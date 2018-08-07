@@ -1,7 +1,6 @@
 from unittest import TestCase
 import gather
 
-
 class TestDocLinks(TestCase):
 
     def test__get_docs(self):
@@ -15,14 +14,12 @@ class TestDocLinks(TestCase):
 
         # Word
         test_word_df = docs_df[docs_df.type == "docx"]
-        self.assertIn(
-            'http://www.marionisd.net/upload/page/0020/DofI%20Plan.docx',
+        self.assertIn('http://www.marionisd.net/upload/page/0020/DofI%20Plan.docx',
             list(test_word_df[test_word_df.index == 'Marion ISD'].link))
 
         # Google
         test_google_df = docs_df[docs_df.type == "google"]
-        self.assertIn(
-            'https://drive.google.com/file/d/0ByTbbvh_1OW_c2pWakJiNENNZXM/preview',
+        self.assertIn('https://drive.google.com/file/d/0ByTbbvh_1OW_c2pWakJiNENNZXM/preview',
             list(test_google_df[test_google_df.index == 'Morton ISD'].link))
 
 

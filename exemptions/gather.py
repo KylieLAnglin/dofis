@@ -7,18 +7,15 @@ import pandas as pd
 
 # Functions
 
-def make_soup(url):
-    html = urllib.request.urlopen(url).read()
-    soup = BeautifulSoup(html)
-    return soup
-
-
-def get_extension_from_webpage_ending(soup, endings, identifier, print_interim=True):
+def get_extension_from_href_ending(soup, endings, identifier, get_title = True, title = '', print_interim=True):
     retrieved_links = {}
     for link in soup.find_all('a'):
         if link.get('href'):
             current_link = link.get('href')
-            title = link.get('title')
+            if get_title:
+                title = link.get('title')
+            else:
+                title = title
             if any([current_link.endswith(ending) for ending in endings]) and title and 'ISD' in title:
                 if print_interim:
                     print(title, current_link)
@@ -26,12 +23,15 @@ def get_extension_from_webpage_ending(soup, endings, identifier, print_interim=T
     return retrieved_links
 
 
-def get_extension_from_webpage_contains(soup, containing, identifier, debug_string=None, print_interim=True):
+def get_extension_from_href_contains(soup, containing, identifier, get_title = True, title = '', debug_string=None, print_interim=True):
     retrieved_links = {}
     for link in soup.find_all('a'):
         if link.get('href'):
             current_link = link.get('href')
-            title = link.get('title')
+            if get_title:
+                title = link.get('title')
+            else:
+                title = title
             if any(strng in current_link for strng in containing) and title and 'ISD' in title:
                 if print_interim:
                     print(debug_string, title, current_link)
@@ -42,8 +42,7 @@ def get_extension_from_webpage_contains(soup, containing, identifier, debug_stri
 ###
 #   Classes
 ###
-
-
+# TODO Gather docs needs to search scripts and iframes.
 class DocLinks:
     """This will be a class for the first level of districts and links"""
 
@@ -58,30 +57,29 @@ class DocLinks:
 
     def _get_docs(self, print_interim):
         # Word Docs
-        docx_links = get_extension_from_webpage_ending(soup=self.soup,
-                                                       endings=['docx', 'doc'],
-                                                       identifier='docx',
-                                                       print_interim=print_interim)
+        docx_links = get_extension_from_href_ending(soup=self.soup,
+                                                    endings=['docx', 'doc'],
+                                                    identifier='docx',
+                                                    print_interim=print_interim)
         self.doc_links.update(docx_links)
 
         # PDFs
-        pdf_links = get_extension_from_webpage_ending(soup=self.soup,
-                                                      endings=['.pdf'],
-                                                      identifier='pdf',
-                                                      print_interim=print_interim)
+        pdf_links = get_extension_from_href_ending(soup=self.soup,
+                                                   endings=['.pdf'],
+                                                   identifier='pdf',
+                                                   print_interim=print_interim)
 
         self.doc_links.update(pdf_links)
 
         #  Google Docs
-        google_links = get_extension_from_webpage_contains(self.soup,
-                                                           ['drive.google.com'],
-                                                           identifier='google',
-                                                           print_interim=print_interim)
+        google_links = get_extension_from_href_contains(self.soup,
+                                                        ['drive.google.com'],
+                                                        identifier='google',
+                                                        print_interim=print_interim)
         self.doc_links.update(google_links)
 
 class SeedLinks:
-    """ Documents that don't come directly from seed links"""
-
+    """Seed links for web crawler"""
 
     def __init__(self, url, print_interim=True):
         self.seed_links = {}
@@ -106,3 +104,6 @@ class SeedLinks:
                 if print_interim:
                     print(title, current_link)
         self.seed_links = seed_links
+
+
+
