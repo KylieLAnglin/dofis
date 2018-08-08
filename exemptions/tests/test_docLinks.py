@@ -1,11 +1,12 @@
 from unittest import TestCase
-import gather
+from exemptions import gather
+
 
 class TestDocLinks(TestCase):
 
     def test__get_docs(self):
         url = 'https://tea.texas.gov/Texas_Schools/District_Initiatives/Districts_of_Innovation/'
-        docs_df = gather.DocLinks(url, print_interim = False).docs_df
+        docs_df = gather.FirstLevelLinks(url, print_interim = False).docs_df
 
         # PDF
         test_pdf_df = docs_df[docs_df.type == "pdf"]
@@ -21,5 +22,4 @@ class TestDocLinks(TestCase):
         test_google_df = docs_df[docs_df.type == "google"]
         self.assertIn('https://drive.google.com/file/d/0ByTbbvh_1OW_c2pWakJiNENNZXM/preview',
             list(test_google_df[test_google_df.index == 'Morton ISD'].link))
-
 
