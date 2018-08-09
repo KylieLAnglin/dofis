@@ -202,7 +202,18 @@ class SecondLevelLinks:
     def __init__(self, titles_urls):
         self.doc_links = {}
         self.crawl(titles_urls=titles_urls)
+        self.docs_df = self.make_df()
 
+    def make_df(self):
+        docs_df = pd.DataFrame.from_dict(self.doc_links,
+                                         orient='index',
+                                         columns=['title', 'type'])
+        docs_df = docs_df.reset_index()
+        docs_df = docs_df.rename(columns={"index": "link"})
+        #docs_df = docs_df.drop(['level_0'])
+        docs_df = docs_df.set_index('title')
+
+        return docs_df
 
     def crawl(self, titles_urls):
         for key, url in titles_urls.items():
