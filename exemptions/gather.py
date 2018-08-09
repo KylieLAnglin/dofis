@@ -9,21 +9,23 @@ from urllib.parse import urljoin
 
 # Functions
 
-def get_doc_links_from_href(soup, strings_of_interest, identifier, get_title=True, title='', print_interim=True,
+def get_doc_links_from_href(url, strings_of_interest, identifier, get_title=True, title='', print_interim=True,
                             kind='ending'):
     """
     First level links
 
-    Takes soup and extracts hrefs of interest and titles them.
-    :param soup: From BeautifulSoup
-    :param strings_of_interest: what strings are you looking for inside the href?
-    :param identifier: how do you identify these types
-    :param get_title: get title or provide title? False = provide title.
-    :param title: if providing title, what is it
-    :param print_interim: want to print interim output?
-    :param kind: -- The kind of href we're trying to detect (default: 'ending', alternative 'containing')
-    :return:
+    Takes url and extracts hrefs of interest.
+    :param url: url to search for document links
+    :param strings_of_interest:  Indicate type of documents with strings like .pdf
+    :param identifier: By what name will you identify these document types?
+    :param get_title: Do you want to find the link title inside the href or provide a title? False = provide title.
+    :param title: If providing title, what is it? This should be a district name.
+    :param print_interim: Want to print interim output?
+    :param kind: -- Where to look for string in href (default: 'ending', alternative 'containing')
+    :return: dic Returns the following dictionary: {title: (link, type)}
     """
+
+    soup = make_soup(url=url)
     retrieved_links = {}
     for link in soup.find_all('a'):
         if link.get('href'):
@@ -47,26 +49,25 @@ def get_doc_links_from_href(soup, strings_of_interest, identifier, get_title=Tru
     return retrieved_links
 
 
-def get_doc_links_from_url(url, identifier, title, strings_of_interest, kind):
+def get_doc_links_from_href_scripts_iframes(url, identifier, title, strings_of_interest, kind):
+
     """
     Second level links
-    :param url:
-    :param identifier:
-    :param title:
-    :param strings_of_interest:
-    :param kind:
-    :return:
+
+    Takes url and extracts docs from hrefs, scripts, and iframes
+    :param url: url to search for document links
+    :param strings_of_interest: Indicate types of documents with strings of interest like .pdf
+    :param identifier: By what name will you identify these document types?
+    :param title: District name
+    :param kind: -- Where to look for string in href (default: 'ending', alternative 'containing')
+    :return: dic Returns the following dictionary: {link: (title, type)}
     """
     retrieved_links = {}
     try:
-        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, '
-                                 'like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
-        req = urllib.request.Request(url, headers=headers)
-        html = urllib.request.urlopen(req).read()
-        sopa = BeautifulSoup(html)
-        for link in sopa.find_all('a'):  # TODO create clean link function
+        soup = make_soup(url)
+        for link in soup.find_all('a'):
             current_link = link.get('href')
-            current_link = clean_link(url= url, current_link = current_link)
+            current_link = clean_link(url=url, current_link=current_link)
             condition_mapping = {
                 'ending': [current_link.endswith(ending) for ending in strings_of_interest],
                 'contains': [strng in current_link for strng in strings_of_interest],
@@ -75,9 +76,9 @@ def get_doc_links_from_url(url, identifier, title, strings_of_interest, kind):
             if any(condition):
                 retrieved_links[current_link] = (title, identifier)
         # TODO <- Figure out how to gracefully handle iframes without src attributes
-        for iframe in sopa.find_all('iframe'):
+        for iframe in soup.find_all('iframe'):
             current_link = iframe.attrs['src']
-            current_link = clean_link(url= url, current_link = current_link)
+            current_link = clean_link(url=url, current_link=current_link)
             condition_mapping = {
                 'ending': [current_link.endswith(ending) for ending in strings_of_interest],
                 'contains': [strng in current_link for strng in strings_of_interest],
@@ -85,7 +86,7 @@ def get_doc_links_from_url(url, identifier, title, strings_of_interest, kind):
             condition = condition_mapping[kind]
             if any(condition):
                 retrieved_links[current_link] = (title, identifier)
-        for script in sopa.find_all('script'):
+        for script in soup.find_all('script'):
             string = str(script)
             matches = re.findall(r'"(.*)"', string)  # figure out what we're looking for here
             for match in matches:
@@ -94,7 +95,7 @@ def get_doc_links_from_url(url, identifier, title, strings_of_interest, kind):
                 condition_mapping = {
                     'ending': [current_link.endswith(ending) for ending in strings_of_interest],
                     'contains': [strng in current_link for strng in strings_of_interest],
-                    }
+                }
                 condition = condition_mapping[kind]
                 if any(condition):
                     retrieved_links[current_link] = (title, identifier)
@@ -113,10 +114,13 @@ def clean_link(url, current_link):
     return current_link
 
 
-# df = pd.DataFrame.from_dict(retrieved_links, orient='index', columns=['title', 'type'])
-#    df2 = df.reset_index()
-#   retrieved_links_df = df2.set_index('title')
-#  retrieved_links_df = retrieved_links_df.rename(columns={"index": "link"})
+def make_soup(url):
+    headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, '
+                             'like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+    req = urllib.request.Request(url, headers=headers)
+    html = urllib.request.urlopen(req).read()
+    soup = BeautifulSoup(html)
+    return soup
 
 
 ###
@@ -126,24 +130,22 @@ class FirstLevelLinks:
     """This will be a class for the first level of districts and links"""
 
     def __init__(self, url, print_interim=True):
-        self.html = urllib.request.urlopen(url).read()
-        self.soup = BeautifulSoup(self.html)
         self.doc_links = {}
-        self._get_docs(print_interim)
+        self._get_docs(url, print_interim)
         self.docs_df = pd.DataFrame.from_dict(self.doc_links,
                                               orient='index',
                                               columns=['link', 'type'])
 
-    def _get_docs(self, print_interim):
+    def _get_docs(self, url, print_interim):
         # Word Docs
-        docx_links = get_doc_links_from_href(soup=self.soup,
+        docx_links = get_doc_links_from_href(url=url,
                                              strings_of_interest=['docx', 'doc'],
                                              identifier='docx',
                                              print_interim=print_interim)
         self.doc_links.update(docx_links)
 
         # PDFs
-        pdf_links = get_doc_links_from_href(soup=self.soup,
+        pdf_links = get_doc_links_from_href(url=url,
                                             strings_of_interest=['.pdf'],
                                             identifier='pdf',
                                             kind='contains',
@@ -152,16 +154,8 @@ class FirstLevelLinks:
         self.doc_links.update(pdf_links)
 
         #  Google Docs
-        google_links = get_doc_links_from_href(self.soup,
-                                               strings_of_interest=['drive.google'],
-                                               identifier='google',
-                                               print_interim=print_interim,
-                                               kind='contains')
-        self.doc_links.update(google_links)
-
-        #  Google Docs
-        google_links = get_doc_links_from_href(self.soup,
-                                               strings_of_interest=['docs.google'],
+        google_links = get_doc_links_from_href(url=url,
+                                               strings_of_interest=['drive.google', 'docs.google'],
                                                identifier='google',
                                                print_interim=print_interim,
                                                kind='contains')
@@ -197,7 +191,7 @@ class SeedLinks:
 
 
 class SecondLevelLinks:
-    """This will be a class for the first level of districts and links"""
+    """This will be a class for the second level of districts and links"""
 
     def __init__(self, titles_urls):
         self.doc_links = {}
@@ -210,7 +204,6 @@ class SecondLevelLinks:
                                          columns=['title', 'type'])
         docs_df = docs_df.reset_index()
         docs_df = docs_df.rename(columns={"index": "link"})
-        #docs_df = docs_df.drop(['level_0'])
         docs_df = docs_df.set_index('title')
 
         return docs_df
@@ -223,25 +216,26 @@ class SecondLevelLinks:
                 print("ERROR...", key, e)
 
     def _get_tricky_docs(self, url, title):
-        # Word Docs
+        # from not just hrefs, but scripts, and iframes
 
-        docx_links = get_doc_links_from_url(url=url,
-                                            identifier='docx',
-                                            title=title,
-                                            strings_of_interest=['.doc', '.docx'],
-                                            kind='ending')
+        docx_links = get_doc_links_from_href_scripts_iframes(url=url,
+                                                             identifier='docx',
+                                                             title=title,
+                                                             strings_of_interest=['.doc', '.docx'],
+                                                             kind='ending')
         self.doc_links.update(docx_links)
 
-        pdf_links = get_doc_links_from_url(url=url,
-                                           identifier='pdf',
-                                           title=title,
-                                           strings_of_interest=['.pdf'],
-                                           kind='contains')
+        pdf_links = get_doc_links_from_href_scripts_iframes(url=url,
+                                                            identifier='pdf',
+                                                            title=title,
+                                                            strings_of_interest=['.pdf'],
+                                                            kind='contains')
         self.doc_links.update(pdf_links)
 
-        google_drive_links = get_doc_links_from_url(url=url,
-                                                    identifier='google',
-                                                    title=title,
-                                                    strings_of_interest=['drive.google', '.docs.google'],
-                                                    kind='contains')
+        google_drive_links = get_doc_links_from_href_scripts_iframes(url=url,
+                                                                     identifier='google',
+                                                                     title=title,
+                                                                     strings_of_interest=['drive.google',
+                                                                                          '.docs.google'],
+                                                                     kind='contains')
         self.doc_links.update(google_drive_links)

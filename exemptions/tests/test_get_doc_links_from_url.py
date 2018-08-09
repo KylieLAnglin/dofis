@@ -10,7 +10,7 @@ class TestGet_doc_links_from_url(TestCase):
         target_url = "https://wildoradoisd.socs.net/vimages/shared/vnews/stories/597b37c5393e1/District%20Innovation%20Plan.docx"
         identifier = '.docx'
         title = 'Wildorado ISD'
-        test1 = gather.get_doc_links_from_url(url = input_url, identifier = identifier, title = title, strings_of_interest=['.docx'], kind = 'ending')
+        test1 = gather.get_doc_links_from_href_scripts_iframes(url = input_url, identifier = identifier, title = title, strings_of_interest=['.docx'], kind ='ending')
         self.assertIn(target_url, list(test1.keys()))
 
         # Example iframe? Or script
@@ -18,7 +18,7 @@ class TestGet_doc_links_from_url(TestCase):
         target_url = "http://www.ldisd.net//cms/lib5/TX01817232/Centricity/Domain/2021/InnovationPlan_1-25-2017.pdf"
         identifier = 'google'
         title = 'Lake Dallas ISD'
-        test2 = gather.get_doc_links_from_url(url = input_url, identifier = identifier, title = title, strings_of_interest=['.pdf'], kind = 'ending')
+        test2 = gather.get_doc_links_from_href_scripts_iframes(url = input_url, identifier = identifier, title = title, strings_of_interest=['.pdf'], kind ='ending')
         self.assertIn(target_url, list(test2.keys()))
 
         # Simple example
@@ -26,8 +26,8 @@ class TestGet_doc_links_from_url(TestCase):
         target_url = 'https://www.aliefisd.net/site/handlers/filedownload.ashx?moduleinstanceid=14757&dataid=16197&FileName=Approved%20Alief%20District%20of%20Innovation%20Plan.pdf'
         identifier = '.pdf'
         title = "Alief ISD"
-        test3 = gather.get_doc_links_from_url(url=input_url, identifier=identifier, title=title,
-                                              strings_of_interest=['.pdf'], kind='contains')
+        test3 = gather.get_doc_links_from_href_scripts_iframes(url=input_url, identifier=identifier, title=title,
+                                                               strings_of_interest=['.pdf'], kind='contains')
         self.assertIn(target_url, list(test3.keys()))
 
         # Example Google Doc
@@ -35,7 +35,7 @@ class TestGet_doc_links_from_url(TestCase):
         target_url = "https://docs.google.com/document/d/1otlNz4M2ppxfasw8G8Uq2CJnHBRJ65xRr6fdKj4VsJI/edit?usp=sharing"
         identifier = 'google'
         title = 'google'
-        test4 = gather.get_doc_links_from_url(url = input_url, identifier = identifier, title = title, strings_of_interest=['docs.google'], kind = 'contains')
+        test4 = gather.get_doc_links_from_href_scripts_iframes(url = input_url, identifier = identifier, title = title, strings_of_interest=['docs.google'], kind ='contains')
         self.assertIn(target_url, list(test4.keys()))
 
 
