@@ -12,6 +12,7 @@ from urllib.parse import urljoin
 def get_doc_links_from_href(soup, strings_of_interest, identifier, get_title=True, title='', print_interim=True,
                             kind='ending'):
     """
+    First level links
 
     Takes soup and extracts hrefs of interest and titles them.
     :param soup: From BeautifulSoup
@@ -46,29 +47,85 @@ def get_doc_links_from_href(soup, strings_of_interest, identifier, get_title=Tru
     return retrieved_links
 
 
-def get_doc_links_from_url(url, identifier, title, endings_regex):
+def get_doc_links_from_url(url, identifier, title, strings_of_interest, kind):
     """
-
+    Second level links
     :param url:
-    :param endings_regex:
     :param identifier:
     :param title:
+    :param strings_of_interest:
+    :param kind:
     :return:
     """
-    html = urllib.request.urlopen(url).read()
-    soup = BeautifulSoup(html)
-    soup_string = str(soup)
     retrieved_links = {}
-    matches = re.findall(endings_regex, soup_string)
-    for match in matches:
-        current_link = match
-        title = title
-        if not current_link.startswith('http') and not current_link.startswith('www'):
-            current_link = urljoin(url, current_link)
-        if " " in current_link:
-            current_link = current_link.replace(" ", "%20")
-        retrieved_links[current_link] = (title, identifier)
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, '
+                                 'like Gecko) Chrome/50.0.2661.102 Safari/537.36'}
+        req = urllib.request.Request(url, headers=headers)
+        html = urllib.request.urlopen(req).read()
+        sopa = BeautifulSoup(html)
+        for link in sopa.find_all('a'):  # TODO create clean link function
+            current_link = link.get('href')
+            if not current_link:
+                current_link = ''
+            if not current_link.startswith('http') and not current_link.startswith('www'):
+                current_link = urljoin(url, current_link)
+            if " " in current_link:
+                current_link = current_link.replace(" ", "%20")
+            condition_mapping = {
+                'ending': [current_link.endswith(ending) for ending in strings_of_interest],
+                'contains': [strng in current_link for strng in strings_of_interest],
+            }
+            condition = condition_mapping[kind]
+            if any(condition):
+                retrieved_links[current_link] = (title, identifier)
+        # TODO <- Figure out how to gracefully handle iframes without src attributes
+        for iframe in sopa.find_all('iframe'):
+            current_link = iframe.attrs['src']
+            if not current_link:
+                current_link = ''
+            if not current_link.startswith('http') and not current_link.startswith('www'):
+                current_link = urljoin(url, current_link)
+            if " " in current_link:
+                current_link = current_link.replace(" ", "%20")
+            condition_mapping = {
+                'ending': [current_link.endswith(ending) for ending in strings_of_interest],
+                'contains': [strng in current_link for strng in strings_of_interest],
+            }
+            condition = condition_mapping[kind]
+            if any(condition):
+                retrieved_links[current_link] = (title, identifier)
+        for script in sopa.find_all('script'):
+            string = str(script)
+            matches = re.findall(r'"(.*)"', string)  # figure out what we're looking for here
+            for match in matches:
+                current_link = match
+                if not current_link:
+                    current_link = ''
+                if not current_link.startswith('http') and not current_link.startswith('www'):
+                    current_link = urljoin(url, current_link)
+                if " " in current_link:
+                    current_link = current_link.replace(" ", "%20")
+                condition_mapping = {
+                    'ending': [current_link.endswith(ending) for ending in strings_of_interest],
+                    'contains': [strng in current_link for strng in strings_of_interest],
+                    }
+                condition = condition_mapping[kind]
+                if any(condition):
+                    retrieved_links[current_link] = (title, identifier)
+    except Exception as e:
+        print('error:', title, e)
     return retrieved_links
+
+
+def clean_link(url, current_link):
+    if not current_link:
+        current_link = ''
+    if not current_link.startswith('http') and not current_link.startswith('www'):
+        current_link = urljoin(url, current_link)
+    if " " in current_link:
+        current_link.replace(" ", "%20")
+    return current_link
 
 
 # df = pd.DataFrame.from_dict(retrieved_links, orient='index', columns=['title', 'type'])
@@ -111,7 +168,15 @@ class FirstLevelLinks:
 
         #  Google Docs
         google_links = get_doc_links_from_href(self.soup,
-                                               strings_of_interest=['drive.google.com'],
+                                               strings_of_interest=['drive.google'],
+                                               identifier='google',
+                                               print_interim=print_interim,
+                                               kind='contains')
+        self.doc_links.update(google_links)
+
+        #  Google Docs
+        google_links = get_doc_links_from_href(self.soup,
+                                               strings_of_interest=['docs.google'],
                                                identifier='google',
                                                print_interim=print_interim,
                                                kind='contains')
@@ -149,22 +214,38 @@ class SeedLinks:
 class SecondLevelLinks:
     """This will be a class for the first level of districts and links"""
 
-    def __init__(self, titles_urls, print_interim=True):
+    def __init__(self, titles_urls):
         self.doc_links = {}
         self.crawl(titles_urls=titles_urls)
 
-    def _get_docs(self, url, title):
+
+    def crawl(self, titles_urls):
+        for key, url in titles_urls.items():
+            try:
+                self._get_tricky_docs(url=url, title=key)
+            except Exception as e:
+                print("ERROR...", key, e)
+
+    def _get_tricky_docs(self, url, title):
         # Word Docs
 
         docx_links = get_doc_links_from_url(url=url,
                                             identifier='docx',
                                             title=title,
-                                            endings_regex=r'([a-zA-Z\ \/0-9_%\.:]*\.docx)')
+                                            strings_of_interest=['.doc', '.docx'],
+                                            kind='ending')
         self.doc_links.update(docx_links)
 
-    def crawl(self, titles_urls):
-        for key, url in titles_urls.items():
-            try:
-                self._get_docs(url=url, title=key)
-            except Exception as e:
-                print("ERROR...", key, e)
+        pdf_links = get_doc_links_from_url(url=url,
+                                           identifier='pdf',
+                                           title=title,
+                                           strings_of_interest=['.pdf'],
+                                           kind='contains')
+        self.doc_links.update(pdf_links)
+
+        google_drive_links = get_doc_links_from_url(url=url,
+                                                    identifier='google',
+                                                    title=title,
+                                                    strings_of_interest=['drive.google', '.docs.google'],
+                                                    kind='contains')
+        self.doc_links.update(google_drive_links)
