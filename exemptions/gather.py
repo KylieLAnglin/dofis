@@ -50,7 +50,6 @@ def get_doc_links_from_href(url, strings_of_interest, identifier, get_title=True
 
 
 def get_doc_links_from_href_scripts_iframes(url, identifier, title, strings_of_interest, kind):
-
     """
     Second level links
 
@@ -62,41 +61,30 @@ def get_doc_links_from_href_scripts_iframes(url, identifier, title, strings_of_i
     :param kind: -- Where to look for string in href (default: 'ending', alternative 'containing')
     :return: dic Returns the following dictionary: {link: (title, type)}
     """
+    condition_mapping = {
+        'ending': lambda x: [x.endswith(ending) for ending in strings_of_interest],
+        'contains': lambda x: [strng in x for strng in strings_of_interest],
+    }
     retrieved_links = {}
     try:
         soup = make_soup(url)
         for link in soup.find_all('a'):
-            current_link = link.get('href')
-            current_link = clean_link(url=url, current_link=current_link)
-            condition_mapping = {
-                'ending': [current_link.endswith(ending) for ending in strings_of_interest],
-                'contains': [strng in current_link for strng in strings_of_interest],
-            }
-            condition = condition_mapping[kind]
+            current_link = clean_link(url=url, current_link=link.get('href'))
+            condition = condition_mapping[kind](current_link)
             if any(condition):
                 retrieved_links[current_link] = (title, identifier)
         # TODO <- Figure out how to gracefully handle iframes without src attributes
         for iframe in soup.find_all('iframe'):
-            current_link = iframe.attrs['src']
-            current_link = clean_link(url=url, current_link=current_link)
-            condition_mapping = {
-                'ending': [current_link.endswith(ending) for ending in strings_of_interest],
-                'contains': [strng in current_link for strng in strings_of_interest],
-            }
-            condition = condition_mapping[kind]
+            current_link = clean_link(url=url, current_link=iframe.attrs['src'])
+            condition = condition_mapping[kind](current_link)
             if any(condition):
                 retrieved_links[current_link] = (title, identifier)
         for script in soup.find_all('script'):
-            string = str(script)
-            matches = re.findall(r'"(.*)"', string)  # figure out what we're looking for here
+            matches = re.findall(r'"(.*)"', str(script))  # figure out what we're looking for here
             for match in matches:
                 current_link = match
                 current_link = clean_link(url=url, current_link=current_link)
-                condition_mapping = {
-                    'ending': [current_link.endswith(ending) for ending in strings_of_interest],
-                    'contains': [strng in current_link for strng in strings_of_interest],
-                }
-                condition = condition_mapping[kind]
+                condition = condition_mapping[kind](current_link)
                 if any(condition):
                     retrieved_links[current_link] = (title, identifier)
     except Exception as e:
@@ -176,14 +164,20 @@ class SeedLinks:
         for link in self.soup.find_all('a'):
             if link.get('href'):
                 current_link = link.get('href')
-                title = link.get('title')
+                title = link.get('title')  # TODO not(any([current_link.endswith('doc'),
                 if ('http' in current_link
                         and title
                         and "ISD" in title
-                        and not current_link.endswith('doc')
-                        and '.pdf' not in current_link
-                        and not current_link.endswith('docx')
-                        and 'drive.google' not in current_link):
+                        and not (
+                                any(
+                                    [current_link.endswith('doc'),
+                                     '.pdf' in current_link,
+                                     current_link.endswith('docx'),
+                                     'drive.google' in current_link,
+                                     ]
+                                )
+                        )
+                ):
                     seed_links[title] = current_link
                 if print_interim:
                     print(title, current_link)
