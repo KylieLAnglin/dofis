@@ -66,12 +66,7 @@ def get_doc_links_from_url(url, identifier, title, strings_of_interest, kind):
         sopa = BeautifulSoup(html)
         for link in sopa.find_all('a'):  # TODO create clean link function
             current_link = link.get('href')
-            if not current_link:
-                current_link = ''
-            if not current_link.startswith('http') and not current_link.startswith('www'):
-                current_link = urljoin(url, current_link)
-            if " " in current_link:
-                current_link = current_link.replace(" ", "%20")
+            current_link = clean_link(url= url, current_link = current_link)
             condition_mapping = {
                 'ending': [current_link.endswith(ending) for ending in strings_of_interest],
                 'contains': [strng in current_link for strng in strings_of_interest],
@@ -82,12 +77,7 @@ def get_doc_links_from_url(url, identifier, title, strings_of_interest, kind):
         # TODO <- Figure out how to gracefully handle iframes without src attributes
         for iframe in sopa.find_all('iframe'):
             current_link = iframe.attrs['src']
-            if not current_link:
-                current_link = ''
-            if not current_link.startswith('http') and not current_link.startswith('www'):
-                current_link = urljoin(url, current_link)
-            if " " in current_link:
-                current_link = current_link.replace(" ", "%20")
+            current_link = clean_link(url= url, current_link = current_link)
             condition_mapping = {
                 'ending': [current_link.endswith(ending) for ending in strings_of_interest],
                 'contains': [strng in current_link for strng in strings_of_interest],
@@ -100,12 +90,7 @@ def get_doc_links_from_url(url, identifier, title, strings_of_interest, kind):
             matches = re.findall(r'"(.*)"', string)  # figure out what we're looking for here
             for match in matches:
                 current_link = match
-                if not current_link:
-                    current_link = ''
-                if not current_link.startswith('http') and not current_link.startswith('www'):
-                    current_link = urljoin(url, current_link)
-                if " " in current_link:
-                    current_link = current_link.replace(" ", "%20")
+                current_link = clean_link(url=url, current_link=current_link)
                 condition_mapping = {
                     'ending': [current_link.endswith(ending) for ending in strings_of_interest],
                     'contains': [strng in current_link for strng in strings_of_interest],
@@ -124,7 +109,7 @@ def clean_link(url, current_link):
     if not current_link.startswith('http') and not current_link.startswith('www'):
         current_link = urljoin(url, current_link)
     if " " in current_link:
-        current_link.replace(" ", "%20")
+        current_link = current_link.replace(" ", "%20")
     return current_link
 
 
