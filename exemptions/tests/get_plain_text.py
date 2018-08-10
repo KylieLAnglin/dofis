@@ -3,7 +3,7 @@ from exemptions import clean_documents
 
 
 
-class TestGet_link_contents(TestCase):
+class Testclean_documents(TestCase):
     def test_get_plain_text(self):
         # simple case
         url = 'http://www.hsisd.net/upload/page/0061/docs/HSISDs%20DOI%20Plan%20-Board%20Approval%20Copy.pdf'
