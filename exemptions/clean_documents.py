@@ -54,14 +54,14 @@ def convert_google_url(url):
     unparsed = parsed._replace(path='/uc?export=downloads&id=' + doc_id)
     return parse.urlunparse(unparsed)
 
-def remove_whitespace(df):
+def remove_whitespace(df, text_col):
     '''
     Remove all \n, \t, \r characters from raw text
     '''
-    col = 'text'
+    col = text_col
     clean_text = df[col].map(lambda x: ' '.join(x.split()))
     df = df.copy()
-    df['clean_text'] = clean_text
+    df[col] = clean_text
     return df
 
 def remove_nulls(df):
