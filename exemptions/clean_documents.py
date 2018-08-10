@@ -7,7 +7,7 @@ from interruptingcow import timeout
 import ssl
 
 
-def get_link_contents(link):
+def get_plain_text(link):
     """
 
     :param link: link to a document (including an HTML doc),
@@ -53,3 +53,22 @@ def convert_google_url(url):
     doc_id = parsed.path.split('/')[doc_id_ind]
     unparsed = parsed._replace(path='/uc?export=downloads&id=' + doc_id)
     return parse.urlunparse(unparsed)
+
+def remove_whitespace(df):
+    '''
+    Remove all \n, \t, \r characters from raw text
+    '''
+    col = 'text'
+    clean_text = df[col].map(lambda x: ' '.join(x.split()))
+    df = df.copy()
+    df['clean_text'] = clean_text
+    return df
+
+def remove_nulls(df):
+    '''
+    Remove all records from text column that are None or UNAVAILABLE
+    '''
+    col = 'text'
+    df = df.copy()
+    df = df[(df[col] != 'UNAVAILABLE') & (df[col].notnull())]
+    return df
