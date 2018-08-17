@@ -25,6 +25,7 @@ def get_plain_text(link):
         try:
             link = convert_google_url(link)
         except Exception as e:
+            link = link
             print("Google Error:", e)
     try:
         with timeout(45, exception=RuntimeError):
