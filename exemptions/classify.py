@@ -4,7 +4,6 @@ from pathlib import Path
 
 import spacy
 from spacy.util import minibatch, compounding
-from random import shuffle
 
 
 def reformat_cat_from_df(df, text_col, label_col, category):
@@ -46,8 +45,6 @@ def train_classifier_and_evaluate(texts, cats, model=None, output_dir=None, n_it
     for label in categories:  # categories should be a list of labels (e.g., ['INNOVATION'])
         textcat.add_label(label)
 
-    # load the IMDB dataset
-    print("Loading IMDB data...")
     (train_texts, train_cats), (dev_texts, dev_cats) = load_data(texts=texts, cats=cats)
     print("Using {} examples ({} training, {} evaluation)"
           .format(len(texts), len(train_texts), len(dev_texts)))
@@ -76,7 +73,7 @@ def train_classifier_and_evaluate(texts, cats, model=None, output_dir=None, n_it
                           scores['textcat_r'], scores['textcat_f']))
 
     # test the trained model
-    test_text = "This movie sucked"
+    test_text = "No text"
     doc = nlp(test_text)
     print(test_text, doc.cats)
 
@@ -97,7 +94,6 @@ def train_classifier_and_evaluate(texts, cats, model=None, output_dir=None, n_it
 
 
 def load_data(texts, cats, split=30):
-    """Load data from the IMDB dataset."""
     # Partition off part of the train data for evaluation
     # split = int(len(texts) * split)
     split = int(len(texts) - split)
@@ -112,13 +108,10 @@ def evaluate(tokenizer, textcat, texts, cats):
     tn = 1e-8  # True negatives
     for i, doc in enumerate(textcat.pipe(docs)):
         gold = cats[i]
-        print(doc[:20])
-        print(gold)
         for label, score in doc.cats.items():
             if label not in gold:
                 print('Label was not in model!')
                 continue
-            print(label, score, gold[label])
             if score >= 0.5 and gold[label] >= 0.5:
                 tp += 1.
             elif score >= 0.5 and gold[label] < 0.5:
