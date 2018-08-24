@@ -13,6 +13,6 @@ class TestTrain_classifier_and_evaluate(TestCase):
     def test_train_term_classifier_and_evaluate(self):
         output_dir = os.path.join(os.getcwd(), '..', '..', '..', 'data', 'date_term_classifier')
         nlp = spacy.load(output_dir)
-        test_text = "This plan will be in effect for the 2017-2018 school year."
+        test_text = "This plan will begin in the 2017-2018 school year and continue until."
         doc = nlp(test_text)
         self.assertGreater(float(doc.cats['TERM']), .5)

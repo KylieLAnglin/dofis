@@ -8,4 +8,7 @@ class TestGet_date_phrase_list(TestCase):
         self.assertEqual(len(test_list), 2)
         self.assertIn('This plan', str(test_list[0][1]))
 
+        test_list2 = Sulphur Bluff ISD District Of Innovation Plan 2017-2018 School Year To 2021-2022 School Year
+        self.assert
+
 
