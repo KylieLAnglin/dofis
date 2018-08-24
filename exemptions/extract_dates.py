@@ -16,7 +16,7 @@ def get_date_phrase_list(text, n_tokens_before = 8, n_tokens_after = 6):
                 start = i - n_tokens_before
                 end = i + (n_tokens_after + 1)
                 phrase = doc[start:end]
-                dates_phrases.append((token.text, phrase))
+                dates_phrases.append((str(token.text), phrase))
     return dates_phrases
 
 def get_phrase_list(text, n_tokens_before = 8, n_tokens_after = 6):

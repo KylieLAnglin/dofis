@@ -25,7 +25,7 @@ Compatible with: spaCy v2.0.0+
 """
 
 
-def train_classifier_and_evaluate(texts, cats, model=None, output_dir=None, n_iter=10, categories=None):
+def train_classifier_and_evaluate(texts, cats, n_test = 30, model=None, output_dir=None, n_iter=10, categories=None):
     if model is not None:
         nlp = spacy.load(model)  # load existing spaCy model
         print("Loaded model '%s'" % model)
@@ -45,7 +45,7 @@ def train_classifier_and_evaluate(texts, cats, model=None, output_dir=None, n_it
     for label in categories:  # categories should be a list of labels (e.g., ['INNOVATION'])
         textcat.add_label(label)
 
-    (train_texts, train_cats), (dev_texts, dev_cats) = load_data(texts=texts, cats=cats)
+    (train_texts, train_cats), (dev_texts, dev_cats) = load_data(texts=texts, cats=cats, split = n_test)
     print("Using {} examples ({} training, {} evaluation)"
           .format(len(texts), len(train_texts), len(dev_texts)))
     train_data = list(zip(train_texts,
@@ -93,7 +93,7 @@ def train_classifier_and_evaluate(texts, cats, model=None, output_dir=None, n_it
     return textcat
 
 
-def load_data(texts, cats, split=30):
+def load_data(texts, cats, split):
     # Partition off part of the train data for evaluation
     # split = int(len(texts) * split)
     split = int(len(texts) - split)
