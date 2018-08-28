@@ -18,5 +18,13 @@ class TestGet_max_p_from_dict_list(TestCase):
                      {'TERM': 0.0025924709625542164},
                      {'TERM': 0.9989855885505676},
                      {'TERM': 0.006762371398508549}]
-        test = extract_dates.get_max_p_from_dict_list(test_list)
-        self.assertEqual(test, 12)
+        test_loc, test_p = extract_dates.get_max_p_from_dict_list(test_list)
+        self.assertEqual(test_loc, 12)
+        self.assertEqual(test_p, 0.9989855885505676)
+
+        test_list = []
+        test_loc, test_p = extract_dates.get_max_p_from_dict_list(test_list)
+        self.assertEqual(test_loc, -999)
+        self.assertEqual(test_p, 0)
+
+
