@@ -48,7 +48,13 @@ def get_phrase_list(text, n_tokens_before=8, n_tokens_after=6):
                 start = i - n_tokens_before
                 if start < 0:
                     start = 0
-                end = i + (n_tokens_after + 1)
+                while doc[start].ent_iob_ == 'I':
+                    start = start - 1
+                end = i + n_tokens_after
+                if end >= len(doc):
+                    end = len(doc) - 1
+                while end < len(doc) and doc[end].ent_iob_ == 'I':
+                    end = end + 1
                 phrase = doc[start:end]
                 phrases.append(phrase)
                 phrases = [str(item) for item in phrases]
