@@ -12,3 +12,6 @@ class TestGet_phrase_list(TestCase):
         self.assertEqual(len(test_list), 4)
         self.assertIn('Sulphur', str(test_list[0]))
 
+        test_list = extract_dates.get_phrase_list('Sulphur Bluff ISD District Of Innovation Plan')
+        self.assertEqual(len(test_list), 0)
+
