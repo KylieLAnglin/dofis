@@ -1,6 +1,8 @@
 import en_core_web_sm
 import re
 import spacy
+from spacy.matcher import Matcher
+
 
 
 def get_term_date_and_phrase(text, output_dir):
@@ -105,3 +107,14 @@ def get_latest_date(phrase):
     dates = [int(item) for sublist in dates for item in sublist]
     final_date= max(dates)
     return final_date
+
+def get_months(phrase):
+    nlp = en_core_web_sm.load()
+    months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October',
+              'November', 'December']
+    month_shape_patterns = [[{'ORTH': month}] for month in months]
+    matcher = Matcher(nlp.vocab)
+    matcher.add("month", None, *month_shape_patterns)
+    doc = nlp(phrase)
+    matches = matcher(doc)
+    return list(set([str(doc[i[1]:i[2]][0]) for i in matches]))
