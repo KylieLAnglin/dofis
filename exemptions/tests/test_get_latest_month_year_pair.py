@@ -14,3 +14,12 @@ class TestGet_latest_month_year_pair(TestCase):
         self.assertEqual('', month)
         self.assertEqual(-999, year)
 
+        test3 = 'meetings held March 23 and April 13, 2016. The Committee obtained input'
+        year, month = extract_dates.get_latest_month_year_pair(test3)
+        self.assertEqual('April', month)
+        self.assertEqual(2016, year)
+
+        test3 = ''
+        year, month = extract_dates.get_latest_month_year_pair(test3)
+        self.assertEqual('', month)
+        self.assertEqual(-999, year)

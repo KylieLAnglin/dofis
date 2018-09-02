@@ -15,3 +15,8 @@ class TestGet_months(TestCase):
         list = extract_dates.get_months(text)
         print(list)
         self.assertEqual(0, len(list))
+
+        text = ''
+        list = extract_dates.get_months(text)
+        print(list)
+        self.assertEqual(0, len(list))

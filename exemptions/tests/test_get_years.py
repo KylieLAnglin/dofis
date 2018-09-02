@@ -11,3 +11,15 @@ class TestGet_years(TestCase):
         self.assertIn('2017', list)
         self.assertEqual(1, len(list))
 
+        text = 'and the community. In February, the Board appointed an eighteen members.'
+        list = extract_dates.get_years(text)
+        print(list)
+        self.assertEqual(0, len(list))
+
+        text = ''
+        list = extract_dates.get_years(text)
+        print(list)
+        self.assertEqual(0, len(list))
+
+
+

@@ -6,3 +6,7 @@ class TestGet_earliest_date(TestCase):
         text = 'This plan will begin on September 1, 2016 and will end on September 1, 2021, 00000.'
         test = extract_dates.get_earliest_date(text)
         self.assertEqual(test, 2016)
+
+        text = ''
+        test = extract_dates.get_earliest_date(text)
+        self.assertEqual(test, -999)

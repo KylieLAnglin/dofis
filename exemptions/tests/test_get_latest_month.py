@@ -8,4 +8,6 @@ class TestGet_latest_month(TestCase):
         self.assertEqual('March', extract_dates.get_latest_month(test))
 
         test = []
-        self.assertEqual('', extract_dates.get_latest_month(test))
+        result = extract_dates.get_latest_month(test)
+        print(result)
+        self.assertEqual('', result)

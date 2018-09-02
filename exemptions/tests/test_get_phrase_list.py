@@ -15,3 +15,18 @@ class TestGet_phrase_list(TestCase):
         test_list = extract_dates.get_phrase_list('Sulphur Bluff ISD District Of Innovation Plan')
         self.assertEqual(len(test_list), 0)
 
+        test_list = extract_dates.get_phrase_list('')
+        self.assertEqual(len(test_list), 0)
+
+        test_list = extract_dates.get_phrase_list('2017')
+        self.assertEqual(len(test_list), 1)
+        self.assertEqual(test_list[0], '2017')
+
+        test = 'ECISD District of Innovation Plan 1 I. Introduction House Bill 1842, passed during the 84th ' \
+               'Legislative Session, permits Texas public school districts to become Districts of Innovation and to ' \
+               'obtain exemption from certain provisions of the Texas Education Code. The plan will begin in March of 2017.'
+        test_list = extract_dates.get_phrase_list(test)
+        print(test_list)
+
+
+
