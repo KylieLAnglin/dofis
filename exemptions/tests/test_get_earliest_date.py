@@ -7,6 +7,10 @@ class TestGet_earliest_date(TestCase):
         test = extract_dates.get_earliest_date(text)
         self.assertEqual(test, 2016)
 
+        text = 'local business owners. On January 17, 2017, the District Education Improvement Committee.'
+        test = extract_dates.get_earliest_date(text)
+        self.assertEqual(test, 2017)
+
         text = ''
         test = extract_dates.get_earliest_date(text)
         self.assertEqual(test, -999)

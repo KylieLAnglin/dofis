@@ -3,6 +3,7 @@ import re
 import spacy
 from spacy.matcher import Matcher
 
+
 def get_finalize_month_year_phrase(text, output_dir):
     max_year_phrases, max_year_months, years, months, narrowed_cats = [], [], [], [], []
     year, max_year = -999, -999
@@ -34,6 +35,7 @@ def get_finalize_month_year_phrase(text, output_dir):
                 date_phrase = max_year_phrases[max_year_phrases.index(max_year)]
     return max_year, month, date_phrase, max_p
 
+
 def get_term_date_and_phrase(text, output_dir):
     start_date = -999
     p = 0
@@ -46,6 +48,7 @@ def get_term_date_and_phrase(text, output_dir):
             start_date = get_earliest_date(max_phrase[0])
             phrase = max_phrase[0]
     return start_date, phrase, p
+
 
 def get_phrase_list(text, n_tokens_before=8, n_tokens_after=6):
     nlp = en_core_web_sm.load()
@@ -73,6 +76,7 @@ def get_phrase_list(text, n_tokens_before=8, n_tokens_after=6):
                     phrases = [str(item) for item in phrases]
     return phrases
 
+
 def narrow_phrase_list(phrases_list, output_dir, just_max = False, min_p = .6):
     nlp = spacy.load(output_dir)
     cats = []
@@ -95,9 +99,10 @@ def narrow_phrase_list(phrases_list, output_dir, just_max = False, min_p = .6):
             narrowed_cats.append(max(clean_cats))
     return phrases_narrowed, narrowed_cats
 
+
 def get_earliest_date(phrase):
     nlp = en_core_web_sm.load()
-    dates = []
+    dates, years = [], []
     start_date = -999
     if phrase:
         for token in nlp(phrase):
@@ -105,7 +110,13 @@ def get_earliest_date(phrase):
             if date and len(token.text) == 4:
                 dates.append(date)
         dates = [int(item) for sublist in dates for item in sublist]
-        start_date= min(dates)
+        for year in dates:
+            if year > 2014: #date can only be after 2014
+                years.append(year)
+            if year == 2021 or year == 2022: #likely captured end of term
+                year = year - 5
+                years.append(year)
+        start_date = min(years)
     return start_date
 
 
@@ -127,6 +138,7 @@ def get_latest_month_year_pair(phrase):
                             month = get_latest_month(months)
     return max_year, month
 
+
 def get_latest_month(month_list):
     month = ''
     subs = {'Spring': 1, 'Summer': 2, 'Fall': 3, 'Winter': 4,
@@ -139,6 +151,21 @@ def get_latest_month(month_list):
         loc = value_list.index(max(value_list))
         month = str(month_list[loc])
     return month
+
+
+def get_earliest_month(month_list):
+    month = ''
+    subs = {'Spring': 1, 'Summer': 2, 'Fall': 3, 'Winter': 4,
+            'January': 5, 'February': 6, 'March': 7, 'April': 8, 'May': 9, 'June': 10, 'July': 11,
+            'August': 12, 'September': 13, 'October': 14, 'November': 15, 'December': 16}
+    value_list = []
+    if month_list:
+        for m in month_list:
+            value_list.append(subs.get(m, 0))
+        loc = value_list.index(min(value_list))
+        month = str(month_list[loc])
+    return month
+
 
 def get_months(phrase):
     nlp = en_core_web_sm.load()
@@ -154,6 +181,7 @@ def get_months(phrase):
         if matches:
             months = list(set([str(doc[i[1]:i[2]][0]) for i in matches]))
     return months
+
 
 def get_years(phrase):
     years = []

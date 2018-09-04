@@ -11,3 +11,8 @@ class TestGet_latest_month(TestCase):
         result = extract_dates.get_latest_month(test)
         print(result)
         self.assertEqual('', result)
+
+        test = ['January']
+        result = extract_dates.get_latest_month(test)
+        print(result)
+        self.assertEqual('January', result)

@@ -5,7 +5,6 @@ class TestGet_latest_month_year_pair(TestCase):
     def test_get_latest_month_year_pair(self):
         test = 'final Local Innovation Plan on March-May 2017* February 28, 2017'
         year, month = extract_dates.get_latest_month_year_pair(test)
-        print(month, year)
         self.assertEqual('May', month)
         self.assertEqual(2017, year)
 
@@ -18,6 +17,12 @@ class TestGet_latest_month_year_pair(TestCase):
         year, month = extract_dates.get_latest_month_year_pair(test3)
         self.assertEqual('April', month)
         self.assertEqual(2016, year)
+
+        test3 = 'local business owners. On January 17, 2017, the District Education Improvement Committee.'
+        year, month = extract_dates.get_latest_month_year_pair(test3)
+        print(month, year)
+        self.assertEqual('January', month)
+        self.assertEqual(2017, year)
 
         test3 = ''
         year, month = extract_dates.get_latest_month_year_pair(test3)
