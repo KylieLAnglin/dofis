@@ -29,4 +29,6 @@ def get_laws(string):
     for match in matches:
         law = re.sub('[^0-9\.]','', match.text)
         laws.append(float(law))
+    if len(laws) > 30: #unlikely just noting innovative laws if laws > 30. Better to add these manually.
+        laws = []
     return laws
