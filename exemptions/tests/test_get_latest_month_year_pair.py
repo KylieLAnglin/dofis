@@ -28,3 +28,8 @@ class TestGet_latest_month_year_pair(TestCase):
         year, month = extract_dates.get_latest_month_year_pair(test3)
         self.assertEqual('', month)
         self.assertEqual(-999, year)
+
+        test = 'plan for minimum 30 days January 19, 2017 Public DOI meeting January 19'
+        year, month = extract_dates.get_latest_month_year_pair(test)
+        self.assertEqual('January', month)
+        self.assertEqual(2017, year)

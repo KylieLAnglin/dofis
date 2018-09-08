@@ -116,26 +116,35 @@ def get_earliest_date(phrase):
             if year == 2021 or year == 2022: #likely captured end of term
                 year = year - 5
                 years.append(year)
-        start_date = min(years)
+            if years:
+                start_date = min(years)
     return start_date
 
 
 def get_latest_month_year_pair(phrase):
-    nlp = en_core_web_sm.load()
     max_year = -999
     month = ''
-    if phrase:
-        doc = nlp(phrase)
-        if doc.ents:
-            for entity in doc.ents:
-                year = get_years(str(entity))
-                if year:
-                    year = int(year[0])
-                    if year > max_year:
-                        max_year = year
-                        months = get_months(str(entity))
-                        if months:
-                            month = get_latest_month(months)
+    years = get_years(phrase)
+    months = get_months(phrase)
+    if years and months:
+        max_year = int(years[0])
+        month = months[0]
+    if len(years) > 1 or len(months) > 1:
+        nlp = en_core_web_sm.load()
+        if phrase:
+            doc = nlp(phrase)
+            if doc.ents:
+                for entity in doc.ents:
+                    year = get_years(str(entity))
+                    if year:
+                        year = int(year[0])
+                        if year >= max_year:
+                            max_year = year
+                            new_months = get_months(str(entity))
+                            for m in new_months:
+                                months.append(m)
+                    if months:
+                        month = get_latest_month(months)
     return max_year, month
 
 
