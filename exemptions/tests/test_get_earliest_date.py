@@ -14,3 +14,7 @@ class TestGet_earliest_date(TestCase):
         text = ''
         test = extract_dates.get_earliest_date(text)
         self.assertEqual(test, -999)
+
+        text = '2017-2018 school year and ending in the 2021-2022 school year.'
+        test = extract_dates.get_earliest_date(text)
+        self.assertEqual(test, 2017)

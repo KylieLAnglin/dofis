@@ -47,7 +47,8 @@ def get_term_date_and_phrase(text, output_dir):
         if max_phrase:
             start_date = get_earliest_date(max_phrase[0])
             phrase = max_phrase[0]
-    return start_date, phrase, p
+    month = get_earliest_month_year_pair(phrase)
+    return start_date, month, phrase, p
 
 
 def get_phrase_list(text, n_tokens_before=8, n_tokens_after=6):
@@ -113,12 +114,37 @@ def get_earliest_date(phrase):
         for year in dates:
             if year > 2014: #date can only be after 2014
                 years.append(year)
-            if year == 2021 or year == 2022: #likely captured end of term
-                year = year - 5
-                years.append(year)
             if years:
                 start_date = min(years)
+                if start_date == 2021 or start_date == 2022:
+                    start_date = start_date - 5
     return start_date
+
+def get_earliest_month_year_pair(phrase):
+    min_year = 999
+    month = ''
+    years = get_years(phrase)
+    months = get_months(phrase)
+    if years and months:
+        min_year = int(years[0])
+        month = months[0]
+    if len(years) > 1 or len(months) > 1:
+        nlp = en_core_web_sm.load()
+        if phrase:
+            doc = nlp(phrase)
+            if doc.ents:
+                for entity in doc.ents:
+                    year = get_years(str(entity))
+                    if year:
+                        year = int(year[0])
+                        if year <= min_year:
+                            min_year = year
+                            new_months = get_months(str(entity))
+                            for m in new_months:
+                                months.append(m)
+                    if months:
+                        month = get_earliest_month(months)
+    return min_year, month
 
 
 def get_latest_month_year_pair(phrase):
