@@ -10,6 +10,7 @@ import csv
 # data from: https://tea.texas.gov/perfreport/tapr/index.html
 # reference of labels: https://rptsvr1.tea.texas.gov/perfreport/tapr/2016/download/dstaff.html
 
+
 years =  ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617']
 for year in years:
     print(year)
@@ -158,8 +159,9 @@ for year in years:
                               "us_all_rs": "us_avescore",
                               "us_all_d": "us_numtakers"}
         dscores_subject = cleaning.filter_and_rename_cols(dscores_subject, dscores_tokeep)
-        dscores = dscores.merge(dscores_subject)
+        dscores = dscores.merge(dscores_subject, on = ['district'])
 
     dscores['year'] = year
+    yr_file = 'descriptives_' + year + '.csv'
 
-dscores.to_csv((os.path.join(start.data_path, 'descriptives.csv')))
+    dscores.to_csv((os.path.join(start.data_path, yr_file )))
