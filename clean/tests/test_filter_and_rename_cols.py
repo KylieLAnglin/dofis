@@ -1,6 +1,6 @@
 
 from unittest import TestCase
-from clean import clean_tea
+from clean.library import clean_tea
 import pandas as pd
 import numpy as np
 

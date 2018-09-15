@@ -1,5 +1,5 @@
 from unittest import TestCase
-from clean import clean_tea
+from clean.library import clean_tea
 
 
 class TestClean_dref(TestCase):
