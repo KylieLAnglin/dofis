@@ -33,9 +33,12 @@ def sync_district_names(df, col_name):
                          "SPLENDORA ISD": "SPLENDORA ISD:",
                          "CARROLLTON-FARMERS BRANCH ISD": "CARROLLTON FARMERS BRANCH ISD",
                          "FT HANCOCK ISD": "FORT HANCOCK ISD",
-                         "WEST HARDIN COUNTY ISD": "WEST HARDIN ISD"}
+                         "WEST HARDIN COUNTY ISD": "WEST HARDIN ISD",
+                         "WEST HARDIN CISD": "WEST HARDIN ISD"}
     df[col_name] = df[col_name].replace(fix_names)
     return df
+
+
 
 def distnum_in_paren(df, distname = 'distname', distnum = 'district'):
     df[distname] = (
@@ -51,6 +54,14 @@ def lpad_nums(df, col_name, length):
     df = df.copy()
     df[col_name] = df[col_name].astype(str).str.zfill(length)
     return df
+
+def strip_distnum_parens(str_list):
+    new_list = [elem[0: -9] for elem in str_list]
+    return new_list
+
+def get_not_in(df_a, col_a, df_b, col_b):
+    a_not_in_b = df_a[[elem not in list(df_b[col_b]) for elem in list(df_a[col_a])]]
+    return a_not_in_b
 
 
 
