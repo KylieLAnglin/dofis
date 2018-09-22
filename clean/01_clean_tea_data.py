@@ -11,12 +11,14 @@ for year in years:
 
     dref = clean_tea.clean_dref(year=year)
     ddem = clean_tea.clean_ddem(year=year)
+    dtype = clean_tea.clean_dtype(year =year)
     dscores = pd.DataFrame(columns=['district'])
     for subject in subjects:
         dscores_subject  = clean_tea.clean_scores(year, subject)
         dscores = dscores.merge(dscores_subject, how='outer',
                                 on='district')
     descriptives = ddem.merge(dref, on='district', how='inner')
+    descriptives = descriptives.merge(dtype, on='district', how='inner')
     print(list(descriptives.columns.values))
     descriptives = descriptives.merge(dscores, on='district',
                                       how='left', indicator=True)

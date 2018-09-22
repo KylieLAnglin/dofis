@@ -2,6 +2,8 @@ import pandas as pd
 import os
 import shutil
 from .start import data_path
+from pandas import ExcelWriter
+from pandas import ExcelFile
 
 def filter_and_rename_cols(df, dict):
     """
@@ -65,6 +67,31 @@ def clean_dref(year):
         dref['district'] = dref['district'].apply(int)
     print("There are ", len(dref), 'districts in dref')
     return dref
+
+def clean_dtype(year):
+    files = {'yr1112': 'district1112.xls',
+                 'yr1213': 'district1213.xls',
+                 'yr1314': 'district1314.xls',
+                 'yr1415': 'district1415.xlsx',
+                 'yr1516': 'district1516.xlsx',
+                 'yr1617': 'district1617.xls',
+                 'yr1718': 'district1617.xls'}  # update when type updates
+    sheets = {'yr1112': 'district1112',
+                  'yr1213': 'district1213',
+                  'yr1314': 'district1314',
+                  'yr1415': 'district1415',
+                  'yr1516': 'district1516',
+                  'yr1617': 'district1617',
+                  'yr1718': 'district1617'}  # update when type undates
+    dtype_to_keep = {'District': 'district',
+                         'Type': 'type',
+                         'Description': 'type_description'}
+    filename = files[year]
+    xls = pd.ExcelFile(os.path.join(data_path, 'tea', 'dtype', filename))
+    dtype = xls.parse(sheets[year], skiprows=2)
+    dtype = filter_and_rename_cols(dtype, dtype_to_keep)
+    print("There are ", len(dtype), 'districts in dref')
+    return dtype
 
 def clean_ddem(year):
     if year == 'yr1213':
@@ -181,7 +208,7 @@ def clean_scores(year, subject):
     if year == 'yr1112':
         dscores['district'] = dscores['district'].apply(int)
     dscores = dscores.set_index('district')
-    print("There are ", len(dscores), "districts in ", "dataset.")
+    print("There are ", len(dscores), "districts in ", subject, "dataset.")
     #num_dups = len(dscores[dscores.index.duplicated(keep = False) == True])
     #print('There are', num_dups, ' duplicate indices.')
 
