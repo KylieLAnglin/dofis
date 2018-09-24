@@ -64,4 +64,25 @@ def get_not_in(df_a, col_a, df_b, col_b):
     return a_not_in_b
 
 
+def standardize_scores(data, std_year):
+    yr_df = data[data.year == std_year]
+    subjects = ['r_3rd', 'm_3rd', 'r_4th', 'm_4th', 'r_5th', 'm_5th',
+                'r_6th', 'm_6th', 'r_7th', 'm_7th', 'r_8th', 'm_8th',
+                'alg', 'bio', 'eng1', 'eng2', 'us']
+    means = []
+    sds = []
+    for var in subjects:
+        sub = var + '_avescore'
+        mean = yr_df[sub].mean()
+        means.append(mean)
+        sd = yr_df[sub].std()
+        sds.append(sd)
+
+    for sub, mean, sd in zip(subjects, means, sds):
+        old_var = sub + "_avescore"
+        new_var = sub + "_std"
+        data[new_var] = (data[old_var] - mean) / sd
+
+    return data
+
 

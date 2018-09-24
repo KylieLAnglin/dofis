@@ -131,7 +131,7 @@ def clean_ddem(year):
             'DPSTEXPA': 'teachers_exp_ave',
             'DPSTTENA': 'teachers_tenure_ave',
             'DPSTURND': 'teachers_turnover_denom',
-            'DPSTURNN': 'teacher_turnover_num',
+            'DPSTURNN': 'teachers_turnover_num',
             'DPSTURNR': 'teachers_turnover_ratio',
             'DPSTNOFC': 'teachers_nodegree_num',
             'DPSTBAFC': 'teachers_badegree_num',
@@ -155,9 +155,16 @@ def clean_scores(year, subject):
     file = 'dfy' + file_yr + file_sub + '.dat'
 
     if year in ['yr1112', 'yr1213'] and subject in ['EnglishI', 'EnglishII']:
-        subject_dict= {'EnglishI': 'er1', 'EnglishII': 'er2'}
+        subject_dict= {'EnglishI': 'ew1', 'EnglishII': 'ew2'}
         file = 'dfy' + file_yr + subject_dict[subject] + '.dat'
-
+        # need two files for early English scores (reading and writing)
+        try:
+            dscores2 = pd.read_csv(os.path.join(data_path, 'tea', 'dscores', subject, file), sep=",")
+        except:
+            new_path = fix_parser_error(os.path.join(data_path, 'tea', 'dscores', subject, file))
+            dscores2 = pd.read_csv(new_path, sep=",")
+        subject_dict = {'EnglishI': 'er1', 'EnglishII': 'er2'}
+        file = 'dfy' + file_yr + subject_dict[subject] + '.dat'
     try:
         dscores = pd.read_csv(os.path.join(data_path, 'tea', 'dscores', subject, file), sep=",")
     except:
@@ -170,8 +177,8 @@ def clean_scores(year, subject):
         dscores_tokeep = {'DISTRICT': 'district',
                           "r_all_rs": "r_" + subject + "_avescore",
                           "r_all_d": "r_" + subject + "_numtakers",
-                          "m_all_d": "m_" + subject + "_avescore",
-                          "m_all_rs": "m_" + subject + "_numtakers"}
+                          "m_all_rs": "m_" + subject + "_avescore",
+                          "m_all_d": "m_" + subject + "_numtakers"}
     if subject == 'Algebra':
         dscores_tokeep = {"DISTRICT": "district",
                           "a1_all_rs": "alg_avescore",
@@ -183,22 +190,20 @@ def clean_scores(year, subject):
 
     if subject == 'EnglishI':
         if year == 'yr1112' or year == 'yr1213':
-            dscores_tokeep = {"DISTRICT": "district",
-                              "r1_all_rs": "eng1_avescore",
-                              "r1_all_d": "eng1_numtakers"}
-        else:
-            dscores_tokeep = {"DISTRICT": "district",
-                              "e1_all_rs": "eng1_avescore",
-                              "e1_all_d": "eng1_numtakers"}
+            dscores['e1_all_rs'] = dscores['r1_all_rs'] + dscores2['w1_all_rs']
+            dscores['e1_all_d'] = dscores['r1_all_d']
+        dscores_tokeep = {"DISTRICT": "district",
+                          "e1_all_rs": "eng1_avescore",
+                          "e1_all_d": "eng1_numtakers"}
+
     if subject == 'EnglishII':
         if year == 'yr1112' or year == 'yr1213':
-            dscores_tokeep = {"DISTRICT": "district",
-                              "r2_all_rs": "eng2_avescore",
-                              "r2_all_d": "eng2_numtakers"}
-        else:
-            dscores_tokeep = {"DISTRICT": "district",
-                              "e2_all_rs": "eng2_avescore",
-                              "e2_all_d": "eng2_numtakers"}
+            dscores['e2_all_rs'] = dscores['r2_all_rs'] + dscores2['w2_all_rs']
+            dscores['e2_all_d'] = dscores['r2_all_d']
+
+        dscores_tokeep = {"DISTRICT": "district",
+                          "e2_all_rs": "eng2_avescore",
+                          "e2_all_d": "eng2_numtakers"}
     if subject == 'USHistory':
         dscores_tokeep = {"DISTRICT": "district",
                           "us_all_rs": "us_avescore",

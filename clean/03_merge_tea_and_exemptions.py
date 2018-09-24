@@ -2,6 +2,7 @@ import pandas as pd
 import os
 from library import start
 from library import clean_for_merge
+import numpy as np
 
 tea = pd.read_csv(os.path.join(start.data_path, 'tea', 'desc_long.csv'),
                   sep=",")
@@ -11,7 +12,7 @@ tea = tea[['district', 'distname', 'year',
            'type', 'type_description',
            'students_num', 'students_frpl_num',
            'students_black_num', 'students_hisp_num', 'students_white_num',
-           'teachers_num', 'teachers_new_num', 'teacher_turnover_num',
+           'teachers_num', 'teachers_new_num', 'teachers_turnover_num',
            'teachers_turnover_denom', 'teachers_turnover_ratio',
            'teachers_exp_ave', 'teachers_tenure_ave',
            'teachers_nodegree_num', 'teachers_badegree_num',
@@ -68,9 +69,7 @@ tea.loc[(tea['distname'].isin(mismatch_list)), 'distname'] = (
     tea.loc[(tea['distname'].isin(mismatch_list))]
         .pipe(clean_for_merge.distnum_in_paren)['distname']
 )
-tea.head()
-laws.head()
-
+print(tea.dtypes)
 # # Merge
 data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
 data.loc[(data['_merge'] == 'both'), 'doi'] = True
@@ -79,11 +78,31 @@ data.head()
 
 laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique()
 
+# # Convert strings to numeric
+num_cols = ['teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num', 'teachers_num',
+            'teachers_turnover_num', 'teachers_turnover_denom', 'teachers_turnover_ratio',  'teachers_exp_ave', 'teachers_tenure_ave']
+data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
 
 # # Create variables
+data['type_urban'] = np.where((data['type'] == 'A') | (data['type'] == 'C'), 1, 0)
+data['type_suburban'] = np.where((data['type'] == 'B') | (data['type'] == 'D'), 1, 0)
+data['type_town'] = np.where((data['type'] == 'E') | (data['type'] == 'F') | (data['type'] == 'G'), 1, 0)
+data['type_town'] = np.where(data['type'] == 'H', 1, 0)
+
+data['students_frpl'] = data['students_frpl_num']/data['students_num']
+data['students_black'] = data['students_black_num']/data['students_num']
+data['students_hisp'] = data['students_hisp_num']/data['students_num']
+data['students_white'] = data['students_white_num']/data['students_num']
+data['teachers_nodegree'] = data['teachers_nodegree_num']/data['teachers_num']
+data['teachers_badegree'] = data['teachers_badegree_num']/data['teachers_num']
+data['teachers_msdegree'] = data['teachers_msdegree_num']/data['teachers_num']
+data['teachers_phddegree'] = data['teachers_phddegree_num']/data['teachers_num']
+
+# # Standardize within subject using mean and standard deviation from 2014-15
+data = clean_for_merge.standardize_scores(data=data, std_year = 'yr1415')
+
 
 
 # # Save
-
 data.to_csv(os.path.join(start.data_path, 'clean', 'master_data.csv'),
             sep=",")
