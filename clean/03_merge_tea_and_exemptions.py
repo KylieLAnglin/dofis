@@ -8,7 +8,7 @@ tea = pd.read_csv(os.path.join(start.data_path, 'tea', 'desc_long.csv'),
                   sep=",")
 print(tea.columns)
 tea = tea[['district', 'distname', 'year',
-           'cntyname', 'distischarter', 'rating',
+           'cntyname', 'distischarter', 'rating_academic', 'rating_financial', 'eligible',
            'type', 'type_description',
            'students_num', 'students_frpl_num',
            'students_black_num', 'students_hisp_num', 'students_white_num',
@@ -97,6 +97,11 @@ data['teachers_nodegree'] = data['teachers_nodegree_num']/data['teachers_num']
 data['teachers_badegree'] = data['teachers_badegree_num']/data['teachers_num']
 data['teachers_msdegree'] = data['teachers_msdegree_num']/data['teachers_num']
 data['teachers_phddegree'] = data['teachers_phddegree_num']/data['teachers_num']
+
+#   Add financial rating from:
+#  https://tea.texas.gov/Finance_and_Grants/State_Funding/State_Funding_Reports_and_Data/PEIMS__Financial_Data_Downloads/
+
+
 
 # # Standardize within subject using mean and standard deviation from 2014-15
 data = clean_for_merge.standardize_scores(data=data, std_year = 'yr1415')

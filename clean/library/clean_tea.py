@@ -4,6 +4,7 @@ import shutil
 from .start import data_path
 from pandas import ExcelWriter
 from pandas import ExcelFile
+import numpy as np
 
 def filter_and_rename_cols(df, dict):
     """
@@ -58,15 +59,40 @@ def clean_dref(year):
         dref_tokeep = {'DISTRICT': 'district',
                        'DISTNAME': 'distname',
                        'DFLCHART': 'distischarter',
-                       'D_RATING': 'rating',
+                       'D_RATING': 'rating_academic',
                        'CNTYNAME': 'cntyname'
                        }
     dref = filter_and_rename_cols(dref, dref_tokeep)
     if year == 'yr1112':
         dref['district'] = dref['district'].str.strip('\'')
         dref['district'] = dref['district'].apply(int)
+
+    # Add financial rating (based on year before - https://tealprod.tea.state.tx.us/First/forms/Main.aspx)
+    if year in ['yr1112', 'yr1213', 'yr1314']:
+        dref['rating_financial'] = None
+    if year == 'yr1415':
+        failed_districts = [9901, 59902, 115902, 123910, 222901, 242905, 108914, 14905, 131001, 84904, 137904, 237902]
+        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+    if year == 'yr1516':
+        failed_districts = [37908, 68901, 123910, 227907]
+        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+    if year == 'yr1617':
+        failed_districts = [92906, 163904, 174902, 70901, 7906]
+        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+    if year == 'yr1718':
+        failed_districts = [54901, 64903, 71903, 108902, 176902]
+        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+
+    if year not in ['yr1112', 'yr1213', 'yr1314']:
+        dref['eligible'] = np.where((dref['rating_academic'].isin(['M', 'A'])
+                                    & (dref['rating_financial'] == 'Pass')
+                                    & (dref['distischarter'] == 'N')), 1, 0) # M= Meets standard, A = Meets alternative standard
+
     print("There are ", len(dref), 'districts in dref')
     return dref
+
+
+
 
 def clean_dtype(year):
     files = {'yr1112': 'district1112.xls',
@@ -218,5 +244,4 @@ def clean_scores(year, subject):
     #print('There are', num_dups, ' duplicate indices.')
 
     return dscores
-
 
