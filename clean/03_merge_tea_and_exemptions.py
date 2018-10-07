@@ -87,7 +87,14 @@ data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
 data['type_urban'] = np.where((data['type'] == 'A') | (data['type'] == 'C'), 1, 0)
 data['type_suburban'] = np.where((data['type'] == 'B') | (data['type'] == 'D'), 1, 0)
 data['type_town'] = np.where((data['type'] == 'E') | (data['type'] == 'F') | (data['type'] == 'G'), 1, 0)
-data['type_town'] = np.where(data['type'] == 'H', 1, 0)
+data['type_rural'] = np.where(data['type'] == 'H', 1, 0)
+
+geography = {'A': 'Urban', 'C': 'Urban',
+             'B': 'Suburban', 'D': 'Suburban',
+             'E': 'Town', 'F': 'Town', 'G': 'Town',
+             'H': 'Rural'}
+
+data['geography'] = data['type'].map(geography)
 
 data['students_frpl'] = data['students_frpl_num']/data['students_num']
 data['students_black'] = data['students_black_num']/data['students_num']
@@ -105,8 +112,17 @@ data['teachers_phddegree'] = data['teachers_phddegree_num']/data['teachers_num']
 
 # # Standardize within subject using mean and standard deviation from 2014-15
 data = clean_for_merge.standardize_scores(data=data, std_year = 'yr1415')
+math_scores = [ 'm_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std']
+reading_scores = [ 'r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std']
+all_scores = [ 'm_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std',
+               'r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',
+               'alg_std', 'bio_std', 'eng1_std', 'eng2_std', 'us_std']
 
+data['math'] = data[math_scores].mean(axis = 1)
+data['reading'] = data[reading_scores].mean(axis = 1)
+data['avescores'] = data[all_scores].mean(axis = 1)
 
+data['student_teacher_ratio'] = data['teachers_num'] / data['students_num']
 
 # # Save
 data.to_csv(os.path.join(start.data_path, 'clean', 'master_data.csv'),
