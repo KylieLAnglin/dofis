@@ -34,3 +34,29 @@ def create_count_proportion_df(data, list_of_regs, dict_of_reg_labels):
              })
 
     return df
+
+
+def create_balance_df(data, list_of_regs, reg_labels, x_var):
+    regs = []
+    cons = []
+    coef = []
+    se = []
+    pvalue = []
+
+    for reg in list_of_regs:
+        formula = reg + ' ~ ' + x_var
+        result = smf.ols(formula=formula, data=data).fit()
+        cons.append(result.params["Intercept"].round(2))
+        coef.append(result.params[x_var].round(2))
+        se.append(result.bse[x_var].round(2))
+        pvalue.append(result.pvalues[x_var].round(2))
+        regs.append(reg_labels[reg])
+
+    df = pd.DataFrame(
+        {'Regulation': regs,
+         'Control': cons,
+         'Exemption Difference': coef,
+         'Std. Error': se,
+         'P-value': pvalue,
+         })
+    return df

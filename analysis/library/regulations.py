@@ -1,8 +1,8 @@
-reg_schedules = ['reg25_0811', 'reg25_081', 'reg25_0812', 'reg25_082']
-reg_class_size = ['reg25_112', 'reg25_113', 'reg25_111']
-reg_certification = ['reg21_003', 'reg21_053', 'reg21_057']
-reg_contracts = ['reg21_102', 'reg21_401', 'reg21_352', 'reg21_354']
-reg_behavior = ['reg25_092', 'reg37_0012', 'reg25_036']
+schedules = ['reg25_0811', 'reg25_081', 'reg25_0812', 'reg25_082']
+class_size = ['reg25_112', 'reg25_113', 'reg25_111']
+certification = ['reg21_003', 'reg21_053', 'reg21_057']
+contracts = ['reg21_102', 'reg21_401', 'reg21_352', 'reg21_354']
+behavior = ['reg25_092', 'reg37_0012', 'reg25_036']
 
 labels = {'reg25_0811':'25.0811 - Minimum First Day of Instruction',
           'reg25_081': '25.081 - Minimum Minutes of Operation',
