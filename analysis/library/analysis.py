@@ -36,26 +36,52 @@ def create_count_proportion_df(data, list_of_regs, dict_of_reg_labels):
     return df
 
 
-def create_balance_df(data, list_of_regs, reg_labels, x_var):
+def many_y_one_x(data, y_list, y_labels, x):
     regs = []
     cons = []
     coef = []
     se = []
     pvalue = []
 
-    for reg in list_of_regs:
-        formula = reg + ' ~ ' + x_var
+    for reg in y_list:
+        formula = reg + ' ~ ' + x
         result = smf.ols(formula=formula, data=data).fit()
-        cons.append(result.params["Intercept"].round(2))
-        coef.append(result.params[x_var].round(2))
-        se.append(result.bse[x_var].round(2))
-        pvalue.append(result.pvalues[x_var].round(2))
-        regs.append(reg_labels[reg])
+        cons.append(result.params['Intercept'].round(2))
+        coef.append(result.params[x].round(2))
+        se.append(result.bse[x].round(2))
+        pvalue.append(result.pvalues[x].round(2))
+        regs.append(y_labels[reg])
 
     df = pd.DataFrame(
         {'Regulation': regs,
          'Control': cons,
          'Exemption Difference': coef,
+         'Std. Error': se,
+         'P-value': pvalue,
+         })
+    return df
+
+def many_x_one_y(data, y, x_list, x_labels):
+    regs = []
+    cons = []
+    coef = []
+    se = []
+    pvalue = []
+
+    for x in x_list:
+        formula = x + ' ~ ' + y
+        result = smf.ols(formula=formula, data=data).fit()
+        cons.append(result.params["Intercept"].round(2))
+        var = y + '[T.True]'
+        coef.append(result.params[var].round(2))
+        se.append(result.bse[var].round(2))
+        pvalue.append(result.pvalues[var].round(2))
+        regs.append(x_labels[x])
+
+    df = pd.DataFrame(
+        {'Characteristic': regs,
+         'Control': cons,
+         'DOI Difference': coef,
          'Std. Error': se,
          'P-value': pvalue,
          })

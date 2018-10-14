@@ -38,13 +38,29 @@ def var_diff_to_excel(file, df, control_col, diff_col, se_col, pvalue_col, start
             coef = str(ob)
         if p < .05:
             coef = str(ob) + '*'
+        if p < .01:
+            coef = str(ob) + '**'
+        if p < .01:
+            coef = str(ob) + '***'
         ws.cell(row=row_n, column=col_n).value = coef
         row_n = row_n + 2
 
     # se
     row_n = start_row + 1
-    for ob in df[diff_col]:
+    for ob in df[se_col]:
         se = '(' + str(ob) + ')'
         ws.cell(row=row_n, column=col_n).value = se
         row_n = row_n + 2
+
     wb.save(file)
+
+def n_to_excel(file, col, row, n):
+    wb = load_workbook(file)
+    ws = wb.active
+
+
+    str_n = 'N = ' + str(n)
+
+    ws.cell(row=row, column=col).value = str_n
+    wb.save(file)
+
