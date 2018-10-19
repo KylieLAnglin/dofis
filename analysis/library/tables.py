@@ -16,7 +16,7 @@ def df_to_excel(file, df, df_columns, start_col, start_row):
         col_n = col_n + 1
     wb.save(file)
 
-def var_diff_to_excel(file, df, control_col, diff_col, se_col, pvalue_col, start_col, start_row):
+def var_diff_to_excel(file, df, control_col, diff_col, se_col, pvalue_col, start_col, start_row, added_third_col = False):
     wb = load_workbook(file)
     ws = wb.active
 
@@ -28,7 +28,11 @@ def var_diff_to_excel(file, df, control_col, diff_col, se_col, pvalue_col, start
         ws.cell(row=row_n, column=col_n).value = ob
         row_n = row_n + 2
 
-    col_n = start_col + 1
+    if added_third_col == False:
+        col_n = start_col + 1
+    else:
+        col_n = start_col + 2
+        col_n = start_col + 2
 
 
     # coefficient

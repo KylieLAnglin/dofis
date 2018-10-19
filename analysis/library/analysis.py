@@ -36,6 +36,8 @@ def create_count_proportion_df(data, list_of_regs, dict_of_reg_labels):
     return df
 
 
+
+
 def many_y_one_x(data, y_list, y_labels, x):
     regs = []
     cons = []
@@ -43,45 +45,20 @@ def many_y_one_x(data, y_list, y_labels, x):
     se = []
     pvalue = []
 
-    for reg in y_list:
-        formula = reg + ' ~ ' + x
-        result = smf.ols(formula=formula, data=data).fit()
-        cons.append(result.params['Intercept'].round(2))
-        coef.append(result.params[x].round(2))
-        se.append(result.bse[x].round(2))
-        pvalue.append(result.pvalues[x].round(2))
-        regs.append(y_labels[reg])
-
-    df = pd.DataFrame(
-        {'Regulation': regs,
-         'Control': cons,
-         'Exemption Difference': coef,
-         'Std. Error': se,
-         'P-value': pvalue,
-         })
-    return df
-
-def many_x_one_y(data, y, x_list, x_labels):
-    regs = []
-    cons = []
-    coef = []
-    se = []
-    pvalue = []
-
-    for x in x_list:
-        formula = x + ' ~ ' + y
+    for y in y_list:
+        formula = y + ' ~ ' + x
         result = smf.ols(formula=formula, data=data).fit()
         cons.append(result.params["Intercept"].round(2))
-        var = y + '[T.True]'
+        var = x + '[T.True]'
         coef.append(result.params[var].round(2))
         se.append(result.bse[var].round(2))
         pvalue.append(result.pvalues[var].round(2))
-        regs.append(x_labels[x])
+        regs.append(y_labels[y])
 
     df = pd.DataFrame(
         {'Characteristic': regs,
          'Control': cons,
-         'DOI Difference': coef,
+         'Difference': coef,
          'Std. Error': se,
          'P-value': pvalue,
          })
