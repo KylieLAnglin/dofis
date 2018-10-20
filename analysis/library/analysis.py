@@ -1,6 +1,9 @@
 import pandas as pd
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
+import statsmodels.formula.api as smf
+import statsmodels.formula.api as sm
+import statsmodels.formula.api as smf
 
 def create_count_proportion_df(data, list_of_regs, dict_of_reg_labels):
     n_col = []
