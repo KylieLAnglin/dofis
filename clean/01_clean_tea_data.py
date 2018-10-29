@@ -9,6 +9,7 @@ subjects = ['3rd', '4th', '5th', '6th', '7th', '8th',
                 'Algebra', 'Biology', 'EnglishI', 'EnglishII', 'USHistory']
 for year in years:
 
+    cref = clean_tea.clean_cref(year=year)
     dref = clean_tea.clean_dref(year=year)
     ddem = clean_tea.clean_ddem(year=year)
     dtype = clean_tea.clean_dtype(year =year)
@@ -19,6 +20,7 @@ for year in years:
                                 on='district')
     descriptives = ddem.merge(dref, on='district', how='inner')
     descriptives = descriptives.merge(dtype, on='district', how='inner')
+    descriptives = descriptives.merge(cref, on = 'district', how = 'inner')
     print(list(descriptives.columns.values))
     descriptives = descriptives.merge(dscores, on='district',
                                       how='left', indicator=True)
