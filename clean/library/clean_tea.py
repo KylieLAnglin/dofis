@@ -1,10 +1,9 @@
-import pandas as pd
 import os
+import pandas as pd
+import numpy as np
 import shutil
 from .start import data_path
-from pandas import ExcelWriter
-from pandas import ExcelFile
-import numpy as np
+
 
 def filter_and_rename_cols(df, dict):
     """
@@ -20,7 +19,13 @@ def filter_and_rename_cols(df, dict):
     new_df = df.rename(index=str, columns=dict)
     return new_df
 
+
 def fix_parser_error(input_path):
+    """
+    Some older datasets have observation data across two rows
+    :param input_path: Location of data set
+    :return: data set where columns are all in one row
+    """
     temp_directory = os.path.join(data_path, 'tea', 'temp')
     temp_file = os.path.basename(input_path)
     temp_path = os.path.join(temp_directory, temp_file)
@@ -34,20 +39,29 @@ def fix_parser_error(input_path):
     with open(temp_path, 'w') \
             as file:
         file.write(text_contents)
-    return(temp_path)
+    return (temp_path)
 
-#https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html
+
 def clean_dref(year):
+    """
+    Reads district reference data from:
+    https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html
+    Manually add financial ratings from:
+    https://tealprod.tea.state.tx.us/First/forms/Main.aspx
+
+    :param year: year of data set to read
+    :return: data frame with variables from dref to keep
+    """
     if year == 'yr1112':
         filename = 'DREF.csv'
     elif year == 'yr1213':
         filename = 'DREF.txt'
     elif year == 'yr1718':
-        year = 'yr1617' #delete when reference data updated
+        year = 'yr1617'  # delete when reference data updated
         filename = 'DREF.dat'
     else:
         filename = 'DREF.dat'
-    dref = pd.read_csv(os.path.join(data_path, 'tea', 'dref',  year, filename), sep=",")
+    dref = pd.read_csv(os.path.join(data_path, 'tea', 'dref', year, filename), sep=",")
 
     if year == 'yr1112':
         dref_tokeep = {'DISTRICT': 'district',
@@ -85,49 +99,56 @@ def clean_dref(year):
 
     if year not in ['yr1112', 'yr1213', 'yr1314']:
         dref['eligible'] = np.where((dref['rating_academic'].isin(['M', 'A'])
-                                    & (dref['rating_financial'] == 'Pass')
-                                    & (dref['distischarter'] == 'N')), True, False) # M= Meets standard, A = Meets alternative standard
+                                     & (dref['rating_financial'] == 'Pass')
+                                     & (dref['distischarter'] == 'N')), True,
+                                    False)  # M= Meets standard, A = Meets alternative standard
 
     print("There are ", len(dref), 'districts in dref')
     return dref
 
+
 def clean_cref(year):
+    """
+    Reads campus reference data from https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html
+    :param year: df of district and number of schools
+    :return:
+    """
     if year in ['yr1112', 'yr1213', 'yr1314']:
         year = 'yr1415'
     if year == 'yr1718':
         year = 'yr1617'
-    cref = pd.read_csv(os.path.join(data_path, 'tea', 'cref',  year, 'CREF.dat'), sep=",")
-
+    cref = pd.read_csv(os.path.join(data_path, 'tea', 'cref', year, 'CREF.dat'), sep=",")
 
     cref = pd.DataFrame(cref.groupby(cref.DISTRICT)['DISTRICT'].count())
     cref.index.names = ['district']
     cref = cref.reset_index()
     cref_tokeep = {'district': 'district',
-                  'DISTRICT': 'schools_num'}
+                   'DISTRICT': 'schools_num'}
     cref = filter_and_rename_cols(cref, cref_tokeep)
 
     return cref
 
 
-
+# district type
+# https://tea.texas.gov/acctres/analyze/years.html
 def clean_dtype(year):
     files = {'yr1112': 'district1112.xls',
-                 'yr1213': 'district1213.xls',
-                 'yr1314': 'district1314.xls',
-                 'yr1415': 'district1415.xlsx',
-                 'yr1516': 'district1516.xlsx',
-                 'yr1617': 'district1617.xls',
-                 'yr1718': 'district1617.xls'}  # update when type updates
+             'yr1213': 'district1213.xls',
+             'yr1314': 'district1314.xls',
+             'yr1415': 'district1415.xlsx',
+             'yr1516': 'district1516.xlsx',
+             'yr1617': 'district1617.xls',
+             'yr1718': 'district1617.xls'}  # update when type updates
     sheets = {'yr1112': 'district1112',
-                  'yr1213': 'district1213',
-                  'yr1314': 'district1314',
-                  'yr1415': 'district1415',
-                  'yr1516': 'district1516',
-                  'yr1617': 'district1617',
-                  'yr1718': 'district1617'}  # update when type undates
+              'yr1213': 'district1213',
+              'yr1314': 'district1314',
+              'yr1415': 'district1415',
+              'yr1516': 'district1516',
+              'yr1617': 'district1617',
+              'yr1718': 'district1617'}  # update when type undates
     dtype_to_keep = {'District': 'district',
-                         'Type': 'type',
-                         'Description': 'type_description'}
+                     'Type': 'type',
+                     'Description': 'type_description'}
     filename = files[year]
     xls = pd.ExcelFile(os.path.join(data_path, 'tea', 'dtype', filename))
     dtype = xls.parse(sheets[year], skiprows=2)
@@ -135,18 +156,24 @@ def clean_dtype(year):
     print("There are ", len(dtype), 'districts in dref')
     return dtype
 
-#https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html
+
 def clean_ddem(year):
+    """
+    Reads district level demographic data pulled from:
+     https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html
+    :param year: year of demographic data to read
+    :return: data frame with variables from ddem to keep
+    """
+    if year == 'yr1718':
+        year = 'yr1617'
     if year == 'yr1213':
         filename = 'DISTPROF.txt'
     else:
         filename = 'DISTPROF.dat'
-    if year == 'yr1718':
-        year = 'yr1617'
     if year == 'yr1112':
         ddem1 = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, 'dstud.csv'), sep=",")
         ddem2 = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, 'dstaf.csv'), sep=",")
-        ddem = ddem1.merge(ddem2, on= 'DISTRICT', how = 'outer')
+        ddem = ddem1.merge(ddem2, on='DISTRICT', how='outer')
         ddem['DISTRICT'] = ddem['DISTRICT'].str.strip('\'')
         ddem['DISTRICT'] = ddem['DISTRICT'].apply(int)
         ddem_tokeep = {
@@ -189,16 +216,24 @@ def clean_ddem(year):
     print("There are ", len(ddem), 'districts in ddem')
     return ddem
 
-#https://tea.texas.gov/Student_Testing_and_Accountability/Testing/State_of_Texas_Assessments_of_Academic_Readiness_(STAAR)/STAAR_Aggregate_Data_for_2017-2018/
+
+
 def clean_scores(year, subject):
+    """
+    Reads STAAR scores from
+    https://tea.texas.gov/Student_Testing_and_Accountability/Testing/State_of_Texas_Assessments_of_Academic_Readiness_(STAAR)/STAAR_Aggregate_Data_for_2017-2018/
+    :param year: year to read
+    :param subject: subject to read (see subject_dict keys for subjects
+    :return:
+    """
     file_yr = year[4:6]
-    subject_dict= {'3rd': 'e3', '4th': 'e4', '5th': 'e5', '6th': 'e6', '7th': 'e7', '8th': 'e8',
-                   'Algebra': 'ea1', 'Biology': 'ebi', 'EnglishI': 'ee1', 'EnglishII': 'ee2', 'USHistory': 'eus'}
+    subject_dict = {'3rd': 'e3', '4th': 'e4', '5th': 'e5', '6th': 'e6', '7th': 'e7', '8th': 'e8',
+                    'Algebra': 'ea1', 'Biology': 'ebi', 'EnglishI': 'ee1', 'EnglishII': 'ee2', 'USHistory': 'eus'}
     file_sub = subject_dict[subject]
     file = 'dfy' + file_yr + file_sub + '.dat'
 
     if year in ['yr1112', 'yr1213'] and subject in ['EnglishI', 'EnglishII']:
-        subject_dict= {'EnglishI': 'ew1', 'EnglishII': 'ew2'}
+        subject_dict = {'EnglishI': 'ew1', 'EnglishII': 'ew2'}
         file = 'dfy' + file_yr + subject_dict[subject] + '.dat'
         # need two files for early English scores (reading and writing)
         try:
@@ -214,7 +249,8 @@ def clean_scores(year, subject):
         new_path = fix_parser_error(os.path.join(data_path, 'tea', 'dscores', subject, file))
         dscores = pd.read_csv(new_path, sep=",")
 
-    if subject not in ['3rd', '4th', '5th', '6th', '7th', '8th', 'Algebra', 'Biology', 'EnglishI', 'EnglishII', 'USHistory']:
+    if subject not in ['3rd', '4th', '5th', '6th', '7th', '8th', 'Algebra', 'Biology', 'EnglishI', 'EnglishII',
+                       'USHistory']:
         return 'invalid subject'
     if subject in ['3rd', '4th', '5th', '6th', '7th', '8th']:
         dscores_tokeep = {'DISTRICT': 'district',
@@ -257,8 +293,7 @@ def clean_scores(year, subject):
         dscores['district'] = dscores['district'].apply(int)
     dscores = dscores.set_index('district')
     print("There are ", len(dscores), "districts in ", subject, "dataset.")
-    #num_dups = len(dscores[dscores.index.duplicated(keep = False) == True])
-    #print('There are', num_dups, ' duplicate indices.')
+    # num_dups = len(dscores[dscores.index.duplicated(keep = False) == True])
+    # print('There are', num_dups, ' duplicate indices.')
 
     return dscores
-
