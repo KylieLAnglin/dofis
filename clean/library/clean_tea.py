@@ -36,7 +36,7 @@ def fix_parser_error(input_path):
         file.write(text_contents)
     return(temp_path)
 
-
+#https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html
 def clean_dref(year):
     if year == 'yr1112':
         filename = 'DREF.csv'
@@ -86,11 +86,27 @@ def clean_dref(year):
     if year not in ['yr1112', 'yr1213', 'yr1314']:
         dref['eligible'] = np.where((dref['rating_academic'].isin(['M', 'A'])
                                     & (dref['rating_financial'] == 'Pass')
-                                    & (dref['distischarter'] == 'N')), 1, 0) # M= Meets standard, A = Meets alternative standard
+                                    & (dref['distischarter'] == 'N')), True, False) # M= Meets standard, A = Meets alternative standard
 
     print("There are ", len(dref), 'districts in dref')
     return dref
 
+def clean_cref(year):
+    if year in ['yr1112', 'yr1213', 'yr1314']:
+        year = 'yr1415'
+    if year == 'yr1718':
+        year = 'yr1617'
+    cref = pd.read_csv(os.path.join(data_path, 'tea', 'cref',  year, 'CREF.dat'), sep=",")
+
+
+    cref = pd.DataFrame(cref.groupby(cref.DISTRICT)['DISTRICT'].count())
+    cref.index.names = ['district']
+    cref = cref.reset_index()
+    cref_tokeep = {'district': 'district',
+                  'DISTRICT': 'schools_num'}
+    cref = filter_and_rename_cols(cref, cref_tokeep)
+
+    return cref
 
 
 
@@ -119,6 +135,7 @@ def clean_dtype(year):
     print("There are ", len(dtype), 'districts in dref')
     return dtype
 
+#https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html
 def clean_ddem(year):
     if year == 'yr1213':
         filename = 'DISTPROF.txt'
@@ -172,7 +189,7 @@ def clean_ddem(year):
     print("There are ", len(ddem), 'districts in ddem')
     return ddem
 
-
+#https://tea.texas.gov/Student_Testing_and_Accountability/Testing/State_of_Texas_Assessments_of_Academic_Readiness_(STAAR)/STAAR_Aggregate_Data_for_2017-2018/
 def clean_scores(year, subject):
     file_yr = year[4:6]
     subject_dict= {'3rd': 'e3', '4th': 'e4', '5th': 'e5', '6th': 'e6', '7th': 'e7', '8th': 'e8',

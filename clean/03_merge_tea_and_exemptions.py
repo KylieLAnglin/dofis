@@ -53,9 +53,6 @@ geo['cnty_pop'] = geo['cnty_pop']/ 1000
 geo['cnty_pop'] = geo['cnty_pop'].round(0)
 geo = clean_for_merge.uppercase_column(geo, 'county')
 
-
-
-
 # # Clean variables for merge
 
 # problems with district name from scraping
