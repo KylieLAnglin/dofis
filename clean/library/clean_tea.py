@@ -191,7 +191,11 @@ def clean_ddem(year):
             'DPETECOC': 'students_frpl_num',
             'DPETHISC': 'students_hisp_num',
             'DPETWHIC': 'students_white_num',
-            'DPETBLAC': 'students_black_num'}
+            'DPETBLAC': 'students_black_num',
+            'DPETINDC': 'students_amind_num',
+            'DPETASIC': 'students_asian_num',
+            'DPETPCIC': 'students_paci_num',
+            'DPETTWOC': 'students_tworaces_num'}
     else:
         ddem = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, filename), sep=",")
         ddem_tokeep = {
@@ -211,7 +215,12 @@ def clean_ddem(year):
             'DPETECOC': 'students_frpl_num',
             'DPETHISC': 'students_hisp_num',
             'DPETWHIC': 'students_white_num',
-            'DPETBLAC': 'students_black_num'}
+            'DPETBLAC': 'students_black_num',
+            'DPETINDC': 'students_amind_num',
+            'DPETASIC': 'students_asian_num',
+            'DPETPCIC': 'students_paci_num',
+            'DPETTWOC': 'students_tworaces_num'}
+
     ddem = filter_and_rename_cols(ddem, ddem_tokeep)
     print("There are ", len(ddem), 'districts in ddem')
     return ddem
