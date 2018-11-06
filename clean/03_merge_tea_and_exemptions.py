@@ -1,9 +1,8 @@
-import pandas as pd
 import os
+import pandas as pd
+import numpy as np
 from library import start
 from library import clean_for_merge
-import numpy as np
-
 
 tea = pd.read_csv(os.path.join(start.data_path, 'tea', 'desc_long.csv'),
                   sep=",")
@@ -14,6 +13,7 @@ tea = tea[['district', 'distname', 'year',
            'schools_num',
            'students_num', 'students_frpl_num',
            'students_black_num', 'students_hisp_num', 'students_white_num',
+           'students_amind_num', 'students_asian_num', 'students_paci_num', 'students_tworaces_num',
            'teachers_num', 'teachers_new_num', 'teachers_turnover_num',
            'teachers_turnover_denom', 'teachers_turnover_ratio',
            'teachers_exp_ave', 'teachers_tenure_ave',
@@ -46,10 +46,10 @@ laws.head()
 
 # Geographic data
 geo = pd.read_csv(os.path.join(start.data_path, 'geo', '2016_txpopest_county.csv'),
-                   sep=",")
+                  sep=",")
 geo = geo[['county', 'july1_2016_pop_est']]
-geo = geo.rename({'july1_2016_pop_est': 'cnty_pop'}, axis = 'columns')
-geo['cnty_pop'] = geo['cnty_pop']/ 1000
+geo = geo.rename({'july1_2016_pop_est': 'cnty_pop'}, axis='columns')
+geo['cnty_pop'] = geo['cnty_pop'] / 1000
 geo['cnty_pop'] = geo['cnty_pop'].round(0)
 geo = clean_for_merge.uppercase_column(geo, 'county')
 
@@ -87,13 +87,15 @@ data.loc[(data['_merge'] == 'both'), 'doi'] = True
 data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
 data.head()
 
-data = data.merge(geo, left_on = 'cntyname', right_on = 'county', how = 'left', indicator = False)
+data = data.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
 
 laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique()
 
 # # Convert strings to numeric
-num_cols = ['teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num', 'teachers_num',
-            'teachers_turnover_num', 'teachers_turnover_denom', 'teachers_turnover_ratio',  'teachers_exp_ave', 'teachers_tenure_ave']
+num_cols = ['teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num',
+            'teachers_num',
+            'teachers_turnover_num', 'teachers_turnover_denom', 'teachers_turnover_ratio', 'teachers_exp_ave',
+            'teachers_tenure_ave']
 data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
 
 # # Create variables
@@ -101,31 +103,28 @@ data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
 
 # Student characteristics
 
-data['students_frpl'] = data['students_frpl_num']/data['students_num']
-data['students_black'] = data['students_black_num']/data['students_num']
-data['students_hisp'] = data['students_hisp_num']/data['students_num']
-data['students_white'] = data['students_white_num']/data['students_num']
+data['students_frpl'] = data['students_frpl_num'] / data['students_num']
+data['students_black'] = data['students_black_num'] / data['students_num']
+data['students_hisp'] = data['students_hisp_num'] / data['students_num']
+data['students_white'] = data['students_white_num'] / data['students_num']
 
-data['students_teacher_ratio'] =  data['students_num'] / data['teachers_num']
-
+data['students_teacher_ratio'] = data['students_num'] / data['teachers_num']
 
 # Performance
 
 # Standardize within subject using mean and standard deviation from 2014-15
-data = clean_for_merge.standardize_scores(data=data, std_year = 'yr1415')
-math_scores = [ 'm_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std']
-reading_scores = [ 'r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std']
-all_scores = [ 'm_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std',
-               'r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',
-               'alg_std', 'bio_std', 'eng1_std', 'eng2_std', 'us_std']
+data = clean_for_merge.standardize_scores(data=data, std_year='yr1415')
+math_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std']
+reading_scores = ['r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std']
+all_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std',
+              'r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',
+              'alg_std', 'bio_std', 'eng1_std', 'eng2_std', 'us_std']
 
-data['math'] = data[math_scores].mean(axis = 1)
-data['reading'] = data[reading_scores].mean(axis = 1)
-data['avescores'] = data[all_scores].mean(axis = 1)
-
+data['math'] = data[math_scores].mean(axis=1)
+data['reading'] = data[reading_scores].mean(axis=1)
+data['avescores'] = data[all_scores].mean(axis=1)
 
 # District Characteristics
-
 
 geography = {'A': 'Urban', 'C': 'Urban',
              'B': 'Suburban', 'D': 'Suburban',
@@ -136,10 +135,10 @@ data['geography'] = data['type'].map(geography)
 data['charter'] = np.where((data['distischarter'] == "Y"), True, False)
 
 data['district_status'] = np.where((data['doi'] == False) & (data['charter'] == False), 'tps',
-                            np.where((data['doi'] == True), 'doi',
-                            np.where((data['charter'] == True), 'charter', 'missing')))
-# Add charter geography
-cnty_type= {}
+                                   np.where((data['doi'] == True), 'doi',
+                                            np.where((data['charter'] == True), 'charter', 'missing')))
+# Add charter geography based on geography of traditional public schools and FRPL
+cnty_type = {}
 for cnty in list(data['cntyname'].unique()):
     geo_list = list(data[data.cntyname == cnty]['geography'].value_counts().keys())
     max_geo = geo_list[0]
@@ -170,11 +169,10 @@ always_eligible.columns = ['distname', 'always_eligible']
 data = data.merge(always_eligible.reset_index(), left_on='distname', right_on='distname', how='left')
 
 #  Teacher Characteristics
-data['teachers_nodegree'] = data['teachers_nodegree_num']/data['teachers_num']
-data['teachers_badegree'] = data['teachers_badegree_num']/data['teachers_num']
-data['teachers_msdegree'] = data['teachers_msdegree_num']/data['teachers_num']
-data['teachers_phddegree'] = data['teachers_phddegree_num']/data['teachers_num']
-
+data['teachers_nodegree'] = data['teachers_nodegree_num'] / data['teachers_num']
+data['teachers_badegree'] = data['teachers_badegree_num'] / data['teachers_num']
+data['teachers_msdegree'] = data['teachers_msdegree_num'] / data['teachers_num']
+data['teachers_phddegree'] = data['teachers_phddegree_num'] / data['teachers_num']
 
 # # Save
 data.to_csv(os.path.join(start.data_path, 'clean', 'master_data.csv'),
