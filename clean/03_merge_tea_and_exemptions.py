@@ -124,6 +124,8 @@ data['math'] = data[math_scores].mean(axis=1)
 data['reading'] = data[reading_scores].mean(axis=1)
 data['avescores'] = data[all_scores].mean(axis=1)
 
+# Teacher characteristics
+data['teachers_turnover_ratio'] = data['teachers_turnover_ratio']/100
 # District Characteristics
 
 geography = {'A': 'Urban', 'C': 'Urban',
