@@ -62,20 +62,13 @@ def clean_dref(year):
     else:
         filename = 'DREF.dat'
     dref = pd.read_csv(os.path.join(data_path, 'tea', 'dref', year, filename), sep=",")
-
-    if year == 'yr1112':
-        dref_tokeep = {'DISTRICT': 'district',
-                       'DISTNAME': 'distname',
-                       'DFLCHART': 'distischarter',
-                       'CNTYNAME': 'cntyname'
-                       }
-    else:
-        dref_tokeep = {'DISTRICT': 'district',
-                       'DISTNAME': 'distname',
-                       'DFLCHART': 'distischarter',
-                       'D_RATING': 'rating_academic',
-                       'CNTYNAME': 'cntyname'
-                       }
+    dref_tokeep = {'DISTRICT': 'district',
+                   'DISTNAME': 'distname',
+                   'DFLCHART': 'distischarter',
+                   'CNTYNAME': 'cntyname'
+                   }
+    if year > 'yr1112':
+        dref_tokeep['D_RATING'] = 'rating_academic'
     dref = filter_and_rename_cols(dref, dref_tokeep)
     if year == 'yr1112':
         dref['district'] = dref['district'].str.strip('\'')
@@ -113,21 +106,22 @@ def clean_cref(year):
     :param year: df of district and number of schools
     :return:
     """
-    if year in ['yr1112', 'yr1213', 'yr1314']:
-        year = 'yr1415'
     if year == 'yr1718':
         year = 'yr1617'
-    cref = pd.read_csv(os.path.join(data_path, 'tea', 'cref', year, 'CREF.dat'), sep=",")
-
-    cref = pd.DataFrame(cref.groupby(cref.DISTRICT)['DISTRICT'].count())
-    cref.index.names = ['district']
+    if year == 'yr1112':
+        filename = 'cref.dat'
+    if year == 'yr1213':
+        filename = 'CREF.txt'
+    if year >= 'yr1314':
+        filename = 'CREF.dat'
+    cref = pd.read_csv(os.path.join(data_path, 'tea', 'cref', year, filename), sep=",")
+    cref = pd.DataFrame(cref.groupby(cref.DISTNAME)['CAMPUS'].count())
+    cref_tokeep = {'DISTNAME': 'distname',
+                   'CAMPUS': 'schools_num'}
     cref = cref.reset_index()
-    cref_tokeep = {'district': 'district',
-                   'DISTRICT': 'schools_num'}
     cref = filter_and_rename_cols(cref, cref_tokeep)
 
     return cref
-
 
 # district type
 # https://tea.texas.gov/acctres/analyze/years.html
@@ -170,57 +164,37 @@ def clean_ddem(year):
         filename = 'DISTPROF.txt'
     else:
         filename = 'DISTPROF.dat'
+    ddem_tokeep = {
+        'DISTRICT': 'district',
+        'DPSATOFC': 'teachers_num',
+        'DPST00FC': 'teachers_new_num',
+        'DPSTEXPA': 'teachers_exp_ave',
+        'DPSTTENA': 'teachers_tenure_ave',
+        'DPSTURNR': 'teachers_turnover_ratio',
+        'DPSTNOFC': 'teachers_nodegree_num',
+        'DPSTBAFC': 'teachers_badegree_num',
+        'DPSTMSFC': 'teachers_msdegree_num',
+        'DPSTPHFC': 'teachers_phddegree_num',
+        'DPETALLC': 'students_num',
+        'DPETECOC': 'students_frpl_num',
+        'DPETHISC': 'students_hisp_num',
+        'DPETWHIC': 'students_white_num',
+        'DPETBLAC': 'students_black_num',
+        'DPETINDC': 'students_amind_num',
+        'DPETASIC': 'students_asian_num',
+        'DPETPCIC': 'students_paci_num',
+        'DPETTWOC': 'students_tworaces_num'}
     if year == 'yr1112':
         ddem1 = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, 'dstud.csv'), sep=",")
         ddem2 = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, 'dstaf.csv'), sep=",")
         ddem = ddem1.merge(ddem2, on='DISTRICT', how='outer')
         ddem['DISTRICT'] = ddem['DISTRICT'].str.strip('\'')
         ddem['DISTRICT'] = ddem['DISTRICT'].apply(int)
-        ddem_tokeep = {
-            'DISTRICT': 'district',
-            'DPSATOFC': 'teachers_num',
-            'DPST00FC': 'teachers_new_num',
-            'DPSTEXPA': 'teachers_exp_ave',
-            'DPSTTENA': 'teachers_tenure_ave',
-            'DPSTURNR': 'teachers_turnover_ratio',
-            'DPSTNOFC': 'teachers_nodegree_num',
-            'DPSTBAFC': 'teachers_badegree_num',
-            'DPSTMSFC': 'teachers_msdegree_num',
-            'DPSTPHFC': 'teachers_phddegree_num',
-            'DPETALLC': 'students_num',
-            'DPETECOC': 'students_frpl_num',
-            'DPETHISC': 'students_hisp_num',
-            'DPETWHIC': 'students_white_num',
-            'DPETBLAC': 'students_black_num',
-            'DPETINDC': 'students_amind_num',
-            'DPETASIC': 'students_asian_num',
-            'DPETPCIC': 'students_paci_num',
-            'DPETTWOC': 'students_tworaces_num'}
     else:
         ddem = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, filename), sep=",")
-        ddem_tokeep = {
-            'DISTRICT': 'district',
-            'DPSATOFC': 'teachers_num',
-            'DPST00FC': 'teachers_new_num',
-            'DPSTEXPA': 'teachers_exp_ave',
-            'DPSTTENA': 'teachers_tenure_ave',
-            'DPSTURND': 'teachers_turnover_denom',
-            'DPSTURNN': 'teachers_turnover_num',
-            'DPSTURNR': 'teachers_turnover_ratio',
-            'DPSTNOFC': 'teachers_nodegree_num',
-            'DPSTBAFC': 'teachers_badegree_num',
-            'DPSTMSFC': 'teachers_msdegree_num',
-            'DPSTPHFC': 'teachers_phddegree_num',
-            'DPETALLC': 'students_num',
-            'DPETECOC': 'students_frpl_num',
-            'DPETHISC': 'students_hisp_num',
-            'DPETWHIC': 'students_white_num',
-            'DPETBLAC': 'students_black_num',
-            'DPETINDC': 'students_amind_num',
-            'DPETASIC': 'students_asian_num',
-            'DPETPCIC': 'students_paci_num',
-            'DPETTWOC': 'students_tworaces_num'}
-
+        ddem_tokeep['DPSTURND'] = 'teachers_turnover_denom'
+        ddem_tokeep['DPSTURNN'] = 'teachers_turnover_num'
+        ddem_tokeep['DPSTURNR'] = 'teachers_turnover_ratio'
     ddem = filter_and_rename_cols(ddem, ddem_tokeep)
     print("There are ", len(ddem), 'districts in ddem')
     return ddem
