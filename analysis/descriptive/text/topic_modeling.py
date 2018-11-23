@@ -6,7 +6,7 @@ from gensim import corpora
 
 
 broad_stop_words = ['district', 'isd', 'innovation', 'tec', 'code', 'tec', 'state', 'local', '§', 'flexibility',
-                    'education', 'texas', 'school', 'board', 'member']
+                    'education', 'texas', 'school', 'board', 'member', 'exemption']
 
 
 stop = stopwords.words('english')
