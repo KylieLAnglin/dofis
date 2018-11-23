@@ -1,9 +1,6 @@
 import pandas as pd
-import statsmodels.api as sm
 import statsmodels.formula.api as smf
-import statsmodels.formula.api as smf
-import statsmodels.formula.api as sm
-import statsmodels.formula.api as smf
+from scipy.stats import ttest_ind
 
 def create_count_proportion_df(data, list_of_regs, dict_of_reg_labels):
     n_col = []
@@ -52,7 +49,10 @@ def many_y_one_x(data, y_list, y_labels, x):
         formula = y + ' ~ ' + x
         result = smf.ols(formula=formula, data=data).fit()
         cons.append(result.params["Intercept"].round(2))
-        var = x + '[T.True]'
+        if str(data[x].dtypes) == 'bool':
+            var = x + '[T.True]'
+        else:
+            var = x
         coef.append(result.params[var].round(2))
         se.append(result.bse[var].round(2))
         pvalue.append(result.pvalues[var].round(2))
@@ -66,3 +66,66 @@ def many_y_one_x(data, y_list, y_labels, x):
          'P-value': pvalue,
          })
     return df
+
+
+def many_x_one_y(data,y,  x_list, x_labels):
+    regs = []
+    cons = []
+    coef = []
+    se = []
+    pvalue = []
+
+    for x in x_list:
+        formula = y + ' ~ ' +  x
+        result = smf.ols(formula=formula, data=data).fit()
+        cons.append(result.params["Intercept"].round(2))
+        var = x
+        coef.append(result.params[var].round(2))
+        se.append(result.bse[var].round(2))
+        pvalue.append(result.pvalues[var].round(2))
+        regs.append(x_labels[x])
+
+    df = pd.DataFrame(
+        {'Characteristic': regs,
+         'Control': cons,
+         'Difference': coef,
+         'Std. Error': se,
+         'P-value': pvalue,
+         })
+    return df
+
+def two_means_by_exemptions(df, exemption, var_list):
+    nonexempt = df[df[exemption] == False]
+    exempt = df[df[exemption] == True]
+
+    variables = var_list
+    nonexempt_col = []
+    exempt_col = []
+    pvalues_col = []
+    for var in variables:
+
+        nonexempt_col.append(nonexempt[var].mean().round(2))
+        exempt_col.append(exempt[var].mean().round(2))
+
+        ttest = ttest_ind(nonexempt[var], exempt[var], nan_policy='omit')
+        pvalue = ttest[1]
+        if pvalue > .1:
+            stars = ''
+        if pvalue <= .1:
+            stars = '+'
+        if pvalue <= .05:
+            stars = '*'
+        if pvalue <= .01:
+            stars = '**'
+        if pvalue <= .001:
+            stars = '***'
+        pvalues_col.append(stars)
+        # pvalues_col.append(ttest[1].round(2))
+
+    data = pd.DataFrame(columns=['variable', 'nonexempt', 'exempt', 'pvalue'])
+    data['variable'] = variables
+    data['nonexempt'] = nonexempt_col
+    data['exempt'] = exempt_col
+    data['pvalue'] = pvalues_col
+
+    return  data
