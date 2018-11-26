@@ -3,19 +3,24 @@ import pandas as pd
 import numpy as np
 from library import start
 from library import clean_for_merge
+try:
+    from start import data_path
+except ModuleNotFoundError:
+    data_path = '/Users/kylieleblancKylie/domino/dofis/data/'
+
+
 
 tea = pd.read_csv(os.path.join(start.data_path, 'tea', 'desc_c_long.csv'),
                   sep=",")
 print(tea.columns)
-tea = tea[['campus', 'campname', 'district', 'distname', 'year',
-           'cntyname', 'distischarter', 'rating_academic', 'rating_financial', 'eligible',
-           'type', 'type_description',
-           'schools_num',
+#TODO add from district data: eligibility, geographic location (type, type_description)
+#TODO calculate teacher tunover
+tea = tea[['campus', 'campname', 'district', 'distname', 'distischarter', 'eligible', 'type', 'year',
+           'cntyname', 'campischarter', 'rating_academic',
            'students_num', 'students_frpl_num',
            'students_black_num', 'students_hisp_num', 'students_white_num',
            'students_amind_num', 'students_asian_num', 'students_paci_num', 'students_tworaces_num',
-           'teachers_num', 'teachers_new_num', 'teachers_turnover_num',
-           'teachers_turnover_denom', 'teachers_turnover_ratio',
+           'teachers_num', 'teachers_new_num',
            'teachers_exp_ave', 'teachers_tenure_ave',
            'teachers_nodegree_num', 'teachers_badegree_num',
            'teachers_msdegree_num', 'teachers_phddegree_num',
@@ -37,6 +42,7 @@ tea = tea[['campus', 'campname', 'district', 'distname', 'year',
            'eng2_avescore', 'eng2_numtakers',
            'us_avescore', 'us_numtakers']]
 
+# Data from plans
 laws = pd.read_csv(os.path.join(start.data_path, 'plans', 'doi_final.csv'),
                    sep=",")
 laws = laws.drop(['Unnamed: 0', 'level', 'type', 'link', 'p_doi'],
@@ -44,20 +50,14 @@ laws = laws.drop(['Unnamed: 0', 'level', 'type', 'link', 'p_doi'],
 laws = laws.rename({'district': 'distname'}, axis=1)
 laws.head()
 
-# Geographic data
-geo = pd.read_csv(os.path.join(start.data_path, 'geo', '2016_txpopest_county.csv'),
-                  sep=",")
-geo = geo[['county', 'july1_2016_pop_est']]
-geo = geo.rename({'july1_2016_pop_est': 'cnty_pop'}, axis='columns')
-geo['cnty_pop'] = geo['cnty_pop'] / 1000
-geo['cnty_pop'] = geo['cnty_pop'].round(0)
-geo = clean_for_merge.uppercase_column(geo, 'county')
 
+# Fix problems with district nams
 # # Clean variables for merge
 
 # problems with district name from scraping
 tea = tea.pipe(clean_for_merge.resolve_unicode_problems, 'distname')
 laws = laws.pipe(clean_for_merge.resolve_unicode_problems, 'distname')
+
 
 # scraped names in title case, but tea all caps. change scraped distname to caps
 laws = laws.pipe(clean_for_merge.uppercase_column, 'distname')
@@ -65,6 +65,7 @@ laws = laws.pipe(clean_for_merge.uppercase_column, 'distname')
 # sometimes districts named CISD othertimes ISD. Make all ISD
 tea = clean_for_merge.replace_column_values(tea, 'distname', 'CISD', 'ISD')
 laws = clean_for_merge.replace_column_values(laws, 'distname', 'CISD', 'ISD')
+
 
 # fix district names that don't match
 tea = clean_for_merge.sync_district_names(tea, 'distname')
@@ -80,25 +81,27 @@ tea.loc[(tea['distname'].isin(mismatch_list)), 'distname'] = (
     tea.loc[(tea['distname'].isin(mismatch_list))]
         .pipe(clean_for_merge.distnum_in_paren)['distname']
 )
-print(tea.dtypes)
+
+# Merge
 # # Merge
 data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
 data.loc[(data['_merge'] == 'both'), 'doi'] = True
 data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
 data.head()
 
-data = data.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
 
-laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique()
+print(laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique())
+
+'students_amind_num', 'students_asian_num', 'students_paci_num', 'students_tworaces_num'
 
 # # Convert strings to numeric
-num_cols = ['teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num',
-            'teachers_num',
-            'teachers_turnover_num', 'teachers_turnover_denom', 'teachers_turnover_ratio', 'teachers_exp_ave',
-            'teachers_tenure_ave']
+num_cols = ['students_num', 'students_frpl_num', 'students_black_num', 'students_white_num',
+            'students_amind_num', 'students_asian_num', 'students_paci_num', 'students_tworaces_num',
+            'teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num',
+            'teachers_num', 'teachers_exp_ave', 'teachers_tenure_ave']
 data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
 
-# # Create variables
+ # Create variables
 
 
 # Student characteristics
@@ -108,7 +111,6 @@ data['students_black'] = data['students_black_num'] / data['students_num']
 data['students_hisp'] = data['students_hisp_num'] / data['students_num']
 data['students_white'] = data['students_white_num'] / data['students_num']
 
-data['students_teacher_ratio'] = data['students_num'] / data['teachers_num']
 
 # Performance
 
@@ -124,8 +126,6 @@ data['math'] = data[math_scores].mean(axis=1)
 data['reading'] = data[reading_scores].mean(axis=1)
 data['avescores'] = data[all_scores].mean(axis=1)
 
-# Teacher characteristics
-data['teachers_turnover_ratio'] = data['teachers_turnover_ratio']/100
 # District Characteristics
 
 geography = {'A': 'Urban', 'C': 'Urban',
@@ -137,25 +137,8 @@ data['geography'] = data['type'].map(geography)
 data['charter'] = np.where((data['distischarter'] == "Y"), True, False)
 
 data['district_status'] = np.where((data['doi'] == False) & (data['charter'] == False), 'tps',
-                                   np.where((data['doi'] == True), 'doi',
-                                            np.where((data['charter'] == True), 'charter', 'missing')))
-# Add charter geography based on geography of traditional public schools and FRPL
-cnty_type = {}
-for cnty in list(data['cntyname'].unique()):
-    geo_list = list(data[data.cntyname == cnty]['geography'].value_counts().keys())
-    max_geo = geo_list[0]
-    cnty_type[cnty] = max_geo
-
-new_geo = []
-for geo, cnty, charter, frpl in zip(data.geography, data.cntyname, data.charter, data.students_frpl):
-    if charter == True:
-        if (frpl > .35) and (cnty_type[cnty] == 'Suburban'):
-            new_geo.append('Urban')
-        else:
-            new_geo.append(cnty_type[cnty])
-    else:
-        new_geo.append(geo)
-data['geography'] = new_geo
+                            np.where((data['doi'] == True), 'doi',
+                            np.where((data['charter'] == True), 'charter', 'missing')))
 
 # Geography indicators
 data['type_urban'] = np.where(data['geography'] == 'Urban', 1, 0)
@@ -177,5 +160,6 @@ data['teachers_msdegree'] = data['teachers_msdegree_num'] / data['teachers_num']
 data['teachers_phddegree'] = data['teachers_phddegree_num'] / data['teachers_num']
 
 # # Save
-data.to_csv(os.path.join(start.data_path, 'clean', 'master_data.csv'),
+data.to_csv(os.path.join(start.data_path, 'clean', 'master_data_c.csv'),
             sep=",")
+

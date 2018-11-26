@@ -59,15 +59,17 @@ def clean_cref(year):
     if year >= 'yr1314':
         filename = 'CREF.dat'
     cref = pd.read_csv(os.path.join(data_path, 'tea', 'cref', year, filename), sep=",")
+    print(os.path.join(data_path, 'tea', 'cref', year, filename))
+    print(cref.columns)
     cref_tokeep = {'DISTNAME': 'distname',
-                   'DISTRICT': 'district',
                    'CAMPUS': 'campus',
                    'CAMPNAME': 'campname',
-                   'CFLCHART': 'campischarter',
+                   'CFLCHART': 'campischarter', #TODO: is campus district the same as district county?
+                   'CNTYNAME':  'cntyname_c',
                    'GRDTYPE': 'grade_range',
                    'REGION': 'region'}
     if year > 'yr1112':
-        cref_tokeep['C_RATING'] = 'rating_c'
+        cref_tokeep['C_RATING'] = 'rating_academic_c'
     cref = filter_and_rename_cols(cref, cref_tokeep)
     return cref
 
@@ -123,6 +125,7 @@ def clean_cdem(year):
         cdem_tokeep['CPSTPHFC'] = 'teachers_phddegree_num'
     # filter and rename
     cdem = filter_and_rename_cols(cdem, cdem_tokeep)
+    cdem['campus'] = cdem['campus'].apply(pd.to_numeric, errors='coerce')
     print("There are ", len(cdem), 'schools in cdem', year)
     return cdem
 
@@ -142,6 +145,7 @@ def clean_cscores(year, subject):
     file_sub = subject_dict[subject]
     file = 'cfy' + file_yr + file_sub + '.dat'
 
+    # English scores across two files in first years
     if year in ['yr1112', 'yr1213'] and subject in ['EnglishI', 'EnglishII']:
         subject_dict = {'EnglishI': 'ew1', 'EnglishII': 'ew2'}
         file = 'cfy' + file_yr + subject_dict[subject] + '.dat'
@@ -153,6 +157,8 @@ def clean_cscores(year, subject):
             cscores2 = pd.read_csv(new_path, sep=",")
         subject_dict = {'EnglishI': 'er1', 'EnglishII': 'er2'}
         file = 'cfy' + file_yr + subject_dict[subject] + '.dat'
+
+    # Import dataa
     try:
         cscores = pd.read_csv(os.path.join(data_path, 'tea', 'cscores', year, file), sep=",")
     except:
@@ -168,13 +174,13 @@ def clean_cscores(year, subject):
                           "m_all_rs": "m_" + subject + "_avescore",
                           "m_all_d": "m_" + subject + "_numtakers"}
     if subject == 'Algebra':
-        cscores_tokeep = {"CAMPUS": "campus",
-                          "a1_all_rs": "alg_avescore",
-                          "a1_all_d": "alg_numtakers"}
+        cscores_tokeep = {'CAMPUS': 'campus',
+                          'a1_all_rs': 'alg_avescore',
+                          'a1_all_d': 'alg_numtakers'}
     if subject == 'Biology':
         cscores_tokeep = {'CAMPUS': 'campus',
-                          "bi_all_rs": "bio_avescore",
-                          "bi_all_d": "bio_numtakers"}
+                          'bi_all_rs': 'bio_avescore',
+                          'bi_all_d': 'bio_numtakers'}
 
     if subject == 'EnglishI':
         if year == 'yr1112' or year == 'yr1213':
@@ -198,6 +204,7 @@ def clean_cscores(year, subject):
                           "us_all_d": "us_numtakers"}
 
     cscores = filter_and_rename_cols(cscores, cscores_tokeep)
+    cscores['campus'] = cscores['campus'].apply(pd.to_numeric, errors='coerce')
     if year == 'yr1112':
         cscores['campus'] = cscores['campus'].apply(int)
     cscores = cscores.set_index('campus')
@@ -205,3 +212,36 @@ def clean_cscores(year, subject):
     # num_dups = len(dscores[dscores.index.duplicated(keep = False) == True])
     # print('There are', num_dups, ' duplicate indices.')
     return cscores
+
+def fix_duplicate_distname(df, distname_col = 'DISTNAME', cntyname_col = 'CNTYNAME'):
+    dist_dict = [{'distname': 'BIG SANDY ISD', 'cntyname': 'UPSHUR', 'newname': 'BIG SANDY ISD (230901)'},
+                 {'distname': 'BIG SANDY ISD', 'cntyname': 'POLK', 'newname': 'BIG SANDY ISD (187901)'},
+                 {'distname': 'CENTERVILLE ISD', 'cntyname': 'LEON', 'newname': 'CENTERVILLE ISD (145902)'},
+                 {'distname': 'CENTERVILLE ISD', 'cntyname': 'TRINITY', 'newname': 'CENTERVILLE ISD (228904)'},
+                 {'distname': 'CHAPEL HILL ISD', 'cntyname': 'TITUS', 'newname': 'CHAPEL HILL ISD (225906)'},
+                 {'distname': 'CHAPEL HILL ISD', 'cntyname': 'SMITH', 'newname': 'CHAPEL HILL ISD (212909)'},
+                 {'distname': 'DAWSON ISD', 'cntyname': 'NAVARRO', 'newname': 'DAWSON ISD (175904)'},
+                 {'distname': 'DAWSON ISD', 'cntyname': 'DAWSON', 'newname': 'DAWSON ISD (58902)'},
+                 {'distname': 'EDGEWOOD ISD', 'cntyname': 'BEXAR', 'newname': 'EDGEWOOD ISD (15905)'},
+                 {'distname': 'EDGEWOOD ISD', 'cntyname': 'VAN ZANDT', 'newname': 'EDGEWOOD ISD (234903)'},
+                 {'distname': 'HIGHLAND PARK ISD', 'cntyname': 'DALLAS', 'newname': 'HIGHLAND PARK ISD (57911)'},
+                 {'distname': 'HIGHLAND PARK ISD', 'cntyname': 'POTTER', 'newname': 'HIGHLAND PARK ISD (188903)'},
+                 {'distname': 'HUBBARD ISD', 'cntyname': 'BOWIE', 'newname': 'HUBBARD ISD (19913)'},
+                 {'distname': 'HUBBARD ISD', 'cntyname': 'HILL', 'newname': 'HUBBARD ISD (109905)'},
+                 {'distname': 'MIDWAY ISD', 'cntyname': 'MCLENNAN', 'newname': 'MIDWAY ISD (161903)'},
+                 {'distname': 'MIDWAY ISD', 'cntyname': 'CLAY', 'newname': 'MIDWAY ISD (39905)'},
+                 {'distname': 'NORTHSIDE ISD', 'cntyname': 'BEXAR', 'newname': 'NORTHSIDE ISD (15915)'},
+                 {'distname': 'NORTHSIDE ISD', 'cntyname': 'WILBARGER', 'newname': 'NORTHSIDE ISD (244905)'},
+                 {'distname': 'VALLEY VIEW ISD', 'cntyname': 'HIDALGO', 'newname': 'VALLEY VIEW ISD (108916)'},
+                 {'distname': 'VALLEY VIEW ISD', 'cntyname': 'COOKE', 'newname': 'VALLEY VIEW ISD (49903)'},
+                 {'distname': 'WYLIE ISD', 'cntyname': 'COLLIN', 'newname': 'WYLIE ISD (43914)'},
+                 {'distname': 'WYLIE ISD', 'cntyname': 'TAYLOR', 'newname': 'WYLIE ISD (221912)'},
+                 {'distname': 'RICHARD MILBURN ALTER HIGH SCHOOL', 'cntyname': 'BELL',
+                  'newname': 'RICHARD MILBURN ALTER HIGH SCHOOL (14801)'},
+                 {'distname': 'RICHARD MILBURN ALTER HIGH SCHOOL', 'cntyname': 'NUECES',
+                  'newname': 'RICHARD MILBURN ALTER HIGH SCHOOL (178804)'}
+                 ]
+    for entry in dist_dict:
+        df.loc[(df[distname_col] == entry['distname']) & (df[cntyname_col] == entry['cntyname']), distname_col] = entry[
+            'newname']
+    return df
