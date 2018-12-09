@@ -6,7 +6,6 @@ from library import clean_for_merge
 
 tea = pd.read_csv(os.path.join(start.data_path, 'tea', 'desc_long.csv'),
                   sep=",")
-print(tea.columns)
 tea = tea[['district', 'distname', 'year',
            'cntyname', 'distischarter', 'rating_academic', 'rating_financial', 'eligible',
            'type', 'type_description',
@@ -80,7 +79,7 @@ tea.loc[(tea['distname'].isin(mismatch_list)), 'distname'] = (
     tea.loc[(tea['distname'].isin(mismatch_list))]
         .pipe(clean_for_merge.distnum_in_paren)['distname']
 )
-print(tea.dtypes)
+
 # # Merge
 data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
 data.loc[(data['_merge'] == 'both'), 'doi'] = True
@@ -88,7 +87,6 @@ data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
 data.head()
 
 data = data.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
-
 laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique()
 
 # # Convert strings to numeric
@@ -143,9 +141,12 @@ data['district_status'] = np.where((data['doi'] == False) & (data['charter'] == 
 cnty_type = {}
 for cnty in list(data['cntyname'].unique()):
     geo_list = list(data[data.cntyname == cnty]['geography'].value_counts().keys())
-    max_geo = geo_list[0]
-    cnty_type[cnty] = max_geo
-
+    try:
+        max_geo = geo_list[0]
+        cnty_type[cnty] = max_geo
+    except:
+        print(cnty)
+        print(geo_list)
 new_geo = []
 for geo, cnty, charter, frpl in zip(data.geography, data.cntyname, data.charter, data.students_frpl):
     if charter == True:
@@ -179,3 +180,4 @@ data['teachers_phddegree'] = data['teachers_phddegree_num'] / data['teachers_num
 # # Save
 data.to_csv(os.path.join(start.data_path, 'clean', 'master_data.csv'),
             sep=",")
+print(data[data.year == 'yr1617']['schools_num'].sum())

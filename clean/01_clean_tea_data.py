@@ -21,7 +21,6 @@ for year in years:
     descriptives = ddem.merge(dref, on='district', how='inner')
     descriptives = descriptives.merge(dtype, on='district', how='inner')
     descriptives = descriptives.merge(cref, on = 'distname', how = 'inner') #TODO check merge
-    print(list(descriptives.columns.values))
     descriptives = descriptives.merge(dscores, on='district',
                                       how='left', indicator=True)
     descriptives = descriptives.dropna(how='all')

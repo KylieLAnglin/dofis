@@ -24,9 +24,48 @@ class TestCampusDataIntegrity1617(unittest.TestCase):
             numstudents = data.students_num.sum()
             self.assertEqual(numdistricts, ground_truth_districts[yr])
             self.assertEqual(numschools, ground_truth_schools[yr])
-            self.assertEqual(numstudents, ground_truth_students[yr]) #TODO: schools wrong
+            self.assertEqual(numstudents, ground_truth_students[yr])
 
+    def test_number_districts_schools_students(self):
+        """
+        Statistics taken from
+        https://tea.texas.gov/Student_Testing_and_Accountability/Testing/State_of_Texas_Assessments_of_Academic_Readiness_(STAAR)/STAAR_Statewide_Summary_Reports_2016-2017/
+        :return:
+        """
+        #TODO solve number of test takers puzzle.
+        ground_truth_scores_1617 = {'r_5th_avescore': 1394, 'm_5th_avescore': 1446,
+                                    'r_8th_avescore': 1551, 'm_8th_avescore': 1655,
+                                    'eng1_avescore': 3922, 'alg1_avescore': 4038}
 
+        ground_truth_testers_1617 = {'r_5th_numtakers': 370790,
+                                     'r_8th_numtakers': 380566, 'm_8th_numtakers': 324154,
+                                     'eng1_numtakers': 479552, 'alg1_numtakers':433496}
+
+        data = pd.read_csv(os.path.join(data_path, 'clean', 'master_data_c.csv'), sep=",")
+
+        for yr in ['yr1617']:
+            data = data[data.year == yr]
+            #for sub in ['r_5th_numtakers', 'r_8th_numtakers', 'm_8th_numtakers', 'eng1_numtakers', 'alg1_numtakers']:
+            for sub in ['r_5th_numtakers']:
+                print(sub)
+                numtakers = data[sub].sum()
+                print(numtakers)
+                self.assertTrue(numtakers - 50 <= ground_truth_testers_1617[sub] <= numtakers + 50)
+            #total = data['r_5th_numtakers'].sum()
+            #weight = data['r_5th_numtakers']/total
+            #weighted = data['r_5th_avescore'] * weight
+            #test = weighted.sum()
+            #self.assertEqual(data['r_5th_avescore'].mean(), ground_truth_scores_1617['r_5th_avescore'])
+            #self.assertEqual(test, ground_truth_scores_1617['r_5th_avescore'])
+            numtakers = data['r_3rd_numtakers'].sum()
+            self.assertTrue(numtakers - 50 <= ground_truth_testers_1617['r_3rd_numtakers'] <= numtakers + 50)
+
+            """
+            for key in ground_truth_testers_1617:
+                avescore = data[key].mean()
+                print(avescore)
+                self.assertEqual(avescore, ground_truth_testers_1617[key])
+            """
 
 if __name__ == '__main__':
     unittest.main()
