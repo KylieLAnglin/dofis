@@ -180,4 +180,3 @@ data['teachers_phddegree'] = data['teachers_phddegree_num'] / data['teachers_num
 # # Save
 data.to_csv(os.path.join(start.data_path, 'clean', 'master_data.csv'),
             sep=",")
-print(data[data.year == 'yr1617']['schools_num'].sum())
