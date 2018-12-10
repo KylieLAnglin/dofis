@@ -22,9 +22,9 @@ class TestCampusDataIntegrity1617(unittest.TestCase):
             numdistricts = data.district.nunique()
             numschools = data.schools_num.sum()
             numstudents = data.students_num.sum()
-            self.assertEqual(numdistricts, ground_truth_districts[yr])
-            self.assertEqual(numschools, ground_truth_schools[yr])
-            self.assertEqual(numstudents, ground_truth_students[yr])
+            self.assertEqual(ground_truth_districts[yr], numdistricts)
+            self.assertEqual(ground_truth_schools[yr], numschools)
+            self.assertEqual(ground_truth_students[yr], numstudents)
 
     def test_scores(self):
         """
@@ -33,16 +33,16 @@ class TestCampusDataIntegrity1617(unittest.TestCase):
         Average scores taken from: https://tea.texas.gov/staar/rpt/sum/
         """
         ground_truth_testers_1617 = {'r_3rd_numtakers': 370790,
-                                     'r_5th_numtakers': 379532}
+                                     'r_5th_numtakers': 379532, 'm_5th_numtakers': 387610,
+                                     'r_8th_numtakers': 380566}
 
         data = pd.read_csv(os.path.join(data_path, 'clean', 'master_data.csv'), sep=",")
 
         for yr in ['yr1617']:
             data = data[data.year == yr]
-            numtakers = data['r_3rd_numtakers'].sum()
-            self.assertTrue(numtakers - 50 <= ground_truth_testers_1617['r_3rd_numtakers'] <= numtakers + 50)
-            numtakers = data['r_5th_numtakers'].sum()
-            self.assertTrue(numtakers - 50 <= ground_truth_testers_1617['r_5th_numtakers'] <= numtakers + 50)
+            for sub in ['r_3rd_numtakers', 'r_5th_numtakers','m_5th_numtakers', 'r_8th_numtakers']:
+                numtakers = data[sub].sum()
+            self.assertTrue(numtakers - 50 <= ground_truth_testers_1617[sub] <= numtakers + 50)
 
 
 if __name__ == '__main__':
