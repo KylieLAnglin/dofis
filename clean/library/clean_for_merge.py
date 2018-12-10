@@ -4,7 +4,7 @@ import unicodedata
 def resolve_unicode_problems(df, col_name):
     """ Resolve Unicode problems from web scraping (e.g., 'Bronte\xa0ISD')"""
     df = df.copy()
-    df[col_name] = df[col_name].map(lambda x: unicodedata.normalize('NFKD', x))
+    df[col_name] = df[col_name].map(lambda x: unicodedata.normalize('NFKD', str(x)))
     return df
 
 def uppercase_column(df, col_name):
