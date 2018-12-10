@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import shutil
 from .start import data_path
+from library import clean_tea_schools
 
 
 def filter_and_rename_cols(df, dict):
@@ -100,7 +101,7 @@ def clean_dref(year):
     return dref
 
 
-def clean_cref(year):
+def clean_cref_numschools(year):
     """
     Reads campus reference data from https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html
     :param year: df of district and number of schools
@@ -115,9 +116,10 @@ def clean_cref(year):
     if year >= 'yr1314':
         filename = 'CREF.dat'
     cref = pd.read_csv(os.path.join(data_path, 'tea', 'cref', year, filename), sep=",")
-    cref = pd.DataFrame(cref.groupby(cref.DISTNAME)['CAMPUS'].count())
+    cref = pd.DataFrame(cref.groupby(['DISTNAME', 'CNTYNAME'])['CAMPUS'].count())
     cref_tokeep = {'DISTNAME': 'distname',
-                   'CAMPUS': 'schools_num'}
+                   'CAMPUS': 'schools_num',
+                   'CNTYNAME': 'cntyname'}
     cref = cref.reset_index()
     cref = filter_and_rename_cols(cref, cref_tokeep)
 
