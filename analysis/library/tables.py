@@ -138,7 +138,7 @@ def var_diff_to_excel(file, df, control_col, diff_col, se_col, pvalue_col, start
             coef = str(ob) + '*'
         if p < .01:
             coef = str(ob) + '**'
-        if p < .01:
+        if p < .001:
             coef = str(ob) + '***'
         ws.cell(row=row_n, column=col_n).value = coef
         row_n = row_n + 2
