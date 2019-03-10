@@ -1,5 +1,4 @@
 from unittest import TestCase
-from clean.library import clean_for_merge
 import pandas as pd
 
 class TestGet_not_in(TestCase):

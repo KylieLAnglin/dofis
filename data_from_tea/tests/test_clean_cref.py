@@ -1,6 +1,6 @@
 from unittest import TestCase
-from clean.library import clean_tea
-from clean.library import clean_tea_schools
+from data_from_tea.library import clean_tea
+from data_from_tea.library import clean_tea_schools
 
 class TestClean_cref(TestCase):
     def test_clean_cref(self):

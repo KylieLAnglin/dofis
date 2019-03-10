@@ -1,6 +1,6 @@
 from unittest import TestCase
-from clean.library import clean_for_merge
-import pandas as pd
+from merge_and_clean.library import clean_for_merge
+
 
 class TestStrip_distnum_parens(TestCase):
     def test_strip_distnum_parens(self):

@@ -1,5 +1,5 @@
 from unittest import TestCase
-from clean.library import clean_for_merge
+from merge_and_clean.library import clean_for_merge
 import pandas as pd
 
 class TestSync_district_names(TestCase):

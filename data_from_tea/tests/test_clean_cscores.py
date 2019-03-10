@@ -1,5 +1,5 @@
 from unittest import TestCase
-from clean.library import clean_tea_schools
+from data_from_tea.library import clean_tea_schools
 
 class TestClean_cscores(TestCase):
     def test_clean_cscores(self):
