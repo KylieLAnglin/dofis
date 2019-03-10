@@ -1,5 +1,5 @@
 from unittest import TestCase
-from exemptions import extract_laws
+from data_from_plans import extract_laws
 
 
 class TestGet_laws(TestCase):

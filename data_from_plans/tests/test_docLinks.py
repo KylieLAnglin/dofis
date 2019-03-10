@@ -1,5 +1,5 @@
 from unittest import TestCase
-from exemptions import gather_documents
+from data_from_plans import gather_documents
 
 
 class TestDocLinks(TestCase):

@@ -1,6 +1,6 @@
 from unittest import TestCase
-from exemptions import extract_dates
-from exemptions import start
+from data_from_plans import extract_dates
+from data_from_plans import start
 import os
 
 class TestNarrow_phrase_list(TestCase):

@@ -1,7 +1,7 @@
 from unittest import TestCase
 import os
-from exemptions import start
-from exemptions import extract_dates
+from data_from_plans import start
+from data_from_plans import extract_dates
 
 
 

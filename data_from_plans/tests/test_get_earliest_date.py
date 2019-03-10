@@ -1,5 +1,5 @@
 from unittest import TestCase
-from exemptions import extract_dates
+from data_from_plans import extract_dates
 
 class TestGet_earliest_date(TestCase):
     def test_get_earliest_date(self):

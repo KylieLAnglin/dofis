@@ -1,5 +1,5 @@
 from unittest import TestCase
-from exemptions import clean_documents
+from data_from_plans import clean_documents
 
 
 

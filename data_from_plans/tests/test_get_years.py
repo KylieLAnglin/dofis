@@ -1,5 +1,5 @@
 from unittest import TestCase
-from exemptions import extract_dates
+from data_from_plans import extract_dates
 
 
 
