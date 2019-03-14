@@ -187,7 +187,7 @@ data.to_csv(os.path.join(start.data_path, 'clean', 'master_data.csv'),
 data = data[data.always_eligible == True]
 cols = [c for c in data.columns if c.lower()[:3] != 'reg']
 data = data[cols]
-data['treat'] = np.where(data.doi == True, 1,0)
+data['treat'] = np.where((data.doi == True), 1, 0)
 data['post'] = np.where(((data.year < data.doi_year) & (data.doi == True)), 0,
                          np.where(((data.year >= data.doi_year) & (data.doi == True)), 1,
                                   np.where(((data.doi == False) & (data.year < 2016)), 0,
@@ -197,3 +197,5 @@ data['treatpost'] = data.treat*data.post
 data['doi_year_centered'] = data.year - data.doi_year
 data['doi_year_centered'] = np.where((data.doi == True), data.doi_year_centered,
                                      (data.year - 2016))  # what year to center
+data.to_csv(os.path.join(start.data_path, 'clean', 'cits.csv'),
+            sep=",")
