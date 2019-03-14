@@ -5,7 +5,7 @@ from merge_and_clean.library import start
 from merge_and_clean.library import clean_for_merge
 
 tea = pd.read_csv(os.path.join(start.data_path, 'tea', 'desc_long.csv'),
-                  sep=",")
+                  sep=",", low_memory = False)
 tea = tea[['district', 'distname', 'year',
            'cntyname', 'distischarter', 'rating_academic', 'rating_financial', 'eligible',
            'type', 'type_description',
@@ -38,7 +38,7 @@ tea = tea[['district', 'distname', 'year',
 
 laws = pd.read_csv(os.path.join(start.data_path, 'plans', 'doi_final.csv'),
                    sep=",")
-cols = [c for c in data.columns if c.lower()[:7] != 'Unnamed']
+cols = [c for c in laws.columns if c.lower()[:7] != 'Unnamed']
 laws = laws[cols]
 laws = laws.drop(['level', 'type', 'link', 'p_doi'],
                  axis=1)
@@ -113,7 +113,7 @@ data['students_teacher_ratio'] = data['students_num'] / data['teachers_num']
 # Performance
 
 # Standardize within subject using mean and standard deviation from 2014-15
-data = clean_for_merge.standardize_scores(data=data, std_year='yr1415')
+data = clean_for_merge.standardize_scores(data=data, std_year=2014)
 math_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std']
 reading_scores = ['r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std']
 all_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std',
@@ -181,4 +181,17 @@ data['teachers_phddegree'] = data['teachers_phddegree_num'] / data['teachers_num
 
 # # Save
 data.to_csv(os.path.join(start.data_path, 'clean', 'master_data.csv'),
+            sep=",")
+
+# CITS dataset
+data = data[data.always_eligible == True]
+cols = [c for c in data.columns if c.lower()[:3] != 'reg']
+data = data[cols]
+data['treat'] = np.where((data.year < data.doi_year) | (data.doi == False), 0,
+                         np.where((data.year >= data.doi_year), 1, None))
+data = data[((data.doi_year > 2014) & (data.doi_year < 2020)) | (data.doi == False)]  # keep real dates
+data['doi_year_centered'] = data.year - data.doi_year
+data['doi_year_centered'] = np.where((data.doi == True), data.doi_year_centered,
+                                     (data.year - 2016))  # what year to center
+data.to_csv(os.path.join(start.data_path, 'clean', 'cits.csv'),
             sep=",")
