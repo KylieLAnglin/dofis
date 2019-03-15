@@ -193,9 +193,15 @@ data['post'] = np.where(((data.year < data.doi_year) & (data.doi == True)), 0,
                                   np.where(((data.doi == False) & (data.year < 2016)), 0,
                                   np.where(((data.doi == False) & (data.year >= 2016)), 1, None)))) # post if after 2016 and TPS
 data = data[((data.doi_year > 2014) & (data.doi_year < 2020)) | (data.doi == False)]  # keep real dates
-data['treatpost'] = data.treat*data.post
 data['doi_year_centered'] = data.year - data.doi_year
 data['doi_year_centered'] = np.where((data.doi == True), data.doi_year_centered,
                                      (data.year - 2016))  # what year to center
+data['yearpost'] = data.doi_year_centered*data.post
+data['treatyear'] = data.treat*data.doi_year_centered
+data['treatpost'] = data.treat*data.post
+data['treatpostyear'] = data.treat*data.post*data.doi_year_centered
+data['treatpostyear1'] = np.where(data.doi_year_centered == 0, 1, 0)
+data['treatpostyear2'] = np.where(data.doi_year_centered == 1, 1, 0)
+data['preyear'] = data.year - data.doi_year
 data.to_csv(os.path.join(start.data_path, 'clean', 'cits.csv'),
             sep=",")
