@@ -31,8 +31,10 @@ for year in years:
                                       how='left', indicator=True)
     descriptives = descriptives.dropna(how='all')
 
-    descriptives['year'] = year
+    year_map = {'yr1112':2012, 'yr1213':2013, 'yr1314':2014, 'yr1415': 2015,
+                'yr1516': 2016, 'yr1617': 2017, 'yr1718': 2018, 'yr1819': 2019,
+                'yr1920': 2020}
+    descriptives['year'] = year_map[year]
     yr_file = 'desc_' + year + '.csv'
 
     descriptives.to_csv((os.path.join(data_path, 'tea', yr_file )))
-    
