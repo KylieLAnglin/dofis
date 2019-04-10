@@ -28,7 +28,7 @@ def get_plain_text(link):
             link = link
             print("Google Error:", e)
     try:
-        with timeout(45, exception=RuntimeError):
+        with timeout(15, exception=RuntimeError):
             req = request.Request(link, headers=headers)
             buff = request.urlopen(req, context=ctx)
             parsed = parser.from_buffer(buff)

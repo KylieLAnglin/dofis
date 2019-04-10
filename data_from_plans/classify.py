@@ -46,6 +46,7 @@ def train_classifier_and_evaluate(texts, cats, n_test = 30, model=None, output_d
         textcat.add_label(label)
 
     (train_texts, train_cats), (dev_texts, dev_cats) = load_data(texts=texts, cats=cats, split = n_test)
+    print("First of test", dev_texts.head())
     print("Using {} examples ({} training, {} evaluation)"
           .format(len(texts), len(train_texts), len(dev_texts)))
     train_data = list(zip(train_texts,
@@ -71,6 +72,9 @@ def train_classifier_and_evaluate(texts, cats, n_test = 30, model=None, output_d
             print('{0:.3f}\t{1:.3f}\t{2:.3f}\t{3:.3f}'  # print a simple table
                   .format(losses['textcat'], scores['textcat_p'],
                           scores['textcat_r'], scores['textcat_f']))
+    precision = float(scores['textcat_p'])
+    recall = float(scores['textcat_r'])
+    fmeasure = float(scores['textcat_f'])
 
     # test the trained model
     test_text = "No text"
@@ -90,7 +94,7 @@ def train_classifier_and_evaluate(texts, cats, n_test = 30, model=None, output_d
         doc2 = nlp2(test_text)
         print(test_text, doc2.cats)
 
-    return textcat
+    return precision, recall, fmeasure
 
 
 def load_data(texts, cats, split):
