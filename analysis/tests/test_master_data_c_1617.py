@@ -15,7 +15,7 @@ class TestCampusDataIntegrity1617(unittest.TestCase):
         ground_truth_schools = {'yr1617': 8757}
         ground_truth_students = {'yr1617': 5343834}
 
-        data = pd.read_csv(os.path.join(data_path, 'clean', 'master_data_c.csv'), sep=",")
+        data = pd.read_csv(os.path.join(data_path, 'data_from_tea', 'master_data_c.csv'), sep=",")
 
         for yr in ['yr1617']:
             data = data[data.year == yr]
@@ -39,7 +39,7 @@ class TestCampusDataIntegrity1617(unittest.TestCase):
         ground_truth_testers_1617 = {'r_8th_numtakers': 380566, 'm_8th_numtakers': 324154,
                                      'eng1_numtakers': 479150} # note english actually fails dues to dropping specialty schools
 
-        data = pd.read_csv(os.path.join(data_path, 'clean', 'master_data_c.csv'), sep=",")
+        data = pd.read_csv(os.path.join(data_path, 'data_from_tea', 'master_data_c.csv'), sep=",")
 
         for yr in ['yr1617']:
             data = data[data.year == yr]
@@ -47,13 +47,6 @@ class TestCampusDataIntegrity1617(unittest.TestCase):
                 numtakers = data[sub].sum()
                 print(sub, ' ', numtakers)
                 self.assertTrue(numtakers - 100 <= ground_truth_testers_1617[sub] <= numtakers + 100)
-
-            """
-            for key in ground_truth_testers_1617:
-                avescore = data[key].mean()
-                print(avescore)
-                self.assertEqual(avescore, ground_truth_testers_1617[key])
-            """
 
 if __name__ == '__main__':
     unittest.main()

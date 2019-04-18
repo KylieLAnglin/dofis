@@ -15,7 +15,7 @@ class TestCampusDataIntegrity1617(unittest.TestCase):
         ground_truth_schools = {'yr1617': 8757}
         ground_truth_students = {'yr1617': 5343834}
 
-        data = pd.read_csv(os.path.join(data_path, 'clean', 'master_data.csv'), sep=",")
+        data = pd.read_csv(os.path.join(data_path, 'data_from_tea', 'master_data.csv'), sep=",")
 
         for yr in ['yr1617']:
             data = data[data.year == yr]
@@ -45,7 +45,7 @@ class TestCampusDataIntegrity1617(unittest.TestCase):
                                     'r_8th_avescore': 1676,
                                     'eng1_avescore': 3922}
 
-        data = pd.read_csv(os.path.join(data_path, 'clean', 'master_data.csv'), sep=",")
+        data = pd.read_csv(os.path.join(data_path, 'data_from_tea', 'master_data.csv'), sep=",")
 
         for yr in ['yr1617']:
             data = data[data.year == yr]

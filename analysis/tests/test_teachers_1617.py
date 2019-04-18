@@ -3,7 +3,7 @@ import pandas as pd
 from start import data_path
 import os
 
-teachers = pd.read_csv(os.path.join(data_path, 'clean', 'teachers', 'teachers_yr1617.csv'))
+teachers = pd.read_csv(os.path.join(data_path, 'data_from_tea', 'teachers', 'teachers_yr1617.csv'))
 teachers['fte_teacher'] = teachers['fte_teacher'].apply(pd.to_numeric, errors='coerce')
 
 class TestNumberTeachers(unittest.TestCase):
