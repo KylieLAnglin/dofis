@@ -37,7 +37,6 @@ def create_count_proportion_df(data, list_of_regs, dict_of_reg_labels):
 
 
 
-
 def many_y_one_x(data, y_list, y_labels, x):
     regs = []
     cons = []
