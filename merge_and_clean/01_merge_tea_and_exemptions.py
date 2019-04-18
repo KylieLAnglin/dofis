@@ -40,8 +40,6 @@ laws = pd.read_csv(os.path.join(start.data_path, 'plans', 'doi_final.csv'),
                    sep=",")
 cols = [c for c in laws.columns if c.lower()[:7] != 'Unnamed']
 laws = laws[cols]
-laws = laws.drop(['level', 'type', 'link', 'p_doi'],
-                 axis=1)
 laws = laws.rename({'district': 'distname'}, axis=1)
 laws.head()
 
@@ -191,17 +189,17 @@ data['treat'] = np.where((data.doi == True), 1, 0)
 data['post'] = np.where(((data.year < data.doi_year) & (data.doi == True)), 0,
                          np.where(((data.year >= data.doi_year) & (data.doi == True)), 1,
                                   np.where(((data.doi == False) & (data.year < 2016)), 0,
-                                  np.where(((data.doi == False) & (data.year >= 2016)), 1, None)))) # post if after 2016 and TPS
-data = data[((data.doi_year > 2014) & (data.doi_year < 2020)) | (data.doi == False)]  # keep real dates
-data['doi_year_centered'] = data.year - data.doi_year
-data['doi_year_centered'] = np.where((data.doi == True), data.doi_year_centered,
+                                  np.where(((data.doi == False) & (data.year >= 2016)), 1, None))))
+data['year_centered'] = data.year - data.doi_year
+data['year_centered'] = np.where((data.doi == True), data.year_centered,
                                      (data.year - 2016))  # what year to center
-data['yearpost'] = data.doi_year_centered*data.post
-data['treatyear'] = data.treat*data.doi_year_centered
+data['yearpost'] = data.year_centered*data.post
+data['treatyear'] = data.treat*data.year_centered
 data['treatpost'] = data.treat*data.post
-data['treatpostyear'] = data.treat*data.post*data.doi_year_centered
-data['treatpostyear1'] = np.where(data.doi_year_centered == 0, 1, 0)
-data['treatpostyear2'] = np.where(data.doi_year_centered == 1, 1, 0)
-data['preyear'] = data.year - data.doi_year
-data.to_csv(os.path.join(start.data_path, 'clean', 'cits.csv'),
-            sep=",")
+data['treatpostyear'] = data.treat*data.post*data.year_centered
+data['yearpost1'] = np.where((data.year_centered == 1) & (data.treat == 0), 1, 0)
+data['treatpostyear1'] = np.where((data.year_centered == 1) & (data.treat == 1), 1, 0)
+data['treatpostyear2'] = np.where((data.year_centered == 2) & (data.treat == 1), 1, 0)
+data = data.drop_duplicates(subset = ['district', 'year'], keep = 'first') # TODO why is Rice listed twice?
+print(len(data[data.year == 2018]))
+data.to_csv(os.path.join(start.data_path, 'clean', 'cits.csv'), sep=",")
