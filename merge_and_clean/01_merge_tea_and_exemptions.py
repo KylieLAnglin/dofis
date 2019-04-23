@@ -68,6 +68,7 @@ laws = clean_for_merge.replace_column_values(laws, 'distname', 'CISD', 'ISD')
 # fix district names that don't match
 tea = clean_for_merge.sync_district_names(tea, 'distname')
 laws = clean_for_merge.sync_district_names(laws, 'distname')
+laws = clean_for_merge.add_distnum_to_plan(laws, 'distname')
 
 mismatch = clean_for_merge.get_not_in(laws, 'distname', tea, 'distname')
 mismatch_list = clean_for_merge.strip_distnum_parens(list(mismatch.distname))
@@ -87,7 +88,7 @@ data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
 data.head()
 
 data = data.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
-laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique()
+print(laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique())
 
 # # Convert strings to numeric
 num_cols = ['teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num',

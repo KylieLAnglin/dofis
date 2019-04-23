@@ -34,7 +34,20 @@ def sync_district_names(df, col_name):
                          "CARROLLTON-FARMERS BRANCH ISD": "CARROLLTON FARMERS BRANCH ISD",
                          "FT HANCOCK ISD": "FORT HANCOCK ISD",
                          "WEST HARDIN COUNTY ISD": "WEST HARDIN ISD",
-                         "WEST HARDIN CISD": "WEST HARDIN ISD"}
+                         "WEST HARDIN CISD": "WEST HARDIN ISD",
+                        "WYLIE ISD (043914)": "WYLIE ISD (43914)",
+                        "HUBBARD ISD (019913)": "HUBBARD ISD (19913)",
+                        "HIGHLAND PARK ISD (057911)": "HIGHLAND PARK ISD (07911)",
+                        "EDGEWOOD ISD (015905)": "EDGEWOOD ISD (15905)",
+                        "HIGHLAND PARK ISD (07911)": "HIGHLAND PARK ISD (57911)",
+                        "CULBERSON COUNTY-ALLAMOORE ISD": "CULBERSON COUNTY ALLAMOORE ISD"}
+    df[col_name] = df[col_name].replace(fix_names)
+    return df
+
+def add_distnum_to_plan(df, col_name):
+    fix_names = {"VALLEY VIEW ISD": "VALLEY VIEW ISD (49903)",
+                 "DAWSON ISD": 'DAWSON ISD (58902)',
+                 "BIG SANDY ISD": "BIG SANDY ISD (187901)"}
     df[col_name] = df[col_name].replace(fix_names)
     return df
 
