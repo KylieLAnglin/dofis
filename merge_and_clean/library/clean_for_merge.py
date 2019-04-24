@@ -48,7 +48,7 @@ def add_distnum_to_plan(df, col_name):
     fix_names = {"VALLEY VIEW ISD": "VALLEY VIEW ISD (49903)",
                  "DAWSON ISD": 'DAWSON ISD (58902)',
                  "BIG SANDY ISD": "BIG SANDY ISD (187901)",
-                 "RICE ISD": "RICE ISD (45903)",
+                 "RICE ISD": "RICE ISD (045903)",
                  "RICE CISD": "RICE ISD (175911)"}
     df[col_name] = df[col_name].replace(fix_names)
     return df
