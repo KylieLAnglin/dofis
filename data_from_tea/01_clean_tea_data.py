@@ -25,7 +25,7 @@ for year in years:
         dscores = dscores.merge(dscores_subject, how='outer',
                                 on='district')
     descriptives = ddem.merge(dref, on='district', how='inner')
-    descriptives = descriptives.merge(dtype, on='district', how='inner')
+    descriptives = descriptives.merge(dtype, on='district', how='left')
     descriptives = descriptives.merge(cref, on = 'distname', how = 'inner')
     descriptives = descriptives.merge(dscores, on='district',
                                       how='left', indicator=True)

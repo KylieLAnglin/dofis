@@ -57,9 +57,6 @@ def clean_dref(year):
         filename = 'DREF.csv'
     elif year == 'yr1213':
         filename = 'DREF.txt'
-    elif year == 'yr1718':
-        year = 'yr1617'  # delete when reference data updated
-        filename = 'DREF.dat'
     else:
         filename = 'DREF.dat'
     dref = pd.read_csv(os.path.join(data_path, 'tea', 'dref', year, filename), sep=",")
@@ -107,8 +104,7 @@ def clean_cref_numschools(year):
     :param year: df of district and number of schools
     :return:
     """
-    if year == 'yr1718':
-        year = 'yr1617'
+
     if year == 'yr1112':
         filename = 'cref.dat'
     if year == 'yr1213':
@@ -160,8 +156,7 @@ def clean_ddem(year):
     :param year: year of demographic data to read
     :return: data frame with variables from ddem to keep
     """
-    if year == 'yr1718':
-        year = 'yr1617'
+
     if year == 'yr1213':
         filename = 'DISTPROF.txt'
     else:
