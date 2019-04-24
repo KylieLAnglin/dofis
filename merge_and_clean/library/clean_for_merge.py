@@ -47,7 +47,9 @@ def sync_district_names(df, col_name):
 def add_distnum_to_plan(df, col_name):
     fix_names = {"VALLEY VIEW ISD": "VALLEY VIEW ISD (49903)",
                  "DAWSON ISD": 'DAWSON ISD (58902)',
-                 "BIG SANDY ISD": "BIG SANDY ISD (187901)"}
+                 "BIG SANDY ISD": "BIG SANDY ISD (187901)",
+                 "RICE ISD": "RICE ISD (45903)",
+                 "RICE CISD": "RICE ISD (175911)"}
     df[col_name] = df[col_name].replace(fix_names)
     return df
 
@@ -57,9 +59,7 @@ def distnum_in_paren(df, distname = 'distname', distnum = 'district'):
     df[distname] = (
             df[distname] +
             ' (' +
-            df.pipe(lpad_nums, distnum, 6)[distnum].astype(str) +
-            ')'
-    )
+            df.pipe(lpad_nums, distnum, 6)[distnum].astype(str) + ')')
     return df
 
 def lpad_nums(df, col_name, length):

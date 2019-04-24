@@ -61,6 +61,9 @@ laws = laws.pipe(clean_for_merge.resolve_unicode_problems, 'distname')
 # scraped names in title case, but tea all caps. change scraped distname to caps
 laws = laws.pipe(clean_for_merge.uppercase_column, 'distname')
 
+# Add district numbers to some plans
+laws = clean_for_merge.add_distnum_to_plan(laws, 'distname')
+
 # sometimes districts named CISD othertimes ISD. Make all ISD
 tea = clean_for_merge.replace_column_values(tea, 'distname', 'CISD', 'ISD')
 laws = clean_for_merge.replace_column_values(laws, 'distname', 'CISD', 'ISD')
@@ -68,7 +71,6 @@ laws = clean_for_merge.replace_column_values(laws, 'distname', 'CISD', 'ISD')
 # fix district names that don't match
 tea = clean_for_merge.sync_district_names(tea, 'distname')
 laws = clean_for_merge.sync_district_names(laws, 'distname')
-laws = clean_for_merge.add_distnum_to_plan(laws, 'distname')
 
 mismatch = clean_for_merge.get_not_in(laws, 'distname', tea, 'distname')
 mismatch_list = clean_for_merge.strip_distnum_parens(list(mismatch.distname))
@@ -183,7 +185,8 @@ data.to_csv(os.path.join(start.data_path, 'clean', 'master_data.csv'),
             sep=",")
 
 # CITS dataset
-data = data[data.always_eligible == True]
+#data = data[data.always_eligible == True] #TODO decide eligibility criteria
+data = data[data.distischarter == "N"]
 cols = [c for c in data.columns if c.lower()[:3] != 'reg']
 data = data[cols]
 data['treat'] = np.where((data.doi == True), 1, 0)
@@ -199,6 +202,7 @@ data['treatyear'] = data.treat*data.year_centered
 data['treatpost'] = data.treat*data.post
 data['treatpostyear'] = data.treat*data.post*data.year_centered
 data['yearpost1'] = np.where((data.year_centered == 1) & (data.treat == 0), 1, 0)
+data['yearpost2'] = np.where((data.year_centered == 2) & (data.treat == 0), 1, 0)
 data['treatpostyear1'] = np.where((data.year_centered == 1) & (data.treat == 1), 1, 0)
 data['treatpostyear2'] = np.where((data.year_centered == 2) & (data.treat == 1), 1, 0)
 data = data.drop_duplicates(subset = ['district', 'year'], keep = 'first') # TODO why is Rice listed twice?
