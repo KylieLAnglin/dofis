@@ -1,32 +1,55 @@
-def all2018districts(data):
-    # statistics from: https://tea.texas.gov/communications/pocket-edition/
-    # 1200
-    # TODO change to exact number of districts which should be in dataset.
-    correct = ((data[data.year == 2018].district.nunique() < 1205) & (
-                data[data.year == 2018].district.nunique() > 1200))
+
+# Notes:
+# Two districts missing test scores
+# 48 districts missing doi year
+
+def allyearsanddistricts(data, just_years = [2012, 2013, 2014, 2015, 2016, 2017, 2018]):
+    ground_truth = {2012: 1227,
+                    2013: 1228,
+                    2014: 1227,
+                    2015: 1219,
+                    2016: 1207,
+                    2017: 1203,
+                    2018: 1200}
+    count_correct = 0
+    count_total = len(just_years)
+    for yr in just_years:
+        if len(data[data.year == yr]) == ground_truth[yr]:
+            count_correct = count_correct + 1
+        if len(data[data.year == yr]) != ground_truth[yr]:
+            print('Year ', yr, 'should have', ground_truth[yr], 'districts. But has ', len(data[data.year == yr]))
+    correct = (count_correct == count_total)
+    return correct
+
+def allyearsandtpsd(data, just_years = [2012, 2013, 2014, 2015, 2016, 2017, 2018]):
+    ground_truth = {2012: 1029,
+                    2013: 1026,
+                    2014: 1025,
+                    2015: 1024,
+                    2016: 1024,
+                    2017: 1023,
+                    2018: 1023}
+    count_correct = 0
+    count_total = len(just_years)
+    for yr in just_years:
+        if len(data[data.year == yr]) == ground_truth[yr]:
+            count_correct = count_correct + 1
+        if len(data[data.year == yr]) != ground_truth[yr]:
+            print('Year ', yr, 'should have', ground_truth[yr], 'districts. But has ', len(data[data.year == yr]))
+    correct = (count_correct == count_total)
     return correct
 
 
 def alldois(data):
     # 824 in dataset as of April 10, 2019
-    # TODO why 824 not 841?
     data = data[data.doi == True]
-    correct = ((data.district.nunique() > 820) & (data.district.nunique() <= 824))
+    correct = ((data.district.nunique() == 824))
     return correct
 
-def alleligible(data):
-    # 929
-    # TODO confirm
-    data = data[data.always_eligible == True]
-    data = data[data.year == 2018]
-    correct = ((data.district.nunique() >= 927) & (data.district.nunique() <= 931))
-    return correct
-
-def onlyeligible(data):
-    # 929
-    # TODO confirm
-    correct = ((data.district.nunique() >= 924) & (data.district.nunique() <= 930))
-    return correct
+def alldoiswithdates(data):
+    data = data[data.doi == True]
+    data = data[pd.notnull(data.doi_year)]
+    correct = ((data.district.nunique() == 777))
 
 def math2018correct(data):
     # 1578 but not a district average
@@ -36,6 +59,3 @@ def math2018correct(data):
     correct = ((ave > 1570) & (ave< 1620))
     return correct
 
-def allwithyears(data):
-    correct = ((data.district.nunique() >= 874) & (data.district.nunique() <= 880))
-    return correct

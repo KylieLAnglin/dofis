@@ -2,6 +2,18 @@ import pandas as pd
 import statsmodels.formula.api as smf
 from scipy.stats import ttest_ind
 
+def coef_with_stars(coef, pvalue):
+    if pvalue >.05:
+        coef = str(coef)
+    if pvalue <= .05:
+        coef = str(coef) + '*'
+    if pvalue <= .01:
+        coef = coef + '*'
+    if pvalue <= .001:
+        coef = coef + '*'
+    return(coef)
+test = coef_with_stars(.1, .005)
+
 def create_count_proportion_df(data, list_of_regs, dict_of_reg_labels):
     n_col = []
     p_urban = []

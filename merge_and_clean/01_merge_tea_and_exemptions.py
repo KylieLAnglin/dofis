@@ -115,14 +115,21 @@ data['students_teacher_ratio'] = data['students_num'] / data['teachers_num']
 
 # Standardize within subject using mean and standard deviation from 2014-15
 data = clean_for_merge.standardize_scores(data=data, std_year=2014)
-math_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std']
-reading_scores = ['r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std']
+math_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std', 'alg_std']
+reading_scores = ['r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',  'eng1_std', 'eng2_std']
+elem_scores = ['m_3rd_std', 'r_3rd_std', 'm_5th_std', 'r_5th_std']
+middle_scores = ['m_6th_std', 'm_7th_std', 'm_8th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std']
+high_scores = ['alg_std', 'bio_std', 'eng1_std', 'eng2_std', 'us_std']
 all_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std',
               'r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',
               'alg_std', 'bio_std', 'eng1_std', 'eng2_std', 'us_std']
 
+
 data['math'] = data[math_scores].mean(axis=1)
 data['reading'] = data[reading_scores].mean(axis=1)
+data['elementary'] = data[elem_scores].mean(axis = 1)
+data['middle'] = data[middle_scores].mean(axis = 1)
+data['high'] = data[high_scores].mean(axis = 1)
 data['avescores'] = data[all_scores].mean(axis=1)
 
 # Teacher characteristics
@@ -203,8 +210,12 @@ data['treatpost'] = data.treat*data.post
 data['treatpostyear'] = data.treat*data.post*data.year_centered
 data['yearpost1'] = np.where((data.year_centered == 1) & (data.treat == 0), 1, 0)
 data['yearpost2'] = np.where((data.year_centered == 2) & (data.treat == 0), 1, 0)
+data['yearpost3'] = np.where((data.year_centered == 3) & (data.treat == 0), 1, 0)
+
 data['treatpostyear1'] = np.where((data.year_centered == 1) & (data.treat == 1), 1, 0)
 data['treatpostyear2'] = np.where((data.year_centered == 2) & (data.treat == 1), 1, 0)
+data['treatpostyear3'] = np.where((data.year_centered == 3) & (data.treat == 1), 1, 0)
+
 data = data.drop_duplicates(subset = ['district', 'year'], keep = 'first') # TODO why is Rice listed twice?
 print(len(data[data.year == 2018]))
 data.to_csv(os.path.join(start.data_path, 'clean', 'cits.csv'), sep=",")
