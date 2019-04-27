@@ -81,6 +81,7 @@ def standardize_scores(data, std_year):
     yr_df = data[data.year == std_year]
     subjects = ['r_3rd', 'm_3rd', 'r_4th', 'm_4th', 'r_5th', 'm_5th',
                 'r_6th', 'm_6th', 'r_7th', 'm_7th', 'r_8th', 'm_8th',
+                's_5th', 's_8th',
                 'alg', 'bio', 'eng1', 'eng2', 'us']
     means = []
     sds = []

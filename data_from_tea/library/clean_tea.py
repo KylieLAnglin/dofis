@@ -232,12 +232,21 @@ def clean_scores(year, subject):
     if subject not in ['3rd', '4th', '5th', '6th', '7th', '8th', 'Algebra', 'Biology', 'EnglishI', 'EnglishII',
                        'USHistory']:
         return 'invalid subject'
-    if subject in ['3rd', '4th', '5th', '6th', '7th', '8th']:
+    if subject in ['3rd', '4th', '6th', '7th']:
         dscores_tokeep = {'DISTRICT': 'district',
                           "r_all_rs": "r_" + subject + "_avescore",
                           "r_all_d": "r_" + subject + "_numtakers",
                           "m_all_rs": "m_" + subject + "_avescore",
                           "m_all_d": "m_" + subject + "_numtakers"}
+    if subject in ['5th', '8th']:
+        dscores_tokeep = {'DISTRICT': 'district',
+                          "r_all_rs": "r_" + subject + "_avescore",
+                          "r_all_d": "r_" + subject + "_numtakers",
+                          "m_all_rs": "m_" + subject + "_avescore",
+                          "m_all_d": "m_" + subject + "_numtakers",
+                          "s_all_rs": "s_" + subject + "_avescore",
+                          "s_all_d": "s_" + subject + "_numtakers"}
+
     if subject == 'Algebra':
         dscores_tokeep = {"DISTRICT": "district",
                           "a1_all_rs": "alg_avescore",

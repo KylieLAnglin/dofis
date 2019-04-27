@@ -24,12 +24,14 @@ tea = tea[['district', 'distname', 'year',
            'm_4th_avescore', 'm_4th_numtakers',
            'r_5th_avescore', 'r_5th_numtakers',
            'm_5th_avescore', 'm_5th_numtakers',
+           's_5th_avescore', 's_5th_numtakers',
            'r_6th_avescore', 'r_6th_numtakers',
            'm_6th_avescore', 'm_6th_numtakers',
            'r_7th_avescore', 'r_7th_numtakers',
            'm_7th_avescore', 'm_7th_numtakers',
            'r_8th_avescore', 'r_8th_numtakers',
            'm_8th_avescore', 'm_8th_numtakers',
+           's_8th_avescore', 's_8th_numtakers',
            'alg_avescore', 'alg_numtakers',
            'bio_avescore', 'bio_numtakers',
            'eng1_avescore', 'eng1_numtakers',
@@ -117,16 +119,19 @@ data['students_teacher_ratio'] = data['students_num'] / data['teachers_num']
 data = clean_for_merge.standardize_scores(data=data, std_year=2014)
 math_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std', 'alg_std']
 reading_scores = ['r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',  'eng1_std', 'eng2_std']
-elem_scores = ['m_3rd_std', 'r_3rd_std', 'm_5th_std', 'r_5th_std']
-middle_scores = ['m_6th_std', 'm_7th_std', 'm_8th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std']
+science_score = ['s_5th_std', 's_8th_std', 'bio_std']
+elem_scores = ['m_3rd_std', 'r_3rd_std', 'm_5th_std', 'r_5th_std', 's_5th_std']
+middle_scores = ['m_6th_std', 'm_7th_std', 'm_8th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std', 's_8th_std']
 high_scores = ['alg_std', 'bio_std', 'eng1_std', 'eng2_std', 'us_std']
 all_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std',
               'r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',
+              's_5th_std', 's_8th_std',
               'alg_std', 'bio_std', 'eng1_std', 'eng2_std', 'us_std']
 
 
 data['math'] = data[math_scores].mean(axis=1)
 data['reading'] = data[reading_scores].mean(axis=1)
+data['science'] = data[science_score].mean(axis=1)
 data['elementary'] = data[elem_scores].mean(axis = 1)
 data['middle'] = data[middle_scores].mean(axis = 1)
 data['high'] = data[high_scores].mean(axis = 1)
