@@ -19,7 +19,6 @@ for year in years:
     ddem = clean_tea.clean_ddem(year=year)
     dtype = clean_tea.clean_dtype(year =year)
     dscores = pd.DataFrame(columns=['district'])
-
     for subject in subjects:
         dscores_subject  = clean_tea.clean_scores(year, subject)
         dscores = dscores.merge(dscores_subject, how='outer',

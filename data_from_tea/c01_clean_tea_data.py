@@ -25,12 +25,14 @@ for year in years:
     descriptives = cref.merge(dref, on='distname', how='inner')
     descriptives = descriptives.merge(dtype, on='district', how='inner')
     descriptives = descriptives.merge(cdem, on='campus', how='left')
-
     descriptives = descriptives.merge(cscores, on='campus',
                                       how='left', indicator=True)
     descriptives = descriptives.dropna(how='all')
 
-    descriptives['year'] = year
+    year_map = {'yr1112':2012, 'yr1213':2013, 'yr1314':2014, 'yr1415': 2015,
+                'yr1516': 2016, 'yr1617': 2017, 'yr1718': 2018, 'yr1819': 2019,
+                'yr1920': 2020}
+    descriptives['year'] = year_map[year]
     yr_file = 'desc_c_' + year + '.csv'
 
     descriptives.to_csv((os.path.join(data_path, 'tea', yr_file)))

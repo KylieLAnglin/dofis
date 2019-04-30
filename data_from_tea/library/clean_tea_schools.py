@@ -50,8 +50,7 @@ def clean_cref(year):
     :param year:
     :return:
     """
-    if year == 'yr1718':
-        year = 'yr1617'
+
     if year == 'yr1112':
         filename = 'cref.dat'
     if year == 'yr1213':
@@ -59,8 +58,7 @@ def clean_cref(year):
     if year >= 'yr1314':
         filename = 'CREF.dat'
     cref = pd.read_csv(os.path.join(data_path, 'tea', 'cref', year, filename), sep=",")
-    print(os.path.join(data_path, 'tea', 'cref', year, filename))
-    print(cref.columns)
+    # Note: no district number in early files
     cref_tokeep = {'DISTNAME': 'distname',
                    'CAMPUS': 'campus',
                    'CAMPNAME': 'campname',
@@ -81,8 +79,7 @@ def clean_cdem(year):
     https://rptsvr1.tea.texas.gov/perfreport/aeis/2012/index.html :param year: year of demographic data to read
     :return: data frame with variables from cdem to keep TODO: Can add classize later
     """
-    if year == 'yr1718':
-        year = 'yr1617'
+
     if year == 'yr1213':
         filename = 'CAMPPROF.txt'
     else:

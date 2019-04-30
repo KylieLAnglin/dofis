@@ -6,7 +6,7 @@ from .start import data_path
 from library import clean_tea_schools
 
 
-def filter_and_rename_cols(df, dict):
+def filter_and_rename_cols(df, mydict):
     """
     Keep some original cols from a dataframe, rename them to new column names
     Return a new data frame
@@ -16,8 +16,8 @@ def filter_and_rename_cols(df, dict):
     dict keys = original column names you want to keep
     dict values = new column names
     """
-    df = df[list(dict.keys())]
-    new_df = df.rename(index=str, columns=dict)
+    df = df[list(mydict.keys())]
+    new_df = df.rename(index=str, columns=mydict)
     return new_df
 
 
