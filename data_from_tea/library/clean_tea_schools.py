@@ -111,9 +111,9 @@ def clean_cdem(year):
     if year == 'yr1112':
         cdem_tokeep['CPETALLC'] = 'students_num'
     if year == 'yr1213':
-        cdem_tokeep['CA0GR12N'] = 'students_num'
+        cdem_tokeep['CPETALLC'] = 'students_num'
     if year == 'yr1314':
-        cdem_tokeep['CA0GR13N'] = 'students_num'
+        cdem_tokeep['CPETALLC'] = 'students_num'
     if year >= 'yr1415':
         cdem_tokeep['CPETALLC'] = 'students_num'
         cdem_tokeep['CPSTNOFC'] = 'teachers_nodegree_num'
@@ -123,6 +123,8 @@ def clean_cdem(year):
     # filter and rename
     cdem = filter_and_rename_cols(cdem, cdem_tokeep)
     cdem['campus'] = cdem['campus'].apply(pd.to_numeric, errors='coerce')
+    cdem['teachers_num'] = cdem['teachers_num'].apply(pd.to_numeric, errors='coerce')
+
     print("There are ", len(cdem), 'schools in cdem', year)
     return cdem
 

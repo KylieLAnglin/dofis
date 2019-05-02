@@ -163,7 +163,7 @@ def clean_ddem(year):
         filename = 'DISTPROF.dat'
     ddem_tokeep = {
         'DISTRICT': 'district',
-        'DPSATOFC': 'teachers_num',
+        'DPSTTOFC': 'teachers_num',
         'DPST00FC': 'teachers_new_num',
         'DPSTEXPA': 'teachers_exp_ave',
         'DPSTTENA': 'teachers_tenure_ave',
@@ -193,6 +193,7 @@ def clean_ddem(year):
         ddem_tokeep['DPSTURNN'] = 'teachers_turnover_num'
         ddem_tokeep['DPSTURNR'] = 'teachers_turnover_ratio'
     ddem = filter_and_rename_cols(ddem, ddem_tokeep)
+    ddem['teachers_num'] = pd.to_numeric(ddem.teachers_num, errors='coerce')
     print("There are ", len(ddem), 'districts in ddem')
     return ddem
 
