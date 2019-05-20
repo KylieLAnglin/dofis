@@ -244,3 +244,23 @@ def fix_duplicate_distname(df, distname_col = 'DISTNAME', cntyname_col = 'CNTYNA
         df.loc[(df[distname_col] == entry['distname']) & (df[cntyname_col] == entry['cntyname']), distname_col] = entry[
             'newname']
     return df
+
+
+def clean_cdays(year):
+    """
+    Reads number of schools days from dataset from PIR
+    :param year:
+    :return: renamed and filtered variables, with min, mean, and max by district
+    Note: only available for yr1617 and 1718
+    """
+    filename = 'days_' + year + '.csv'
+    cdays = pd.read_csv(os.path.join(data_path, 'tea', 'cdays', filename), sep=",")
+    cdays_to_keep = {'DISTRICT': 'district', 'DISTNAME': 'distname',
+                    'CAMPUS': 'campus', 'CAMPNAME': 'campname',
+                    'TRACK': 'track',
+                    'TOTAL_DAYS': 'days'}
+    cdays = filter_and_rename_cols(cdays, cdays_to_keep)
+    cdays = cdays.groupby(by=['district', 'distname', 'campus', 'campname']).max().reset_index() #TODO: right now we just keep the max number of days by instructional track. After I get the defn of tracks, can/should change this.
+    cdays = cdays[['district', 'distname', 'campus', 'campname', 'days']]
+
+    return cdays

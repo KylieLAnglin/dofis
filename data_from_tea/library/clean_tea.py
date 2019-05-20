@@ -287,3 +287,27 @@ def clean_scores(year, subject):
     # print('There are', num_dups, ' duplicate indices.')
 
     return dscores
+
+def clean_ddays(year):
+    """
+    Reads number of schools days from dataset from PIR
+    :param year:
+    :return: renamed and filtered variables, with min, mean, and max by district
+    Note: only available for yr1617 and 1718
+    """
+    filename = 'days_' + year + '.csv'
+    cdays = pd.read_csv(os.path.join(data_path, 'tea', 'cdays', filename), sep=",")
+    cdays_to_keep = {'DISTRICT': 'district', 'DISTNAME': 'distname',
+                    'CAMPUS': 'campus', 'CAMPNAME': 'campname',
+                    'TRACK': 'track',
+                    'TOTAL_DAYS': 'days'}
+    cdays = filter_and_rename_cols(cdays, cdays_to_keep)
+    cdays = cdays.groupby(by=['district', 'distname', 'campus', 'campname']).max().reset_index() #TODO: right now we just keep the max number of days by instructional track. After I get the defn of tracks, can/should change this.
+    cdays = cdays[['district', 'distname', 'campus', 'campname', 'days']]
+
+    ddays = cdays.groupby(by=['district', 'distname']).agg({'days': ['min', 'mean', 'max']}).reset_index()
+    ddays.columns = [' '.join(col).strip() for col in ddays.columns.values]
+    ddays = ddays.rename({'days min': 'days_min', 'days mean': 'days_mean', 'days max': 'days_mean'}, axis='columns')
+
+    days = cdays.merge(ddays, on = ['district', 'distname'])
+    return days
