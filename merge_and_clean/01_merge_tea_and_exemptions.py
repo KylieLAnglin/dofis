@@ -116,7 +116,7 @@ data['students_teacher_ratio'] = data['students_num'] / data['teachers_num']
 # Performance
 
 # Standardize within subject using mean and standard deviation from 2014-15
-data = clean_for_merge.standardize_scores(data=data, std_year=2014)
+data = clean_for_merge.standardize_scores(data=data, std_year=2015)
 math_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std', 'alg_std']
 reading_scores = ['r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',  'eng1_std', 'eng2_std']
 science_score = ['s_5th_std', 's_8th_std', 'bio_std']

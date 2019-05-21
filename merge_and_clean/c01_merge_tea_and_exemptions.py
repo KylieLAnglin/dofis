@@ -21,7 +21,8 @@ tea = tea[['campus', 'campname', 'district', 'distname', 'distischarter', 'eligi
            'students_num', 'students_frpl_num',
            'students_black_num', 'students_hisp_num', 'students_white_num',
            'students_amind_num', 'students_asian_num', 'students_paci_num', 'students_tworaces_num',
-           'teachers_num', 'teachers_new_num',
+           'teachers_num', 'teachers_new_num', 'teachers_turnover_num',
+           'teachers_turnover_denom', 'teachers_turnover_ratio',
            'teachers_exp_ave', 'teachers_tenure_ave',
            'teachers_nodegree_num', 'teachers_badegree_num',
            'teachers_msdegree_num', 'teachers_phddegree_num',
@@ -31,22 +32,23 @@ tea = tea[['campus', 'campname', 'district', 'distname', 'distischarter', 'eligi
            'm_4th_avescore', 'm_4th_numtakers',
            'r_5th_avescore', 'r_5th_numtakers',
            'm_5th_avescore', 'm_5th_numtakers',
+           's_5th_avescore', 's_5th_numtakers',
            'r_6th_avescore', 'r_6th_numtakers',
            'm_6th_avescore', 'm_6th_numtakers',
            'r_7th_avescore', 'r_7th_numtakers',
            'm_7th_avescore', 'm_7th_numtakers',
            'r_8th_avescore', 'r_8th_numtakers',
            'm_8th_avescore', 'm_8th_numtakers',
+           's_8th_avescore', 's_8th_numtakers',
            'alg_avescore', 'alg_numtakers',
            'bio_avescore', 'bio_numtakers',
            'eng1_avescore', 'eng1_numtakers',
-           'eng2_avescore', 'eng2_numtakers',
-           'us_avescore', 'us_numtakers']]
+           'eng2_avescore', 'eng2_numtakers']]
 
 # Data from plans
 laws = pd.read_csv(os.path.join(start.data_path, 'plans', 'doi_final.csv'),
                    sep=",")
-laws = laws.drop(['Unnamed: 0', 'level', 'type', 'link', 'p_doi'],
+laws = laws.drop(['Unnamed: 0','link', 'p_doi'],
                  axis=1)
 laws = laws.rename({'district': 'distname'}, axis=1)
 laws.head()
@@ -116,7 +118,7 @@ data['students_white'] = data['students_white_num'] / data['students_num']
 # Performance
 
 # Standardize within subject using mean and standard deviation from 2014-15
-data = clean_for_merge.standardize_scores(data=data, std_year='yr1415')
+data = clean_for_merge.standardize_scores(data=data, std_year= 2015)
 math_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std']
 reading_scores = ['r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std']
 all_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std',

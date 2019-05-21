@@ -29,6 +29,10 @@ for year in years:
     descriptives = descriptives.merge(dscores, on='district',
                                       how='left', indicator=True)
     descriptives = descriptives.dropna(how='all')
+    if year == 'yr1617' or year == 'yr1718':
+        ddays = clean_tea.clean_ddays(year)
+        descriptives = descriptives.merge(ddays, on = 'district', how = 'left')
+        print(len(descriptives))
 
     year_map = {'yr1112':2012, 'yr1213':2013, 'yr1314':2014, 'yr1415': 2015,
                 'yr1516': 2016, 'yr1617': 2017, 'yr1718': 2018, 'yr1819': 2019,
