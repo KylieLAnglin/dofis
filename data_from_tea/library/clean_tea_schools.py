@@ -207,9 +207,7 @@ def clean_cscores(year, subject):
     if year == 'yr1112':
         cscores['campus'] = cscores['campus'].apply(int)
     cscores = cscores.set_index('campus')
-    print("There are ", len(cscores), "districts in ", subject, "dataset.")
-    # num_dups = len(dscores[dscores.index.duplicated(keep = False) == True])
-    # print('There are', num_dups, ' duplicate indices.')
+    print("There are ", len(cscores), "schools in ", subject, "dataset.")
     return cscores
 
 def fix_duplicate_distname(df, distname_col = 'DISTNAME', cntyname_col = 'CNTYNAME'):

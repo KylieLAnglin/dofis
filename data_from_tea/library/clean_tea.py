@@ -307,7 +307,6 @@ def clean_ddays(year):
 
     ddays = cdays.groupby(by=['district', 'distname']).agg({'days': ['min', 'mean', 'max']}).reset_index()
     ddays.columns = [' '.join(col).strip() for col in ddays.columns.values]
-    ddays = ddays.rename({'days min': 'days_min', 'days mean': 'days_mean', 'days max': 'days_mean'}, axis='columns')
+    ddays = ddays.rename({'days min': 'days_min', 'days mean': 'days_mean', 'days max': 'days_max'}, axis='columns')
 
-    days = cdays.merge(ddays, on = ['district', 'distname'])
-    return days
+    return ddays

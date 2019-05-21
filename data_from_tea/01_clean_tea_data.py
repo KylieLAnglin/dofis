@@ -31,7 +31,7 @@ for year in years:
     descriptives = descriptives.dropna(how='all')
     if year == 'yr1617' or year == 'yr1718':
         ddays = clean_tea.clean_ddays(year)
-        descriptives = descriptives.merge(ddays, on = 'district', how = 'left')
+        descriptives = descriptives.merge(ddays[['district', 'days_min', 'days_mean', 'days_max']], on = 'district', how = 'left')
         print(len(descriptives))
 
     year_map = {'yr1112':2012, 'yr1213':2013, 'yr1314':2014, 'yr1415': 2015,
