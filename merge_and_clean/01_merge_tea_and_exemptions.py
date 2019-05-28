@@ -36,14 +36,19 @@ tea = tea[['district', 'distname', 'year',
            'bio_avescore', 'bio_numtakers',
            'eng1_avescore', 'eng1_numtakers',
            'eng2_avescore', 'eng2_numtakers',
-           'us_avescore', 'us_numtakers']]
+           'us_avescore', 'us_numtakers',
+           'days_min', 'days_mean', 'days_max',
+           'class_size_k',
+           'class_size_1', 'class_size_2', 'class_size_3', 'class_size_4', 'class_size_5', 'class_size_6',
+           'class_size_sec_r',  'class_size_sec_math',
+           'class_size_sec_lang', 'class_size_sec_sci', 'class_size_sec_ss'
+           ]]
 
 laws = pd.read_csv(os.path.join(start.data_path, 'plans', 'doi_final.csv'),
                    sep=",")
 cols = [c for c in laws.columns if c.lower()[:7] != 'Unnamed']
 laws = laws[cols]
 laws = laws.rename({'district': 'distname'}, axis=1)
-laws.head()
 
 # Geographic data
 geo = pd.read_csv(os.path.join(start.data_path, 'geo', '2016_txpopest_county.csv'),
@@ -222,5 +227,4 @@ data['treatpostyear2'] = np.where((data.year_centered == 2) & (data.treat == 1),
 data['treatpostyear3'] = np.where((data.year_centered == 3) & (data.treat == 1), 1, 0)
 
 data = data.drop_duplicates(subset = ['district', 'year'], keep = 'first') # TODO why is Rice listed twice?
-print(len(data[data.year == 2018]))
 data.to_csv(os.path.join(start.data_path, 'clean', 'cits.csv'), sep=",")

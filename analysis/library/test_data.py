@@ -2,6 +2,7 @@
 # Notes:
 # Two districts missing test scores
 # 48 districts missing doi year
+x = 'got it'
 
 def allyearsanddistricts(data, just_years = [2012, 2013, 2014, 2015, 2016, 2017, 2018]):
     ground_truth = {2012: 1227,
@@ -56,6 +57,6 @@ def math2018correct(data):
     # stats from:https://tea.texas.gov/Student_Testing_and_Accountability/Testing/State_of_Texas_Assessments_of_Academic_Readiness_(STAAR)/STAAR_Statewide_Summary_Reports_2017-2018/
     data = data[data.year == 2018]
     ave = data.m_5th_avescore.sum() / len(data.m_5th_avescore)
-    correct = ((ave > 1570) & (ave< 1620))
+    correct = ((ave > 1550) & (ave< 1620))
     return correct
 

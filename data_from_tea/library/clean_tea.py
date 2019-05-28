@@ -163,6 +163,7 @@ def clean_ddem(year):
         filename = 'DISTPROF.dat'
     ddem_tokeep = {
         'DISTRICT': 'district',
+        # Teacher Characteristics
         'DPSTTOFC': 'teachers_num',
         'DPST00FC': 'teachers_new_num',
         'DPSTEXPA': 'teachers_exp_ave',
@@ -172,6 +173,7 @@ def clean_ddem(year):
         'DPSTBAFC': 'teachers_badegree_num',
         'DPSTMSFC': 'teachers_msdegree_num',
         'DPSTPHFC': 'teachers_phddegree_num',
+        # Student Characteristics
         'DPETALLC': 'students_num',
         'DPETECOC': 'students_frpl_num',
         'DPETHISC': 'students_hisp_num',
@@ -180,7 +182,21 @@ def clean_ddem(year):
         'DPETINDC': 'students_amind_num',
         'DPETASIC': 'students_asian_num',
         'DPETPCIC': 'students_paci_num',
-        'DPETTWOC': 'students_tworaces_num'}
+        'DPETTWOC': 'students_tworaces_num',
+        # Class Sizes
+        'DPCTGKGA': 'class_size_k',
+        'DPCTG01A': 'class_size_1',
+        'DPCTG02A': 'class_size_2',
+        'DPCTG03A': 'class_size_3',
+        'DPCTG04A': 'class_size_4',
+        'DPCTG05A': 'class_size_5',
+        'DPCTG06A': 'class_size_6',
+        'DPCTENGA': 'class_size_sec_r',
+        'DPCTFLAA': 'class_size_sec_lang',
+        'DPCTMATA': 'class_size_sec_math',
+        'DPCTSCIA': 'class_size_sec_sci',
+        'DPCTSOCA': 'class_size_sec_ss'
+    }
     if year == 'yr1112':
         ddem1 = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, 'dstud.csv'), sep=",")
         ddem2 = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, 'dstaf.csv'), sep=",")
@@ -302,7 +318,7 @@ def clean_ddays(year):
                     'TRACK': 'track',
                     'TOTAL_DAYS': 'days'}
     cdays = filter_and_rename_cols(cdays, cdays_to_keep)
-    cdays = cdays.groupby(by=['district', 'distname', 'campus', 'campname']).max().reset_index() #TODO: right now we just keep the max number of days by instructional track. After I get the defn of tracks, can/should change this.
+    cdays = cdays.groupby(by=['district', 'distname', 'campus', 'campname']).max().reset_index() #No definition of tracks. So we keep the max number. May change later.
     cdays = cdays[['district', 'distname', 'campus', 'campname', 'days']]
 
     ddays = cdays.groupby(by=['district', 'distname']).agg({'days': ['min', 'mean', 'max']}).reset_index()
