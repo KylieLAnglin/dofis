@@ -13,6 +13,7 @@ year = 'yr1718'
 
 for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1718']:
 
+
     # Files
     folder = 'certification_' + year + '/'
     teacher_datapath = os.path.join(start.data_path, 'tea', 'teachers', folder)
@@ -30,10 +31,16 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1718']:
     certification = pd.concat(df_list)
 
     # Rename and keep
-    vars_to_keep = {'PERSONID_SCRAM': 'teacher_id', 'DISTRICT': 'district',
-                    'CREDENTIAL_TYPE': 'cert_type', 'CERTIFICATE_PREPARATION_ROUTE': 'cert_route',
-                    'CERTIFICATION_LEVEL': 'cert_level', 'CREDENTIALED_GRADES': 'cert_grades',
-                    'SUBJECT_AREA': 'cert_area', 'SUBJECT': 'cert_subject'}
+    if year > 'yr1415':
+        vars_to_keep = {'PERSONID_SCRAM': 'teacher_id', 'DISTRICT': 'district',
+                        'CREDENTIAL_TYPE': 'cert_type', 'CERTIFICATE_PREPARATION_ROUTE': 'cert_route',
+                        'CERTIFICATION_LEVEL': 'cert_level', 'CREDENTIALED_GRADES': 'cert_grades',
+                        'SUBJECT_AREA': 'cert_area', 'SUBJECT': 'cert_subject'}
+    else:
+        vars_to_keep = {'personid_SCRAM': 'teacher_id', 'DISTRICT': 'district',
+                        'CREDENTIAL TYPE': 'cert_type', 'CERTIFICATE PREPARATION ROUTE': 'cert_route',
+                        'CERTIFICATION LEVEL': 'cert_level', 'CREDENTIALED GRADES': 'cert_grades',
+                        'SUBJECT AREA': 'cert_area', 'SUBJECT': 'cert_subject'}
     certification = clean_tea.filter_and_rename_cols(certification, vars_to_keep)
 
     # Generate binary certified variable
