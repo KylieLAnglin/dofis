@@ -56,6 +56,11 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1718']:
                                            (teachers.sub_area3 == "SCIENCE") |
                                            (teachers.sub_area4 == "SCIENCE") |
                                            (teachers.sub_area5 == "SCIENCE")), True, False)
+    teachers['course_ela'] = np.where(((teachers.sub_area1 == "ENGLISH LANGUAGE ARTS") |
+                                           (teachers.sub_area2 == "ENGLISH LANGUAGE ARTS") |
+                                           (teachers.sub_area3 == "ENGLISH LANGUAGE ARTS") |
+                                           (teachers.sub_area4 == "ENGLISH LANGUAGE ARTS") |
+                                           (teachers.sub_area5 == "ENGLISH LANGUAGE ARTS")), True, False)
     teachers['course_cte'] = np.where(((teachers.sub_area1 == "CAREER & TECHNOLOGY EDUCATION") |
                                        (teachers.sub_area2 == "CAREER & TECHNOLOGY EDUCATION") |
                                        (teachers.sub_area3 == "CAREER & TECHNOLOGY EDUCATION") |
@@ -63,8 +68,8 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1718']:
                                        (teachers.sub_area5 == "CAREER & TECHNOLOGY EDUCATION")), True, False)
 
     teachers = teachers[
-        ['teacher_id', 'district', 'campus', 'campus_elem', 'campus_middle', 'campus_high', 'course_elem', 'course_math',
-         'course_science', 'course_cte']]
+        ['teacher_id', 'district', 'campus', 'campus_elem', 'campus_middle', 'campus_high',
+        'course_ela', 'course_elem', 'course_math', 'course_science', 'course_cte']]
 
     teachers.sort_values(by=['teacher_id'], axis=0)
     filename = 'teacher_course_' + year + '.csv'
