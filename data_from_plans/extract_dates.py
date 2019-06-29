@@ -11,7 +11,7 @@ def get_finalize_month_year_phrase(text, output_dir):
     month, date_phrase, max_month = '', '', ''
     phrases = get_phrase_list(text)
     if phrases:  # phrases not None --> means a document contains years
-        narrowed_phrases, cats = narrow_phrase_list(phrases, output_dir)  # dates likely to be finalized TODO add cats
+        narrowed_phrases, cats = narrow_phrase_list(phrases, output_dir)  # dates likely to be finalized
         if narrowed_phrases:
 
             # Append month and year from likely finalization dates to years and months

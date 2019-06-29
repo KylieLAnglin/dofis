@@ -13,7 +13,7 @@ def reformat_cat_from_df(df, text_col, label_col, category):
 
 
 """Code adjusted from: https://spacy.io/usage/training#section-textcat.
-Example code used IMDB dataset. 
+Example code_one used IMDB dataset. 
 Train a convolutional neural network text classifier on the
 IMDB dataset, using the TextCategorizer component. The dataset will be loaded
 automatically via Thinc's built-in dataset loader. The model is added to

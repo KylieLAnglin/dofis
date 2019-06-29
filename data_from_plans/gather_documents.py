@@ -73,7 +73,6 @@ def get_doc_links_from_href_scripts_iframes(url, identifier, title, strings_of_i
             condition = condition_mapping[kind](current_link)
             if any(condition):
                 retrieved_links[current_link] = (title, identifier)
-        # TODO <- Figure out how to gracefully handle iframes without src attributes
         for iframe in soup.find_all('iframe'):
             current_link = clean_link(url=url, current_link=iframe.attrs['src'])
             condition = condition_mapping[kind](current_link)
@@ -164,7 +163,7 @@ class SeedLinks:
         for link in self.soup.find_all('a'):
             if link.get('href'):
                 current_link = link.get('href')
-                title = link.get('title')  # TODO not(any([current_link.endswith('doc'),
+                title = link.get('title')  #
                 if ('http' in current_link
                         and title
                         and "ISD" in title
