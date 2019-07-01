@@ -55,6 +55,7 @@ def convert_google_url(url):
     unparsed = parsed._replace(path='/uc?export=downloads&id=' + doc_id)
     return parse.urlunparse(unparsed)
 
+
 def remove_whitespace(df, text_col):
     '''
     Remove all \n, \t, \r characters from raw text
@@ -63,6 +64,15 @@ def remove_whitespace(df, text_col):
     clean_text = df[col].map(lambda x: ' '.join(x.split()))
     df = df.copy()
     df[col] = clean_text
+    df[col] = df[col].str.replace('Â', ' ')
+    df[col] = df[col].str.replace('â\x80\x99s', ' ')
+    df[col] = df[col].str.replace('Ã¢ \x80 ¢', ' ')
+    df[col] = df[col].str.replace('\x80', ' ')
+    df[col] = df[col].str.replace('\x99s', ' ')
+    df[col] = df[col].str.replace('Ã\x82', ' ')
+    df[col] = df[col].str.replace('\u200b', ' ')
+
+
     return df
 
 def remove_nulls(df):
@@ -73,3 +83,4 @@ def remove_nulls(df):
     df = df.copy()
     df = df[(df[col] != 'UNAVAILABLE') & (df[col].notnull())]
     return df
+
