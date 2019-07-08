@@ -64,13 +64,23 @@ def remove_whitespace(df, text_col):
     clean_text = df[col].map(lambda x: ' '.join(x.split()))
     df = df.copy()
     df[col] = clean_text
-    df[col] = df[col].str.replace('Â', ' ')
     df[col] = df[col].str.replace('â\x80\x99s', ' ')
     df[col] = df[col].str.replace('Ã¢ \x80 ¢', ' ')
     df[col] = df[col].str.replace('\x80', ' ')
     df[col] = df[col].str.replace('\x99s', ' ')
     df[col] = df[col].str.replace('Ã\x82', ' ')
     df[col] = df[col].str.replace('\u200b', ' ')
+    df[col] = df[col].str.replace('Â', ' ')
+    df[col] = df[col].str.replace('¤', ' ')
+    df[col] = df[col].str.replace('â', ' ')
+    df[col] = df[col].str.replace('', ' ')
+    df[col] = df[col].str.replace('¢', ' ')
+    df[col] = df[col].str.replace('ï·', ' ')
+    df[col] = df[col].str.replace('â', ' ')
+    df[col] = df[col].str.replace('Ã', ' ')
+    df[col] = df[col].str.replace('Â', ' ')
+    df[col] = df[col].str.replace('¨', ' ')
+    df[col] = df[col].str.replace('¨', ' ')
 
 
     return df

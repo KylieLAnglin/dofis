@@ -6,13 +6,28 @@ from spacy.matcher import Matcher
 
 
 nlp = spacy.load('en_core_web_sm')
-law_shapes = [i * 'd' + '.' + j * 'd' + k * 'x' for i in range(1, 4) for j in range(3,5) for k in range(3)]
+law_shapes = [i * 'd' + '.' + j * 'd' + k * 'x' for i in range(2, 3) for j in range(3,5) for k in range(3)]
 law_shapes.extend([shape + i * ')' +  m * '(' + n * 'X' + j * 'x' + k * 'd' for shape in law_shapes for i in range(2) for m in range(2) for n in range(2) for j in range(2) for k in range(2)])
 law_shapes.extend([shape + i * '(' + j * 'x' + k * 'd' for shape in law_shapes for i in range(2) for j in range(2) for k in range(2)])
 law_shapes.append('XXXdd.dddd')
 law_shapes.append('xxxdd.dddd')
 law_shapes.append('XXXdd.ddd')
 law_shapes.append('xxxdd.ddd')
+law_shapes.append('XXX§dd.ddd')
+law_shapes.append('XXX§dd.dddd')
+law_shapes.append('xxx§dd.ddd')
+law_shapes.append('xxx§dd.dddd')
+law_shapes.append('§dd.ddd')
+law_shapes.append('§dd.dddd')
+law_shapes.append('dd.ddd)(XXX')
+law_shapes.append('dd.ddd)(XX')
+law_shapes.append('dd.dddd)(XXX')
+law_shapes.append('dd.dddd)(XX')
+law_shapes.append('dd.ddd)(XXX')
+law_shapes.append('dd.dddd)(XXX')
+
+
+
 law_shape_patterns = [[{'SHAPE': shape}, {'ORTH': '%', 'OP': '!'}] for shape in law_shapes] # could add {'SHAPE':'§', 'OP':'*'},
 
 matcher = Matcher(nlp.vocab)
@@ -44,7 +59,7 @@ def get_laws(string: str) -> List[str]:
     laws = []
     for match in matches:
         law = re.sub('[^0-9\.]','', match.text)
-        if law != 39.054:
+        if law != '39.054':
             laws.append(float(law))
     if len(set(laws)) > 30: #unlikely just noting innovative laws if laws > 30. Better to add these manually.
         laws = []
