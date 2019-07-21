@@ -7,7 +7,7 @@ from library import clean_tea
 
 year = 'yr1718'
 
-for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1718']:
+for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     # Read files
     folder = 'certification_' + year + '/'
     teacher_datapath = os.path.join(start.data_path, 'tea', 'teachers', folder)

@@ -11,7 +11,7 @@ from library import clean_tea
 
 year = 'yr1718'
 
-for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1718']:
+for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
 
     # Files
     folder = 'certification_' + year + '/'
@@ -48,10 +48,10 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1718']:
                   'Temporary Exemption': False, 'Temporary Teaching Certificate': False,
                   'Unknown Permit': False, 'Unknown': False,
                   'Special Assignment': False,
-                  'Paraprofessional': False, 'Standard Paraprofessional': False,
+                  'Paraprofessional': False, 'Standard Paraprofessional': False, 'Non-renewable': False,
                   'Standard': True, 'Provisional': True,
                   'Probationary': True, 'Probationary Extension': True, 'Probationary Second Extension': True,
-                  'Non-renewable': True, 'One Year': True,
+                   'One Year': True,
                   'Visiting International Teacher': True,
                   'Professional': True, 'Standard Professional': True}
     certification['certification'] = certification['cert_type'].map(cert_types)
