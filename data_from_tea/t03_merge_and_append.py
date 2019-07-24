@@ -75,5 +75,23 @@ for year in years:
     all_certs = all_certs.merge(high_sci, on = 'district', how = 'left')
     all_certs = all_certs.merge(cte, on = 'district', how = 'left', indicator = '_merge')
 
-    file = 'teachers' + year + '.csv'
+    file = 'teachers_' + year + '.csv'
     all_certs.to_csv(os.path.join(start.data_path, 'tea', 'teachers', file))
+
+
+###
+#   Append
+###
+
+certification_rates_yr1213 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_yr1213.csv')))
+certification_rates_yr1314 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_yr1314.csv')))
+certification_rates_yr1415 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_yr1415.csv')))
+certification_rates_yr1516 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_yr1516.csv')))
+certification_rates_yr1617 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_yr1617.csv')))
+certification_rates_yr1718 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_yr1718.csv')))
+
+certification_rates_long = pd.concat([certification_rates_yr1213, certification_rates_yr1314, certification_rates_yr1415, certification_rates_yr1516, certification_rates_yr1617, certification_rates_yr1718], sort=True)
+
+certification_rates_long.to_csv((os.path.join(start.data_path, 'tea', 'certification_rates_long.csv')))
+
+

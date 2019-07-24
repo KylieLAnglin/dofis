@@ -50,6 +50,9 @@ cols = [c for c in laws.columns if c.lower()[:7] != 'Unnamed']
 laws = laws[cols]
 laws = laws.rename({'district': 'distname'}, axis=1)
 
+# Teachers
+teachers = pd.read_csv(os.path.join(start.data_path,'tea', 'certification_rates_long.csv'))
+print(teachers.head())
 # Geographic data
 geo = pd.read_csv(os.path.join(start.data_path, 'geo', '2016_txpopest_county.csv'),
                   sep=",")
@@ -94,6 +97,7 @@ tea.loc[(tea['distname'].isin(mismatch_list)), 'distname'] = (
 data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
 data.loc[(data['_merge'] == 'both'), 'doi'] = True
 data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
+data = data.merge(teachers, left_on = 'district', right_on = 'district', how = 'left')
 data.head()
 
 data = data.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
@@ -202,7 +206,7 @@ data.to_csv(os.path.join(start.data_path, 'clean', 'master_data.csv'),
             sep=",")
 
 # CITS dataset
-#data = data[data.always_eligible == True] #TODO decide eligibility criteria
+#data = data[data.always_eligible == True]
 data = data[data.distischarter == "N"]
 cols = [c for c in data.columns if c.lower()[:3] != 'reg']
 data = data[cols]
