@@ -2,7 +2,7 @@
 
 import pandas as pd
 import os
-from library import start
+from data_from_tea.library import start
 
 years = ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']
 for year in years:
@@ -74,7 +74,12 @@ for year in years:
     all_certs = all_certs.merge(high_ela, on = 'district', how = 'left')
     all_certs = all_certs.merge(high_sci, on = 'district', how = 'left')
     all_certs = all_certs.merge(cte, on = 'district', how = 'left', indicator = '_merge')
+    
+    # Add year variable
+    years = {'yr1112': 2012,'yr1213': 2013, 'yr1314': 2014, 'yr1415': 2015, 'yr1516': 2016, 'yr1617':2017, 'yr1718': 2018, 'yr1819': 2019}
+    all_certs['year'] = years[year]
 
+    # Save
     file = 'teachers_' + year + '.csv'
     all_certs.to_csv(os.path.join(start.data_path, 'tea', 'teachers', file))
 
