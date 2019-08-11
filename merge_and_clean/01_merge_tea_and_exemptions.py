@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+pd.set_option(max_columns, 200)
 import numpy as np
 from merge_and_clean.library import start
 from merge_and_clean.library import clean_for_merge
@@ -49,10 +50,13 @@ laws = pd.read_csv(os.path.join(start.data_path, 'plans', 'doi_final.csv'),
 cols = [c for c in laws.columns if c.lower()[:7] != 'Unnamed']
 laws = laws[cols]
 laws = laws.rename({'district': 'distname'}, axis=1)
+laws[['doi_year']]
 
 # Teachers
 teachers = pd.read_csv(os.path.join(start.data_path,'tea', 'certification_rates_long.csv'))
 print(teachers.head())
+
+
 # Geographic data
 geo = pd.read_csv(os.path.join(start.data_path, 'geo', '2016_txpopest_county.csv'),
                   sep=",")
@@ -212,7 +216,7 @@ cols = [c for c in data.columns if c.lower()[:3] != 'reg']
 data = data[cols]
 data['treat'] = np.where((data.doi == True), 1, 0)
 data['post'] = np.where(((data.year < data.doi_year) & (data.doi == True)), 0,
-                         np.where(((data.year >= data.doi_year) & (data.doi == True)), 1,
+                         np.where(((data.year > data.doi_year) & (data.doi == True)), 1,
                                   np.where(((data.doi == False) & (data.year < 2016)), 0,
                                   np.where(((data.doi == False) & (data.year >= 2016)), 1, None))))
 data['year_centered'] = data.year - data.doi_year

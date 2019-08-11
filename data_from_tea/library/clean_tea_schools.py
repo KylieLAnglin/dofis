@@ -62,7 +62,7 @@ def clean_cref(year):
     cref_tokeep = {'DISTNAME': 'distname',
                    'CAMPUS': 'campus',
                    'CAMPNAME': 'campname',
-                   'CFLCHART': 'campischarter', #TODO: is campus district the same as district county?
+                   'CFLCHART': 'campischarter',
                    'CNTYNAME':  'cntyname_c',
                    'GRDTYPE': 'grade_range',
                    'REGION': 'region'}
@@ -77,7 +77,7 @@ def clean_cdem(year):
     Reads demographic data from TAPR reports: from
     https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html 2011-12 from AEIS reports
     https://rptsvr1.tea.texas.gov/perfreport/aeis/2012/index.html :param year: year of demographic data to read
-    :return: data frame with variables from cdem to keep TODO: Can add classize later
+    :return: data frame with variables from cdem to keep
     """
 
     if year == 'yr1213':
@@ -258,7 +258,7 @@ def clean_cdays(year):
                     'TRACK': 'track',
                     'TOTAL_DAYS': 'days'}
     cdays = filter_and_rename_cols(cdays, cdays_to_keep)
-    cdays = cdays.groupby(by=['district', 'distname', 'campus', 'campname']).max().reset_index() #TODO: right now we just keep the max number of days by instructional track. After I get the defn of tracks, can/should change this.
+    cdays = cdays.groupby(by=['district', 'distname', 'campus', 'campname']).max().reset_index()
     cdays = cdays[['district', 'distname', 'campus', 'campname', 'days']]
 
     return cdays

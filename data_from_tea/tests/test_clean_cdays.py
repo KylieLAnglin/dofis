@@ -19,11 +19,10 @@ class TestClean_cdays(TestCase):
                 All of them appear to be alternative schools, hospitals, DAEP, accelerated schools, JAEP.
                 126 schools in desc_c_yr1718 that are not in days. Not all are charters
                 """
-                #TODO: cdays_yr1718 is missing a number of campuses
                 c_acceptable = cdays.campus.nunique() - 109 + 7
                 d_acceptable = cdays.district.nunique() + 2 #missing two charters
             if year == 'yr1718':
-                c_acceptable = cdays.campus.nunique() - 274 + 126 + 2 #TODO: can't explain plus 2
+                c_acceptable = cdays.campus.nunique() - 274 + 126 + 2 #cant's explain plus two
                 d_acceptable = cdays.district.nunique()
 
             self.assertEqual(c_ground_truth[year], c_acceptable)

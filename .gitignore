@@ -1,0 +1,14 @@
+*.ipynb_checkpoints
+*.vscode
+*.idea/
+venv
+*__pycache__
+*.pytest_cache
+*.dominokeep
+*.pyc
+.pyc
+.idea/*
+*.xml
+*.iml
+.idea/code.iml
+.idea/modules.xml
