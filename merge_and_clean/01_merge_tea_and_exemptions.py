@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-pd.set_option(max_columns, 200)
+pd.options.display.max_columns = 200
 import numpy as np
 from merge_and_clean.library import start
 from merge_and_clean.library import clean_for_merge
@@ -50,7 +50,6 @@ laws = pd.read_csv(os.path.join(start.data_path, 'plans', 'doi_final.csv'),
 cols = [c for c in laws.columns if c.lower()[:7] != 'Unnamed']
 laws = laws[cols]
 laws = laws.rename({'district': 'distname'}, axis=1)
-laws[['doi_year']]
 
 # Teachers
 teachers = pd.read_csv(os.path.join(start.data_path,'tea', 'certification_rates_long.csv'))
@@ -101,8 +100,7 @@ tea.loc[(tea['distname'].isin(mismatch_list)), 'distname'] = (
 data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
 data.loc[(data['_merge'] == 'both'), 'doi'] = True
 data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
-data = data.merge(teachers, left_on = 'district', right_on = 'district', how = 'left')
-data.head()
+data = data.merge(teachers, left_on = ['district', 'year'], right_on = ['district', 'year'], how = 'outer')
 
 data = data.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
 print(laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique())

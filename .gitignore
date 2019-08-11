@@ -12,3 +12,5 @@ venv
 *.iml
 .idea/code.iml
 .idea/modules.xml
+src.code-workspace
+.gitignore

@@ -37,8 +37,8 @@ def sync_district_names(df, col_name):
                          "WEST HARDIN CISD": "WEST HARDIN ISD",
                         "WYLIE ISD (043914)": "WYLIE ISD (43914)",
                         "HUBBARD ISD (019913)": "HUBBARD ISD (19913)",
-                        "HIGHLAND PARK ISD (057911)": "HIGHLAND PARK ISD (07911)",
                         "EDGEWOOD ISD (015905)": "EDGEWOOD ISD (15905)",
+                        "HIGHLAND PARK ISD (057911)": "HIGHLAND PARK ISD (57911)",
                         "HIGHLAND PARK ISD (07911)": "HIGHLAND PARK ISD (57911)",
                         "CULBERSON COUNTY-ALLAMOORE ISD": "CULBERSON COUNTY ALLAMOORE ISD"}
     df[col_name] = df[col_name].replace(fix_names)
