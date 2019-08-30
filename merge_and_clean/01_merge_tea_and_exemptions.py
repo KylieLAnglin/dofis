@@ -5,48 +5,20 @@ import numpy as np
 from merge_and_clean.library import start
 from merge_and_clean.library import clean_for_merge
 
+# Import TEA data and select columns
 tea = pd.read_csv(os.path.join(start.data_path, 'tea', 'desc_c_long.csv'),
                   sep=",", low_memory = False)
-tea = tea[['year', 'campus', 'campname', 'campischarter',
-            'district', 'distname', 'distischarter', 
-            'cntyname_c', 'cntyname',
-            'rating_academic', 'rating_financial',
-            'rating_academic_c'
-            'type', 'type_description',
-            'schools_num',
-            'students_num', 'students_frpl_num',
-            'students_black_num', 'students_hisp_num', 'students_white_num',
-            'students_amind_num', 'students_asian_num', 'students_paci_num', 'students_tworaces_num',
-            'teachers_num', 'teachers_new_num', 'teachers_turnover_num',
-            'teachers_turnover_denom', 'teachers_turnover_ratio',
-            'teachers_exp_ave', 'teachers_tenure_ave',
-            'teachers_nodegree_num', 'teachers_badegree_num',
-            'teachers_msdegree_num', 'teachers_phddegree_num',
-            'r_3rd_avescore', 'r_3rd_numtakers',
-            'm_3rd_avescore', 'm_3rd_numtakers',
-           'r_4th_avescore', 'r_4th_numtakers',
-           'm_4th_avescore', 'm_4th_numtakers',
-           'r_5th_avescore', 'r_5th_numtakers',
-           'm_5th_avescore', 'm_5th_numtakers',
-           's_5th_avescore', 's_5th_numtakers',
-           'r_6th_avescore', 'r_6th_numtakers',
-           'm_6th_avescore', 'm_6th_numtakers',
-           'r_7th_avescore', 'r_7th_numtakers',
-           'm_7th_avescore', 'm_7th_numtakers',
-           'r_8th_avescore', 'r_8th_numtakers',
-           'm_8th_avescore', 'm_8th_numtakers',
-           's_8th_avescore', 's_8th_numtakers',
-           'alg_avescore', 'alg_numtakers',
-           'bio_avescore', 'bio_numtakers',
-           'eng1_avescore', 'eng1_numtakers',
-           'eng2_avescore', 'eng2_numtakers',
-           'us_avescore', 'us_numtakers',
-           'days_min', 'days_mean', 'days_max',
-           'class_size_k',
-           'class_size_1', 'class_size_2', 'class_size_3', 'class_size_4', 'class_size_5', 'class_size_6',
-           'class_size_sec_r',  'class_size_sec_math',
-           'class_size_sec_lang', 'class_size_sec_sci', 'class_size_sec_ss']]
+variables = ['year', 'campus', 'campname', 'campischarter', 'district', 'distname', 'distischarter',
+            'rating_academic', 'rating_financial','rating_academic_c',
+            'type', 'type_description', 'cntyname_c']
+variables = variables + (list(tea.filter(regex = ("students"))))
+variables = variables + (list(tea.filter(regex = ("teachers"))))
+variables = variables + (list(tea.filter(regex = ("avescore"))))
+variables = variables + (list(tea.filter(regex = ("days"))))
+variables = variables + (list(tea.filter(regex = ("class_size"))))
+tea = tea[variables]
 
+# Import DOI data and select columns
 laws = pd.read_csv(os.path.join(start.data_path, 'plans', 'doi_final.csv'),
                    sep=",")
 cols = [c for c in laws.columns if c.lower()[:7] != 'Unnamed']
@@ -54,9 +26,8 @@ laws = laws[cols]
 laws = laws.rename({'district': 'distname'}, axis=1)
 
 # Teachers
-teachers = pd.read_csv(os.path.join(start.data_path,'tea', 'certification_rates_long.csv'))
-print(teachers.head())
-
+#teachers = pd.read_csv(os.path.join(start.data_path,'tea', 'certification_rates_long.csv'))
+#print(teachers.head())
 
 # Geographic data
 geo = pd.read_csv(os.path.join(start.data_path, 'geo', '2016_txpopest_county.csv'),
@@ -66,8 +37,6 @@ geo = geo.rename({'july1_2016_pop_est': 'cnty_pop'}, axis='columns')
 geo['cnty_pop'] = geo['cnty_pop'] / 1000
 geo['cnty_pop'] = geo['cnty_pop'].round(0)
 geo = clean_for_merge.uppercase_column(geo, 'county')
-
-# # Clean variables for merge
 
 # problems with district name from scraping
 tea = tea.pipe(clean_for_merge.resolve_unicode_problems, 'distname')
@@ -102,15 +71,15 @@ tea.loc[(tea['distname'].isin(mismatch_list)), 'distname'] = (
 data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
 data.loc[(data['_merge'] == 'both'), 'doi'] = True
 data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
-data = data.merge(teachers, left_on = ['district', 'year'], right_on = ['district', 'year'], how = 'outer')
-
-data = data.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
+#data = data.merge(teachers, left_on = ['district', 'year'], right_on = ['district', 'year'], how = 'outer')
+data = data.merge(geo, left_on='cntyname_c', right_on='county', how='left', indicator=False)
 print(laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique())
+print(tea.campus.nunique(), data.campus.nunique())
+
 
 # # Convert strings to numeric
 num_cols = ['teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num',
-            'teachers_num',
-            'teachers_turnover_num', 'teachers_turnover_denom', 'teachers_turnover_ratio', 'teachers_exp_ave',
+            'teachers_num', 'teachers_exp_ave',
             'teachers_tenure_ave']
 data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
 
@@ -132,13 +101,13 @@ data['students_teacher_ratio'] = data['students_num'] / data['teachers_num']
 data = clean_for_merge.standardize_scores(data=data, std_year=2015)
 math_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std', 'alg_std']
 reading_scores = ['r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',  'eng1_std', 'eng2_std']
-science_score = ['s_5th_std', 's_8th_std', 'bio_std']
-elem_scores = ['m_3rd_std', 'r_3rd_std', 'm_5th_std', 'r_5th_std', 's_5th_std']
+science_score = ['s_8th_std', 'bio_std']
+elem_scores = ['m_3rd_std', 'r_3rd_std', 'm_5th_std', 'r_5th_std']
 middle_scores = ['m_6th_std', 'm_7th_std', 'm_8th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std', 's_8th_std']
 high_scores = ['alg_std', 'bio_std', 'eng1_std', 'eng2_std', 'us_std']
 all_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std',
               'r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',
-              's_5th_std', 's_8th_std',
+              's_8th_std',
               'alg_std', 'bio_std', 'eng1_std', 'eng2_std', 'us_std']
 
 
