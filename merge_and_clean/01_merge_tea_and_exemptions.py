@@ -5,22 +5,25 @@ import numpy as np
 from merge_and_clean.library import start
 from merge_and_clean.library import clean_for_merge
 
-tea = pd.read_csv(os.path.join(start.data_path, 'tea', 'desc_long.csv'),
+tea = pd.read_csv(os.path.join(start.data_path, 'tea', 'desc_c_long.csv'),
                   sep=",", low_memory = False)
-tea = tea[['district', 'distname', 'year',
-           'cntyname', 'distischarter', 'rating_academic', 'rating_financial', 'eligible',
-           'type', 'type_description',
-           'schools_num',
-           'students_num', 'students_frpl_num',
-           'students_black_num', 'students_hisp_num', 'students_white_num',
-           'students_amind_num', 'students_asian_num', 'students_paci_num', 'students_tworaces_num',
-           'teachers_num', 'teachers_new_num', 'teachers_turnover_num',
-           'teachers_turnover_denom', 'teachers_turnover_ratio',
-           'teachers_exp_ave', 'teachers_tenure_ave',
-           'teachers_nodegree_num', 'teachers_badegree_num',
-           'teachers_msdegree_num', 'teachers_phddegree_num',
-           'r_3rd_avescore', 'r_3rd_numtakers',
-           'm_3rd_avescore', 'm_3rd_numtakers',
+tea = tea[['year', 'campus', 'campname', 'campischarter',
+            'district', 'distname', 'distischarter', 
+            'cntyname_c', 'cntyname',
+            'rating_academic', 'rating_financial',
+            'rating_academic_c'
+            'type', 'type_description',
+            'schools_num',
+            'students_num', 'students_frpl_num',
+            'students_black_num', 'students_hisp_num', 'students_white_num',
+            'students_amind_num', 'students_asian_num', 'students_paci_num', 'students_tworaces_num',
+            'teachers_num', 'teachers_new_num', 'teachers_turnover_num',
+            'teachers_turnover_denom', 'teachers_turnover_ratio',
+            'teachers_exp_ave', 'teachers_tenure_ave',
+            'teachers_nodegree_num', 'teachers_badegree_num',
+            'teachers_msdegree_num', 'teachers_phddegree_num',
+            'r_3rd_avescore', 'r_3rd_numtakers',
+            'm_3rd_avescore', 'm_3rd_numtakers',
            'r_4th_avescore', 'r_4th_numtakers',
            'm_4th_avescore', 'm_4th_numtakers',
            'r_5th_avescore', 'r_5th_numtakers',
@@ -42,8 +45,7 @@ tea = tea[['district', 'distname', 'year',
            'class_size_k',
            'class_size_1', 'class_size_2', 'class_size_3', 'class_size_4', 'class_size_5', 'class_size_6',
            'class_size_sec_r',  'class_size_sec_math',
-           'class_size_sec_lang', 'class_size_sec_sci', 'class_size_sec_ss'
-           ]]
+           'class_size_sec_lang', 'class_size_sec_sci', 'class_size_sec_ss']]
 
 laws = pd.read_csv(os.path.join(start.data_path, 'plans', 'doi_final.csv'),
                    sep=",")
