@@ -16,6 +16,7 @@ variables = variables + (list(tea.filter(regex = ("teachers"))))
 variables = variables + (list(tea.filter(regex = ("avescore"))))
 variables = variables + (list(tea.filter(regex = ("days"))))
 variables = variables + (list(tea.filter(regex = ("class_size"))))
+variables = variables + ['stu_teach_ratio']
 tea = tea[variables]
 
 # Import DOI data and select columns
