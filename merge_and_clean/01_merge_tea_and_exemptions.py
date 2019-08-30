@@ -119,8 +119,6 @@ data['middle'] = data[middle_scores].mean(axis = 1)
 data['high'] = data[high_scores].mean(axis = 1)
 data['avescores'] = data[all_scores].mean(axis=1)
 
-# Teacher characteristics
-data['teachers_turnover_ratio'] = data['teachers_turnover_ratio']/100
 # District Characteristics
 
 geography = {'A': 'Urban', 'C': 'Urban',
@@ -136,8 +134,8 @@ data['district_status'] = np.where((data['doi'] == False) & (data['charter'] == 
                                             np.where((data['charter'] == True), 'charter', 'missing')))
 # Add charter geography based on geography of traditional public schools and FRPL
 cnty_type = {}
-for cnty in list(data['cntyname'].unique()):
-    geo_list = list(data[data.cntyname == cnty]['geography'].value_counts().keys())
+for cnty in list(data['cntyname_c'].unique()):
+    geo_list = list(data[data.cntyname_c == cnty]['geography'].value_counts().keys())
     try:
         max_geo = geo_list[0]
         cnty_type[cnty] = max_geo
@@ -145,7 +143,7 @@ for cnty in list(data['cntyname'].unique()):
         print(cnty)
         print(geo_list)
 new_geo = []
-for geo, cnty, charter, frpl in zip(data.geography, data.cntyname, data.charter, data.students_frpl):
+for geo, cnty, charter, frpl in zip(data.geography, data.cntyname_c, data.charter, data.students_frpl):
     if charter == True:
         if (frpl > .35) and (cnty_type[cnty] == 'Suburban'):
             new_geo.append('Urban')
@@ -162,11 +160,11 @@ data['type_town'] = np.where(data['geography'] == 'Town', 1, 0)
 data['type_rural'] = np.where(data['geography'] == 'Rural', 1, 0)
 
 # Always eligible?
-df_filter = data[['distname', 'year', 'eligible']]
-df_filter = df_filter[~df_filter['year'].isin(['yr1112', 'yr1213', 'yr1314'])]
-always_eligible = pd.DataFrame(df_filter.groupby(['distname'])['eligible'].min()).reset_index()
-always_eligible.columns = ['distname', 'always_eligible']
-data = data.merge(always_eligible.reset_index(), left_on='distname', right_on='distname', how='left')
+#df_filter = data[['distname', 'year', 'eligible']]
+#df_filter = df_filter[~df_filter['year'].isin(['yr1112', 'yr1213', 'yr1314'])]
+#always_eligible = pd.DataFrame(df_filter.groupby(['distname'])['eligible'].min()).reset_index()
+#always_eligible.columns = ['distname', 'always_eligible']
+#data = data.merge(always_eligible.reset_index(), left_on='distname', right_on='distname', how='left')
 
 #  Teacher Characteristics
 data['teachers_nodegree'] = data['teachers_nodegree_num'] / data['teachers_num']
