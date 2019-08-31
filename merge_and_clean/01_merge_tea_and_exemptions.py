@@ -27,8 +27,7 @@ laws = laws[cols]
 laws = laws.rename({'district': 'distname'}, axis=1)
 
 # Teachers
-#teachers = pd.read_csv(os.path.join(start.data_path,'tea', 'certification_rates_long.csv'))
-#print(teachers.head())
+teachers = pd.read_csv(os.path.join(start.data_path,'tea', 'certification_rates_long.csv'))
 
 # Geographic data
 geo = pd.read_csv(os.path.join(start.data_path, 'geo', '2016_txpopest_county.csv'),
