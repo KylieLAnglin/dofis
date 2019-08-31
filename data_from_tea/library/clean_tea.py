@@ -72,60 +72,6 @@ def clean_cref(year):
     cref = filter_and_rename_cols(cref, cref_tokeep)
     return cref
 
-def clean_dref(year):
-    """
-    Reads district reference data from:
-    https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html
-    Manually add financial ratings from:
-    https://tealprod.tea.state.tx.us/First/forms/Main.aspx
-
-    :param year: year of data set to read
-    :return: data frame with variables from dref to keep
-    """
-    if year == 'yr1112':
-        filename = 'DREF.csv'
-    elif year == 'yr1213':
-        filename = 'DREF.txt'
-    else:
-        filename = 'DREF.dat'
-    dref = pd.read_csv(os.path.join(data_path, 'tea', 'dref', year, filename), sep=",")
-    dref_tokeep = {'DISTRICT': 'district',
-                   'DISTNAME': 'distname',
-                   'DFLCHART': 'distischarter',
-                   'CNTYNAME': 'cntyname'
-                   }
-    if year > 'yr1112':
-        dref_tokeep['D_RATING'] = 'rating_academic'
-    dref = filter_and_rename_cols(dref, dref_tokeep)
-    if year == 'yr1112':
-        dref['district'] = dref['district'].str.strip('\'')
-        dref['district'] = dref['district'].apply(int)
-
-    # Add financial rating (based on year before - https://tealprod.tea.state.tx.us/First/forms/Main.aspx)
-    if year in ['yr1112', 'yr1213', 'yr1314']:
-        dref['rating_financial'] = None
-    if year == 'yr1415':
-        failed_districts = [9901, 59902, 115902, 123910, 222901, 242905, 108914, 14905, 131001, 84904, 137904, 237902]
-        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
-    if year == 'yr1516':
-        failed_districts = [37908, 68901, 123910, 227907]
-        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
-    if year == 'yr1617':
-        failed_districts = [92906, 163904, 174902, 70901, 7906]
-        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
-    if year == 'yr1718':
-        failed_districts = [54901, 64903, 71903, 108902, 176902]
-        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
-
-    if year not in ['yr1112', 'yr1213', 'yr1314']:
-        dref['eligible'] = np.where((dref['rating_academic'].isin(['M', 'A'])
-                                     & (dref['rating_financial'] == 'Pass')
-                                     & (dref['distischarter'] == 'N')), True,
-                                    False)  # M= Meets standard, A = Meets alternative standard
-
-    print("There are ", len(dref), 'districts in dref')
-    return dref
-
 # district type
 # https://tea.texas.gov/acctres/analyze/years.html
 def clean_dtype(year):
@@ -152,163 +98,6 @@ def clean_dtype(year):
     dtype = filter_and_rename_cols(dtype, dtype_to_keep)
     print("There are ", len(dtype), 'districts in dtype')
     return dtype
-
-
-def clean_ddem(year):
-    """
-    Reads district level demographic data pulled from:
-     https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html
-    :param year: year of demographic data to read
-    :return: data frame with variables from ddem to keep
-    """
-
-    if year == 'yr1213':
-        filename = 'DISTPROF.txt'
-    else:
-        filename = 'DISTPROF.dat'
-    ddem_tokeep = {
-        'DISTRICT': 'district',
-        # Teacher Characteristics
-        'DPSTTOFC': 'teachers_num',
-        'DPST00FC': 'teachers_new_num',
-        'DPSTEXPA': 'teachers_exp_ave',
-        'DPSTTENA': 'teachers_tenure_ave',
-        'DPSTURNR': 'teachers_turnover_ratio',
-        'DPSTNOFC': 'teachers_nodegree_num',
-        'DPSTBAFC': 'teachers_badegree_num',
-        'DPSTMSFC': 'teachers_msdegree_num',
-        'DPSTPHFC': 'teachers_phddegree_num',
-        
-        # Student Characteristics
-        'DPETALLC': 'students_num',
-        'DPETECOC': 'students_frpl_num',
-        'DPETHISC': 'students_hisp_num',
-        'DPETWHIC': 'students_white_num',
-        'DPETBLAC': 'students_black_num',
-        'DPETINDC': 'students_amind_num',
-        'DPETASIC': 'students_asian_num',
-        'DPETPCIC': 'students_paci_num',
-        'DPETTWOC': 'students_tworaces_num',
-        # Class Sizes
-        'DPCTGKGA': 'class_size_k',
-        'DPCTG01A': 'class_size_1',
-        'DPCTG02A': 'class_size_2',
-        'DPCTG03A': 'class_size_3',
-        'DPCTG04A': 'class_size_4',
-        'DPCTG05A': 'class_size_5',
-        'DPCTG06A': 'class_size_6',
-        'DPCTENGA': 'class_size_sec_r',
-        'DPCTFLAA': 'class_size_sec_lang',
-        'DPCTMATA': 'class_size_sec_math',
-        'DPCTSCIA': 'class_size_sec_sci',
-        'DPCTSOCA': 'class_size_sec_ss'
-    }
-    if year == 'yr1112':
-        ddem1 = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, 'dstud.csv'), sep=",")
-        ddem2 = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, 'dstaf.csv'), sep=",")
-        ddem = ddem1.merge(ddem2, on='DISTRICT', how='outer')
-        ddem['DISTRICT'] = ddem['DISTRICT'].str.strip('\'')
-        ddem['DISTRICT'] = ddem['DISTRICT'].apply(int)
-    else:
-        ddem = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, filename), sep=",")
-        ddem_tokeep['DPSTURND'] = 'teachers_turnover_denom'
-        ddem_tokeep['DPSTURNN'] = 'teachers_turnover_num'
-        ddem_tokeep['DPSTURNR'] = 'teachers_turnover_ratio'
-    ddem = filter_and_rename_cols(ddem, ddem_tokeep)
-    ddem['teachers_num'] = pd.to_numeric(ddem.teachers_num, errors='coerce')
-    print("There are ", len(ddem), 'districts in ddem')
-    return ddem
-
-
-
-def clean_scores(year, subject):
-    """
-    Reads STAAR scores from
-    https://tea.texas.gov/Student_Testing_and_Accountability/Testing/State_of_Texas_Assessments_of_Academic_Readiness_(STAAR)/STAAR_Aggregate_Data_for_2017-2018/
-    :param year: year to read
-    :param subject: subject to read (see subject_dict keys for subjects
-    :return:
-    """
-    file_yr = year[4:6]
-    subject_dict = {'3rd': 'e3', '4th': 'e4', '5th': 'e5', '6th': 'e6', '7th': 'e7', '8th': 'e8',
-                    'Algebra': 'ea1', 'Biology': 'ebi', 'EnglishI': 'ee1', 'EnglishII': 'ee2', 'USHistory': 'eus'}
-    file_sub = subject_dict[subject]
-    file = 'dfy' + file_yr + file_sub + '.dat'
-
-    if year in ['yr1112', 'yr1213'] and subject in ['EnglishI', 'EnglishII']:
-        subject_dict = {'EnglishI': 'ew1', 'EnglishII': 'ew2'}
-        file = 'dfy' + file_yr + subject_dict[subject] + '.dat'
-        # need two files for early English scores (reading and writing)
-        try:
-            dscores2 = pd.read_csv(os.path.join(data_path, 'tea', 'dscores', subject, file), sep=",")
-        except:
-            new_path = fix_parser_error(os.path.join(data_path, 'tea', 'dscores', subject, file))
-            dscores2 = pd.read_csv(new_path, sep=",")
-        subject_dict = {'EnglishI': 'er1', 'EnglishII': 'er2'}
-        file = 'dfy' + file_yr + subject_dict[subject] + '.dat'
-    try:
-        dscores = pd.read_csv(os.path.join(data_path, 'tea', 'dscores', subject, file), sep=",")
-    except:
-        new_path = fix_parser_error(os.path.join(data_path, 'tea', 'dscores', subject, file))
-        dscores = pd.read_csv(new_path, sep=",")
-
-    if subject not in ['3rd', '4th', '5th', '6th', '7th', '8th', 'Algebra', 'Biology', 'EnglishI', 'EnglishII',
-                       'USHistory']:
-        return 'invalid subject'
-    if subject in ['3rd', '4th', '6th', '7th']:
-        dscores_tokeep = {'DISTRICT': 'district',
-                          "r_all_rs": "r_" + subject + "_avescore",
-                          "r_all_d": "r_" + subject + "_numtakers",
-                          "m_all_rs": "m_" + subject + "_avescore",
-                          "m_all_d": "m_" + subject + "_numtakers"}
-    if subject in ['5th', '8th']:
-        dscores_tokeep = {'DISTRICT': 'district',
-                          "r_all_rs": "r_" + subject + "_avescore",
-                          "r_all_d": "r_" + subject + "_numtakers",
-                          "m_all_rs": "m_" + subject + "_avescore",
-                          "m_all_d": "m_" + subject + "_numtakers",
-                          "s_all_rs": "s_" + subject + "_avescore",
-                          "s_all_d": "s_" + subject + "_numtakers"}
-
-    if subject == 'Algebra':
-        dscores_tokeep = {"DISTRICT": "district",
-                          "a1_all_rs": "alg_avescore",
-                          "a1_all_d": "alg_numtakers"}
-    if subject == 'Biology':
-        dscores_tokeep = {"DISTRICT": "district",
-                          "bi_all_rs": "bio_avescore",
-                          "bi_all_d": "bio_numtakers"}
-
-    if subject == 'EnglishI':
-        if year == 'yr1112' or year == 'yr1213':
-            dscores['e1_all_rs'] = dscores['r1_all_rs'] + dscores2['w1_all_rs']
-            dscores['e1_all_d'] = dscores['r1_all_d']
-        dscores_tokeep = {"DISTRICT": "district",
-                          "e1_all_rs": "eng1_avescore",
-                          "e1_all_d": "eng1_numtakers"}
-
-    if subject == 'EnglishII':
-        if year == 'yr1112' or year == 'yr1213':
-            dscores['e2_all_rs'] = dscores['r2_all_rs'] + dscores2['w2_all_rs']
-            dscores['e2_all_d'] = dscores['r2_all_d']
-
-        dscores_tokeep = {"DISTRICT": "district",
-                          "e2_all_rs": "eng2_avescore",
-                          "e2_all_d": "eng2_numtakers"}
-    if subject == 'USHistory':
-        dscores_tokeep = {"DISTRICT": "district",
-                          "us_all_rs": "us_avescore",
-                          "us_all_d": "us_numtakers"}
-
-    dscores = filter_and_rename_cols(dscores, dscores_tokeep)
-    if year == 'yr1112':
-        dscores['district'] = dscores['district'].apply(int)
-    dscores = dscores.set_index('district')
-    print("There are ", len(dscores), "districts in ", subject, "dataset.")
-    # num_dups = len(dscores[dscores.index.duplicated(keep = False) == True])
-    # print('There are', num_dups, ' duplicate indices.')
-
-    return dscores
 
 
 def clean_cscores(year, subject):
@@ -395,30 +184,6 @@ def clean_cscores(year, subject):
     print("There are ", len(cscores), "schools in ", subject, "dataset.")
     return cscores
 
-def clean_ddays(year):
-    """
-    Reads number of schools days from dataset from PIR
-    :param year:
-    :return: renamed and filtered variables, with min, mean, and max by district
-    Note: only available for yr1617 and 1718
-    """
-    filename = 'days_' + year + '.csv'
-    cdays = pd.read_csv(os.path.join(data_path, 'tea', 'cdays', filename), sep=",")
-    cdays_to_keep = {'DISTRICT': 'district',
-                    'CAMPUS': 'campus',
-                    'TRACK': 'track',
-                    'TOTAL_DAYS': 'days'}
-    cdays = filter_and_rename_cols(cdays, cdays_to_keep)
-    cdays = cdays.groupby(by=['district', 'campus']).max().reset_index() #No definition of tracks. So we keep the max number. May change later.
-    cdays = cdays[['district',  'campus', 'campname']]
-
-    ddays = cdays.groupby(by=['district']).agg({'days': ['min', 'mean', 'max']}).reset_index()
-    ddays.columns = [' '.join(col).strip() for col in ddays.columns.values]
-    ddays = ddays.rename({'days min': 'days_min', 'days mean': 'days_mean', 'days max': 'days_max'}, axis='columns')
-
-    return ddays
-
-
 
 def clean_cdem(year):
     """
@@ -494,8 +259,6 @@ def clean_cdem(year):
     print("There are ", len(cdem), 'schools in cdem', year)
     return cdem
 
-
-
 def fix_duplicate_distname(df, distname_col = 'DISTNAME', cntyname_col = 'CNTYNAME'):
     dist_dict = [{'distname': 'BIG SANDY ISD', 'cntyname': 'UPSHUR', 'newname': 'BIG SANDY ISD (230901)'},
                  {'distname': 'BIG SANDY ISD', 'cntyname': 'POLK', 'newname': 'BIG SANDY ISD (187901)'},
@@ -549,3 +312,238 @@ def clean_cdays(year):
     cdays.columns = [' '.join(col).strip() for col in cdays.columns.values]
     cdays = cdays.rename({'days min': 'days_min', 'days mean': 'days_mean', 'days max': 'days_max'}, axis='columns')
     return cdays
+
+    ####
+
+def clean_dref(year):
+"""
+Reads district reference data from:
+https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html
+Manually add financial ratings from:
+https://tealprod.tea.state.tx.us/First/forms/Main.aspx
+
+:param year: year of data set to read
+:return: data frame with variables from dref to keep
+"""
+if year == 'yr1112':
+    filename = 'DREF.csv'
+elif year == 'yr1213':
+    filename = 'DREF.txt'
+else:
+    filename = 'DREF.dat'
+dref = pd.read_csv(os.path.join(data_path, 'tea', 'dref', year, filename), sep=",")
+dref_tokeep = {'DISTRICT': 'district',
+                'DISTNAME': 'distname',
+                'DFLCHART': 'distischarter',
+                'CNTYNAME': 'cntyname'
+                }
+if year > 'yr1112':
+    dref_tokeep['D_RATING'] = 'rating_academic'
+dref = filter_and_rename_cols(dref, dref_tokeep)
+if year == 'yr1112':
+    dref['district'] = dref['district'].str.strip('\'')
+    dref['district'] = dref['district'].apply(int)
+
+# Add financial rating (based on year before - https://tealprod.tea.state.tx.us/First/forms/Main.aspx)
+if year in ['yr1112', 'yr1213', 'yr1314']:
+    dref['rating_financial'] = None
+if year == 'yr1415':
+    failed_districts = [9901, 59902, 115902, 123910, 222901, 242905, 108914, 14905, 131001, 84904, 137904, 237902]
+    dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+if year == 'yr1516':
+    failed_districts = [37908, 68901, 123910, 227907]
+    dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+if year == 'yr1617':
+    failed_districts = [92906, 163904, 174902, 70901, 7906]
+    dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+if year == 'yr1718':
+    failed_districts = [54901, 64903, 71903, 108902, 176902]
+    dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+
+if year not in ['yr1112', 'yr1213', 'yr1314']:
+    dref['eligible'] = np.where((dref['rating_academic'].isin(['M', 'A'])
+                                    & (dref['rating_financial'] == 'Pass')
+                                    & (dref['distischarter'] == 'N')), True,
+                                False)  # M= Meets standard, A = Meets alternative standard
+
+print("There are ", len(dref), 'districts in dref')
+return dref
+
+def clean_ddem(year):
+"""
+Reads district level demographic data pulled from:
+    https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/DownloadData.html
+:param year: year of demographic data to read
+:return: data frame with variables from ddem to keep
+"""
+
+if year == 'yr1213':
+    filename = 'DISTPROF.txt'
+else:
+    filename = 'DISTPROF.dat'
+ddem_tokeep = {
+    'DISTRICT': 'district',
+    # Teacher Characteristics
+    'DPSTTOFC': 'teachers_num',
+    'DPST00FC': 'teachers_new_num',
+    'DPSTEXPA': 'teachers_exp_ave',
+    'DPSTTENA': 'teachers_tenure_ave',
+    'DPSTURNR': 'teachers_turnover_ratio',
+    'DPSTNOFC': 'teachers_nodegree_num',
+    'DPSTBAFC': 'teachers_badegree_num',
+    'DPSTMSFC': 'teachers_msdegree_num',
+    'DPSTPHFC': 'teachers_phddegree_num',
+    
+    # Student Characteristics
+    'DPETALLC': 'students_num',
+    'DPETECOC': 'students_frpl_num',
+    'DPETHISC': 'students_hisp_num',
+    'DPETWHIC': 'students_white_num',
+    'DPETBLAC': 'students_black_num',
+    'DPETINDC': 'students_amind_num',
+    'DPETASIC': 'students_asian_num',
+    'DPETPCIC': 'students_paci_num',
+    'DPETTWOC': 'students_tworaces_num',
+    # Class Sizes
+    'DPCTGKGA': 'class_size_k',
+    'DPCTG01A': 'class_size_1',
+    'DPCTG02A': 'class_size_2',
+    'DPCTG03A': 'class_size_3',
+    'DPCTG04A': 'class_size_4',
+    'DPCTG05A': 'class_size_5',
+    'DPCTG06A': 'class_size_6',
+    'DPCTENGA': 'class_size_sec_r',
+    'DPCTFLAA': 'class_size_sec_lang',
+    'DPCTMATA': 'class_size_sec_math',
+    'DPCTSCIA': 'class_size_sec_sci',
+    'DPCTSOCA': 'class_size_sec_ss'
+}
+if year == 'yr1112':
+    ddem1 = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, 'dstud.csv'), sep=",")
+    ddem2 = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, 'dstaf.csv'), sep=",")
+    ddem = ddem1.merge(ddem2, on='DISTRICT', how='outer')
+    ddem['DISTRICT'] = ddem['DISTRICT'].str.strip('\'')
+    ddem['DISTRICT'] = ddem['DISTRICT'].apply(int)
+else:
+    ddem = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, filename), sep=",")
+    ddem_tokeep['DPSTURND'] = 'teachers_turnover_denom'
+    ddem_tokeep['DPSTURNN'] = 'teachers_turnover_num'
+    ddem_tokeep['DPSTURNR'] = 'teachers_turnover_ratio'
+ddem = filter_and_rename_cols(ddem, ddem_tokeep)
+ddem['teachers_num'] = pd.to_numeric(ddem.teachers_num, errors='coerce')
+print("There are ", len(ddem), 'districts in ddem')
+return ddem
+
+def clean_scores(year, subject):
+"""
+Reads STAAR scores from
+https://tea.texas.gov/Student_Testing_and_Accountability/Testing/State_of_Texas_Assessments_of_Academic_Readiness_(STAAR)/STAAR_Aggregate_Data_for_2017-2018/
+:param year: year to read
+:param subject: subject to read (see subject_dict keys for subjects
+:return:
+"""
+file_yr = year[4:6]
+subject_dict = {'3rd': 'e3', '4th': 'e4', '5th': 'e5', '6th': 'e6', '7th': 'e7', '8th': 'e8',
+                'Algebra': 'ea1', 'Biology': 'ebi', 'EnglishI': 'ee1', 'EnglishII': 'ee2', 'USHistory': 'eus'}
+file_sub = subject_dict[subject]
+file = 'dfy' + file_yr + file_sub + '.dat'
+
+if year in ['yr1112', 'yr1213'] and subject in ['EnglishI', 'EnglishII']:
+    subject_dict = {'EnglishI': 'ew1', 'EnglishII': 'ew2'}
+    file = 'dfy' + file_yr + subject_dict[subject] + '.dat'
+    # need two files for early English scores (reading and writing)
+    try:
+        dscores2 = pd.read_csv(os.path.join(data_path, 'tea', 'dscores', subject, file), sep=",")
+    except:
+        new_path = fix_parser_error(os.path.join(data_path, 'tea', 'dscores', subject, file))
+        dscores2 = pd.read_csv(new_path, sep=",")
+    subject_dict = {'EnglishI': 'er1', 'EnglishII': 'er2'}
+    file = 'dfy' + file_yr + subject_dict[subject] + '.dat'
+try:
+    dscores = pd.read_csv(os.path.join(data_path, 'tea', 'dscores', subject, file), sep=",")
+except:
+    new_path = fix_parser_error(os.path.join(data_path, 'tea', 'dscores', subject, file))
+    dscores = pd.read_csv(new_path, sep=",")
+
+if subject not in ['3rd', '4th', '5th', '6th', '7th', '8th', 'Algebra', 'Biology', 'EnglishI', 'EnglishII',
+                    'USHistory']:
+    return 'invalid subject'
+if subject in ['3rd', '4th', '6th', '7th']:
+    dscores_tokeep = {'DISTRICT': 'district',
+                        "r_all_rs": "r_" + subject + "_avescore",
+                        "r_all_d": "r_" + subject + "_numtakers",
+                        "m_all_rs": "m_" + subject + "_avescore",
+                        "m_all_d": "m_" + subject + "_numtakers"}
+if subject in ['5th', '8th']:
+    dscores_tokeep = {'DISTRICT': 'district',
+                        "r_all_rs": "r_" + subject + "_avescore",
+                        "r_all_d": "r_" + subject + "_numtakers",
+                        "m_all_rs": "m_" + subject + "_avescore",
+                        "m_all_d": "m_" + subject + "_numtakers",
+                        "s_all_rs": "s_" + subject + "_avescore",
+                        "s_all_d": "s_" + subject + "_numtakers"}
+
+if subject == 'Algebra':
+    dscores_tokeep = {"DISTRICT": "district",
+                        "a1_all_rs": "alg_avescore",
+                        "a1_all_d": "alg_numtakers"}
+if subject == 'Biology':
+    dscores_tokeep = {"DISTRICT": "district",
+                        "bi_all_rs": "bio_avescore",
+                        "bi_all_d": "bio_numtakers"}
+
+if subject == 'EnglishI':
+    if year == 'yr1112' or year == 'yr1213':
+        dscores['e1_all_rs'] = dscores['r1_all_rs'] + dscores2['w1_all_rs']
+        dscores['e1_all_d'] = dscores['r1_all_d']
+    dscores_tokeep = {"DISTRICT": "district",
+                        "e1_all_rs": "eng1_avescore",
+                        "e1_all_d": "eng1_numtakers"}
+
+if subject == 'EnglishII':
+    if year == 'yr1112' or year == 'yr1213':
+        dscores['e2_all_rs'] = dscores['r2_all_rs'] + dscores2['w2_all_rs']
+        dscores['e2_all_d'] = dscores['r2_all_d']
+
+    dscores_tokeep = {"DISTRICT": "district",
+                        "e2_all_rs": "eng2_avescore",
+                        "e2_all_d": "eng2_numtakers"}
+if subject == 'USHistory':
+    dscores_tokeep = {"DISTRICT": "district",
+                        "us_all_rs": "us_avescore",
+                        "us_all_d": "us_numtakers"}
+
+dscores = filter_and_rename_cols(dscores, dscores_tokeep)
+if year == 'yr1112':
+    dscores['district'] = dscores['district'].apply(int)
+dscores = dscores.set_index('district')
+print("There are ", len(dscores), "districts in ", subject, "dataset.")
+# num_dups = len(dscores[dscores.index.duplicated(keep = False) == True])
+# print('There are', num_dups, ' duplicate indices.')
+
+return dscores
+
+
+def clean_ddays(year):
+"""
+Reads number of schools days from dataset from PIR
+:param year:
+:return: renamed and filtered variables, with min, mean, and max by district
+Note: only available for yr1617 and 1718
+"""
+filename = 'days_' + year + '.csv'
+cdays = pd.read_csv(os.path.join(data_path, 'tea', 'cdays', filename), sep=",")
+cdays_to_keep = {'DISTRICT': 'district',
+                'CAMPUS': 'campus',
+                'TRACK': 'track',
+                'TOTAL_DAYS': 'days'}
+cdays = filter_and_rename_cols(cdays, cdays_to_keep)
+cdays = cdays.groupby(by=['district', 'campus']).max().reset_index() #No definition of tracks. So we keep the max number. May change later.
+cdays = cdays[['district',  'campus', 'campname']]
+
+ddays = cdays.groupby(by=['district']).agg({'days': ['min', 'mean', 'max']}).reset_index()
+ddays.columns = [' '.join(col).strip() for col in ddays.columns.values]
+ddays = ddays.rename({'days min': 'days_min', 'days mean': 'days_mean', 'days max': 'days_max'}, axis='columns')
+
+return ddays
+
