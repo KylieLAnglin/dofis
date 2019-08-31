@@ -159,6 +159,8 @@ data['type_suburban'] = np.where(data['geography'] == 'Suburban', 1, 0)
 data['type_town'] = np.where(data['geography'] == 'Town', 1, 0)
 data['type_rural'] = np.where(data['geography'] == 'Rural', 1, 0)
 
+data['eligible'] = np.where((data.distischarter == 'Y') | (data.rating_academic == 'F') |(data.rating_financial == 'Fail'), 0, 1)
+
 # Always eligible?
 #df_filter = data[['distname', 'year', 'eligible']]
 #df_filter = df_filter[~df_filter['year'].isin(['yr1112', 'yr1213', 'yr1314'])]
