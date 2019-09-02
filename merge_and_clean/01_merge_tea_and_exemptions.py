@@ -71,7 +71,7 @@ tea.loc[(tea['distname'].isin(mismatch_list)), 'distname'] = (
 data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
 data.loc[(data['_merge'] == 'both'), 'doi'] = True
 data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
-#data = data.merge(teachers, left_on = ['district', 'year'], right_on = ['district', 'year'], how = 'outer')
+data = data.merge(teachers, left_on = ['campus', 'year'], right_on = ['campus', 'year'], how = 'left')
 data = data.merge(geo, left_on='cntyname_c', right_on='county', how='left', indicator=False)
 print(laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique())
 print(tea.campus.nunique(), data.campus.nunique())
@@ -80,7 +80,7 @@ print(tea.campus.nunique(), data.campus.nunique())
 # # Convert strings to numeric
 num_cols = ['teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num',
             'teachers_num', 'teachers_exp_ave',
-            'teachers_tenure_ave']
+            'teachers_tenure_ave', 'stu_teach_ratio']
 data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
 
 # # Create variables
@@ -99,24 +99,22 @@ data['students_teacher_ratio'] = data['students_num'] / data['teachers_num']
 
 # Standardize within subject using mean and standard deviation from 2014-15
 data = clean_for_merge.standardize_scores(data=data, std_year=2015)
-math_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std', 'alg_std']
-reading_scores = ['r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',  'eng1_std', 'eng2_std']
-science_score = ['s_8th_std', 'bio_std']
-elem_scores = ['m_3rd_std', 'r_3rd_std', 'm_5th_std', 'r_5th_std']
-middle_scores = ['m_6th_std', 'm_7th_std', 'm_8th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std', 's_8th_std']
-high_scores = ['alg_std', 'bio_std', 'eng1_std', 'eng2_std', 'us_std']
+elem_math = ['m_3rd_std', 'm_4th_std', 'm_5th_std']
+elem_reading =  ['r_3rd_std', 'r_4th_std', 'r_5th_std']
+sec_math = ['m_6th_std', 'm_7th_std', 'm_8th_std', 'alg_std']
+sec_reading = ['r_6th_std', 'r_7th_std', 'r_8th_std',  'eng1_std', 'eng2_std']
+sec_science = ['s_8th_std', 'bio_std']
+
 all_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std',
               'r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',
               's_8th_std',
               'alg_std', 'bio_std', 'eng1_std', 'eng2_std', 'us_std']
 
-
-data['math'] = data[math_scores].mean(axis=1)
-data['reading'] = data[reading_scores].mean(axis=1)
-data['science'] = data[science_score].mean(axis=1)
-data['elementary'] = data[elem_scores].mean(axis = 1)
-data['middle'] = data[middle_scores].mean(axis = 1)
-data['high'] = data[high_scores].mean(axis = 1)
+data['elem_math'] = data[elem_math].mean(axis=1)
+data['elem_reading'] = data[elem_reading].mean(axis=1)
+data['sec_math'] = data[sec_math].mean(axis=1)
+data['sec_reading'] = data[sec_reading].mean(axis = 1)
+data['sec_science'] = data[sec_science].mean(axis = 1)
 data['avescores'] = data[all_scores].mean(axis=1)
 
 # District Characteristics
@@ -183,25 +181,6 @@ data.to_csv(os.path.join(start.data_path, 'clean', 'master_data.csv'),
 data = data[data.distischarter == "N"]
 cols = [c for c in data.columns if c.lower()[:3] != 'reg']
 data = data[cols]
-data['treat'] = np.where((data.doi == True), 1, 0)
-data['post'] = np.where(((data.year < data.doi_year) & (data.doi == True)), 0,
-                         np.where(((data.year > data.doi_year) & (data.doi == True)), 1,
-                                  np.where(((data.doi == False) & (data.year < 2016)), 0,
-                                  np.where(((data.doi == False) & (data.year >= 2016)), 1, None))))
-data['year_centered'] = data.year - data.doi_year
-data['year_centered'] = np.where((data.doi == True), data.year_centered,
-                                     (data.year - 2016))  # what year to center
-data['yearpost'] = data.year_centered*data.post
-data['treatyear'] = data.treat*data.year_centered
-data['treatpost'] = data.treat*data.post
-data['treatpostyear'] = data.treat*data.post*data.year_centered
-data['yearpost1'] = np.where((data.year_centered == 1) & (data.treat == 0), 1, 0)
-data['yearpost2'] = np.where((data.year_centered == 2) & (data.treat == 0), 1, 0)
-data['yearpost3'] = np.where((data.year_centered == 3) & (data.treat == 0), 1, 0)
-
-data['treatpostyear1'] = np.where((data.year_centered == 1) & (data.treat == 1), 1, 0)
-data['treatpostyear2'] = np.where((data.year_centered == 2) & (data.treat == 1), 1, 0)
-data['treatpostyear3'] = np.where((data.year_centered == 3) & (data.treat == 1), 1, 0)
-
-data = data.drop_duplicates(subset = ['district', 'year'], keep = 'first') # TODO why is Rice listed twice?
+data['doi_year'] = np.where((data.doi_year == 2015), np.nan, data.doi_year) #drop first implementer (one district)
+data['treatpost'] = np.where(((data.year > data.doi_year) &(data.doi == True)), True, False)
 data.to_csv(os.path.join(start.data_path, 'clean', 'cits.csv'), sep=",")
