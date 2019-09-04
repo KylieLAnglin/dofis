@@ -101,6 +101,7 @@ data['students_teacher_ratio'] = data['students_num'] / data['teachers_num']
 data = clean_for_merge.standardize_scores(data=data, std_year=2015)
 elem_math = ['m_3rd_std', 'm_4th_std', 'm_5th_std']
 elem_reading =  ['r_3rd_std', 'r_4th_std', 'r_5th_std']
+elem = ['m_3rd_std', 'm_4th_std', 'm_5th_std','r_3rd_std', 'r_4th_std', 'r_5th_std']
 sec_math = ['m_6th_std', 'm_7th_std', 'm_8th_std', 'alg_std']
 sec_reading = ['r_6th_std', 'r_7th_std', 'r_8th_std',  'eng1_std', 'eng2_std']
 sec_science = ['s_8th_std', 'bio_std']
@@ -112,6 +113,8 @@ all_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', '
 
 data['elem_math'] = data[elem_math].mean(axis=1)
 data['elem_reading'] = data[elem_reading].mean(axis=1)
+data['elem'] = data[elem].mean(axis=1)
+
 data['sec_math'] = data[sec_math].mean(axis=1)
 data['sec_reading'] = data[sec_reading].mean(axis = 1)
 data['sec_science'] = data[sec_science].mean(axis = 1)
