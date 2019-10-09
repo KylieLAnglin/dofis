@@ -3,10 +3,9 @@ import os
 from data_from_tea.library.start import data_path
 from data_from_tea.library import clean_tea
 
-years = ['yr1112', 'yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']
+years = [ 'yr1819']
 for year in years:
     print(year)
-
     # distname, campus, campname, campischarter, cntyname_c, grade_range, region, academic rating
     cref = clean_tea.clean_cref(year=year)
     cref = clean_tea.fix_duplicate_distname(cref, distname_col='distname', cntyname_col= 'cntyname_c')

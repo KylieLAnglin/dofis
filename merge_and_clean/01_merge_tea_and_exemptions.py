@@ -14,6 +14,7 @@ variables = ['year', 'campus', 'campname', 'campischarter', 'district', 'distnam
 variables = variables + (list(tea.filter(regex = ("students"))))
 variables = variables + (list(tea.filter(regex = ("teachers"))))
 variables = variables + (list(tea.filter(regex = ("avescore"))))
+variables = variables + (list(tea.filter(regex = ("numtakers"))))
 variables = variables + (list(tea.filter(regex = ("days"))))
 variables = variables + (list(tea.filter(regex = ("class_size"))))
 variables = variables + ['stu_teach_ratio']
@@ -179,11 +180,11 @@ data['teachers_phddegree'] = data['teachers_phddegree_num'] / data['teachers_num
 data.to_csv(os.path.join(start.data_path, 'clean', 'master_data.csv'),
             sep=",")
 
-# CITS dataset
+# GDID
 #data = data[data.always_eligible == True]
-data = data[data.distischarter == "N"]
+#data = data[data.distischarter == "N"]
 cols = [c for c in data.columns if c.lower()[:3] != 'reg']
 data = data[cols]
 data['doi_year'] = np.where((data.doi_year == 2015), np.nan, data.doi_year) #drop first implementer (one district)
 data['treatpost'] = np.where(((data.year > data.doi_year) &(data.doi == True)), True, False)
-data.to_csv(os.path.join(start.data_path, 'clean', 'cits.csv'), sep=",")
+data.to_csv(os.path.join(start.data_path, 'clean', 'gdid.csv'), sep=",")
