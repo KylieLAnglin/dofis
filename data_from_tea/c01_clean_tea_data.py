@@ -3,7 +3,7 @@ import os
 from data_from_tea.library.start import data_path
 from data_from_tea.library import clean_tea
 
-years = [ 'yr1819']
+years = ['yr1112', 'yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718', 'yr1819']
 for year in years:
     print(year)
     # distname, campus, campname, campischarter, cntyname_c, grade_range, region, academic rating
@@ -19,6 +19,7 @@ for year in years:
 
     # student and teacher characteristics
     cdem = clean_tea.clean_cdem(year=year)
+    ddem = clean_tea.clean_ddem(year = year) #number of students in district
 
 
 
@@ -34,6 +35,7 @@ for year in years:
     descriptives = cref.merge(dref, on='distname', how='inner')
     descriptives = descriptives.merge(dtype, on='district', how='inner')
     descriptives = descriptives.merge(cdem, on='campus', how='left')
+    descriptive = descriptives.merge(ddem, on = 'district', how = 'inner')
     descriptives = descriptives.merge(cscores, on='campus',
                                       how='left', indicator=True)
     descriptives = descriptives.dropna(how='all')

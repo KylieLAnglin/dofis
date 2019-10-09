@@ -467,6 +467,9 @@ def clean_ddem(year):
         ddem_tokeep['DPSTURNR'] = 'teachers_turnover_ratio'
     ddem = filter_and_rename_cols(ddem, ddem_tokeep)
     ddem['teachers_num'] = pd.to_numeric(ddem.teachers_num, errors='coerce')
+    ddem_tokeep = {'district': 'district', 
+                    'students_num': 'students_num_d'}
+    ddem = filter_and_rename_cols(ddem, ddem_tokeep)
     print("There are ", len(ddem), 'districts in ddem')
     return ddem
 
