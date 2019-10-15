@@ -31,7 +31,7 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
 
     # Rename and keep
     if year > 'yr1415':
-        vars_to_keep = {'PERSONID_SCRAM': 'teacher_id', 'DISTRICT': 'district'
+        vars_to_keep = {'PERSONID_SCRAM': 'teacher_id', 'DISTRICT': 'district',
                         'CREDENTIAL_TYPE': 'cert_type', 'CERTIFICATE_PREPARATION_ROUTE': 'cert_route',
                         'CERTIFICATION_LEVEL': 'cert_level', 'CREDENTIALED_GRADES': 'cert_grades',
                         'SUBJECT_AREA': 'cert_area', 'SUBJECT': 'cert_subject'}
