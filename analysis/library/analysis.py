@@ -57,8 +57,10 @@ def many_y_one_x(data, y_list, y_labels, x):
     pvalue = []
 
     for y in y_list:
-        formula = y + ' ~ ' + x
+        formula = y + ' ~ + 1 + ' + x
+        print(formula)
         result = smf.ols(formula=formula, data=data).fit()
+        print(result.summary())
         cons.append(result.params["Intercept"].round(2))
         if str(data[x].dtypes) == 'bool':
             var = x + '[T.True]'
