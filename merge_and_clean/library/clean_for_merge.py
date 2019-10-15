@@ -37,16 +37,17 @@ def sync_district_names(df, col_name):
                          "WEST HARDIN CISD": "WEST HARDIN ISD",
                         "WYLIE ISD (043914)": "WYLIE ISD (43914)",
                         "HUBBARD ISD (019913)": "HUBBARD ISD (19913)",
-                        "HIGHLAND PARK ISD (057911)": "HIGHLAND PARK ISD (07911)",
                         "EDGEWOOD ISD (015905)": "EDGEWOOD ISD (15905)",
+                        "HIGHLAND PARK ISD (057911)": "HIGHLAND PARK ISD (57911)",
                         "HIGHLAND PARK ISD (07911)": "HIGHLAND PARK ISD (57911)",
-                        "CULBERSON COUNTY-ALLAMOORE ISD": "CULBERSON COUNTY ALLAMOORE ISD"}
+                        "CULBERSON COUNTY-ALLAMOORE ISD": "CULBERSON COUNTY ALLAMOORE ISD",
+                        }
     df[col_name] = df[col_name].replace(fix_names)
     return df
 
 def add_distnum_to_plan(df, col_name):
-    fix_names = {"VALLEY VIEW ISD": "VALLEY VIEW ISD (49903)",
-                 "DAWSON ISD": 'DAWSON ISD (58902)',
+    fix_names = {"VALLEY VIEW ISD": "VALLEY VIEW ISD (049903)",
+                 "DAWSON ISD": 'DAWSON ISD (058902)',
                  "BIG SANDY ISD": "BIG SANDY ISD (187901)",
                  "RICE ISD": "RICE ISD (045903)",
                  "RICE CISD": "RICE ISD (175911)"}
@@ -81,7 +82,7 @@ def standardize_scores(data, std_year):
     yr_df = data[data.year == std_year]
     subjects = ['r_3rd', 'm_3rd', 'r_4th', 'm_4th', 'r_5th', 'm_5th',
                 'r_6th', 'm_6th', 'r_7th', 'm_7th', 'r_8th', 'm_8th',
-                's_5th', 's_8th',
+                's_8th',
                 'alg', 'bio', 'eng1', 'eng2', 'us']
     means = []
     sds = []

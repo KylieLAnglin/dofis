@@ -2,8 +2,8 @@ import pandas as pd
 import os
 import fnmatch
 import numpy as np
-from library import start
-from library import clean_tea
+from data_from_tea.library import start
+from data_from_tea.library import clean_tea
 
 ###
 # Certification
