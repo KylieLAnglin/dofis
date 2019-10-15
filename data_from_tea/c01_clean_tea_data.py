@@ -21,8 +21,9 @@ for year in years:
     cdem = clean_tea.clean_cdem(year=year)
     ddem = clean_tea.clean_ddem(year = year) #number of students in district
     ddem_tokeep = {'district': 'district', 
-                    'students_num': 'students_num_d'}
-    ddem = filter_and_rename_cols(ddem, ddem_tokeep)
+                    'students_num': 'students_num_d',
+                    'teachers_turnover_ratio': 'teachers_turnover_ratio_d'}
+    ddem = clean_tea.filter_and_rename_cols(ddem, ddem_tokeep)
 
 
     # test scores
@@ -37,7 +38,7 @@ for year in years:
     descriptives = cref.merge(dref, on='distname', how='inner')
     descriptives = descriptives.merge(dtype, on='district', how='inner')
     descriptives = descriptives.merge(cdem, on='campus', how='left')
-    descriptive = descriptives.merge(ddem, on = 'district', how = 'inner')
+    descriptives = descriptives.merge(ddem, on = 'district', how = 'inner')
     descriptives = descriptives.merge(cscores, on='campus',
                                       how='left', indicator=True)
     descriptives = descriptives.dropna(how='all')

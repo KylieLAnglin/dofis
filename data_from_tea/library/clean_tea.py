@@ -235,6 +235,7 @@ def clean_cdem(year):
         'CPSTEXPA': 'teachers_exp_ave',
         'CPSTTENA': 'teachers_tenure_ave',
         'CPSTKIDR': 'stu_teach_ratio',
+
         # Student Characteristics
         'CPETALLC': 'students_num',
         'CPETECOC': 'students_frpl_num',
