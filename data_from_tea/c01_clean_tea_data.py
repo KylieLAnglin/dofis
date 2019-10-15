@@ -20,7 +20,9 @@ for year in years:
     # student and teacher characteristics
     cdem = clean_tea.clean_cdem(year=year)
     ddem = clean_tea.clean_ddem(year = year) #number of students in district
-
+    ddem_tokeep = {'district': 'district', 
+                    'students_num': 'students_num_d'}
+    ddem = filter_and_rename_cols(ddem, ddem_tokeep)
 
 
     # test scores

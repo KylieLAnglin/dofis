@@ -332,7 +332,7 @@ def clean_cdays(year):
     filename = 'days_' + year + '.csv'
     cdays = pd.read_csv(os.path.join(data_path, 'tea', 'cdays', filename), sep=",")
     cdays_to_keep = {'DISTRICT': 'district', 
-                    'CAMPUS': 'campus', 'CAMPNAME': 'campname',
+                    'CAMPUS': 'campus',
                     'TRACK': 'track',
                     'TOTAL_DAYS': 'days'}
     cdays = filter_and_rename_cols(cdays, cdays_to_keep)
@@ -421,6 +421,7 @@ def clean_ddem(year):
         'DISTRICT': 'district',
         # Teacher Characteristics
         'DPSTTOFC': 'teachers_num',
+        'DPSTKIDR': 'stu_teach_ratio',
         'DPST00FC': 'teachers_new_num',
         'DPSTEXPA': 'teachers_exp_ave',
         'DPSTTENA': 'teachers_tenure_ave',
@@ -467,9 +468,6 @@ def clean_ddem(year):
         ddem_tokeep['DPSTURNR'] = 'teachers_turnover_ratio'
     ddem = filter_and_rename_cols(ddem, ddem_tokeep)
     ddem['teachers_num'] = pd.to_numeric(ddem.teachers_num, errors='coerce')
-    ddem_tokeep = {'district': 'district', 
-                    'students_num': 'students_num_d'}
-    ddem = filter_and_rename_cols(ddem, ddem_tokeep)
     print("There are ", len(ddem), 'districts in ddem')
     return ddem
 
@@ -578,11 +576,9 @@ def clean_ddays(year):
                     'TOTAL_DAYS': 'days'}
     cdays = filter_and_rename_cols(cdays, cdays_to_keep)
     cdays = cdays.groupby(by=['district', 'campus']).max().reset_index() #No definition of tracks. So we keep the max number. May change later.
-    cdays = cdays[['district',  'campus', 'campname']]
-
     ddays = cdays.groupby(by=['district']).agg({'days': ['min', 'mean', 'max']}).reset_index()
-    ddays.columns = [' '.join(col).strip() for col in ddays.columns.values]
-    ddays = ddays.rename({'days min': 'days_min', 'days mean': 'days_mean', 'days max': 'days_max'}, axis='columns')
+    ddays.columns = ['_'.join(col).strip() for col in ddays.columns.values]
+    ddays = ddays.rename(columns = {'district_': 'district'})
 
     return ddays
 

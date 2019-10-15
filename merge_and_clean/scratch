@@ -1,0 +1,18 @@
+    # Add charter geography based on geography of traditional public schools and FRPL
+    cnty_type = {}
+    for cnty in list(data['cntyname'].unique()):
+        geo_list = list(data[data.cntyname == cnty]['geography'].value_counts().keys())
+        try:
+            max_geo = geo_list[0]
+            cnty_type[cnty] = max_geo
+        except:
+            print(cnty)
+            print(geo_list)
+    new_geo = []
+    for geo, cnty, charter, frpl in zip(data.geography, data.cntyname, data.charter, data.students_frpl):
+        if charter == True:
+            if (frpl > .35) and (cnty_type[cnty] == 'Suburban'):
+                new_geo.append('Urban')
+        else:
+            new_geo.append(cnty_type[cnty])
+    data['geography'] = new_geo
