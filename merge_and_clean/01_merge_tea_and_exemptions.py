@@ -215,7 +215,7 @@ def gen_vars(data):
 ###
 data_district = merge_district_and_exemptions()
 data_district = gen_vars(data_district)
-data_district['doi_year'] = np.where((data_district.doi_year == 2019), np.nan, data_district.doi_year) # set aside 2019 districts for now
+#data_district['doi_year'] = np.where((data_district.doi_year == 2019), np.nan, data_district.doi_year) # set aside 2019 districts for now
 data_district.to_csv(os.path.join(start.data_path, 'clean', 'master_data_district.csv'),
     sep=",")
 
@@ -225,7 +225,7 @@ data_district.to_csv(os.path.join(start.data_path, 'clean', 'master_data_distric
 ###
 data = merge_school_and_exemptions()
 data = gen_vars(data)
-data['doi_year'] = np.where((data.doi_year == 2019), np.nan, data.doi_year) # set aside 2019 districts for now
+#data['doi_year'] = np.where((data.doi_year == 2019), np.nan, data.doi_year) # set aside 2019 districts for now
 
 data.to_csv(os.path.join(start.data_path, 'clean', 'master_data_school.csv'),
     sep=",")
@@ -235,7 +235,7 @@ data.to_csv(os.path.join(start.data_path, 'clean', 'master_data_school.csv'),
 #data = data[data.distischarter == "N"]
 cols = [c for c in data.columns if c.lower()[:3] != 'reg']
 data = data[cols]
-data['doi_year'] = np.where((data.doi_year == 2015), np.nan, data.doi_year) #drop first implementer (one district)
-data['doi_year'] = np.where((data.doi_year == 2019), np.nan, data.doi_year) # set aside 2019 districts for now
+#data['doi_year'] = np.where((data.doi_year == 2015), np.nan, data.doi_year) #drop first implementer (one district)
+#data['doi_year'] = np.where((data.doi_year == 2019), np.nan, data.doi_year) # set aside 2019 districts for now
 data['treatpost'] = np.where(((data.year > data.doi_year) &(data.doi == True)), True, False)
 data.to_csv(os.path.join(start.data_path, 'clean', 'gdid.csv'), sep=",")
