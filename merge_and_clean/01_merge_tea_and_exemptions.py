@@ -153,23 +153,33 @@ def gen_vars(data):
     elem_math = ['m_3rd_std', 'm_4th_std', 'm_5th_std']
     elem_reading =  ['r_3rd_std', 'r_4th_std', 'r_5th_std']
     elem = ['m_3rd_std', 'm_4th_std', 'm_5th_std','r_3rd_std', 'r_4th_std', 'r_5th_std']
-    sec_math = ['m_6th_std', 'm_7th_std', 'm_8th_std', 'alg_std']
-    sec_reading = ['r_6th_std', 'r_7th_std', 'r_8th_std',  'eng1_std']
-    sec_science = ['s_8th_std', 'bio_std']
+    middle_math = ['m_6th_std', 'm_7th_std', 'm_8th_std']
+    middle_reading = ['r_6th_std', 'r_7th_std', 'r_8th_std']
+    middle_science = ['s_8th_std']
+    algebra = ['alg_std']
+    biology = ['bio_std']
+    eng1 = ['eng1_std']
 
     all_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std',
             'r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',
             's_8th_std',
             'alg_std', 'bio_std']
 
+
     data['elem_math'] = data[elem_math].mean(axis=1)
     data['elem_reading'] = data[elem_reading].mean(axis=1)
     data['elem'] = data[elem].mean(axis=1)
 
-    data['sec_math'] = data[sec_math].mean(axis=1)
-    data['sec_reading'] = data[sec_reading].mean(axis = 1)
-    data['sec_science'] = data[sec_science].mean(axis = 1)
+    data['middle_math'] = data[middle_math].mean(axis=1)
+    data['middle_reading'] = data[middle_reading].mean(axis = 1)
+    data['middle_science'] = data[middle_science].mean(axis = 1)
+
+    data['algebra'] = data[algebra].mean(axis = 1)
+    data['biology'] = data[biology].mean(axis = 1)
+    data['eng1'] = data[eng1].mean(axis = 1)
+
     data['avescores'] = data[all_scores].mean(axis=1)
+
 
     # District Characteristics
 
