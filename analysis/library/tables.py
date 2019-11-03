@@ -10,8 +10,11 @@ def df_to_excel(file, df, df_columns, start_col, start_row, all_ints = True):
         row_n = start_row
         for ob in df[col]:
             if all_ints:
-                if ob < .01:
-                    ob = '<.01'
+                try: 
+                    if ob < .01:
+                        ob = '<.01'
+                except:
+                    ob = ob
             ws.cell(row=row_n, column=col_n).value = ob
             row_n = row_n + 1
         col_n = col_n + 1
