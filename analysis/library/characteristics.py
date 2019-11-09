@@ -1,5 +1,5 @@
 geography = ['type_urban', 'type_suburban', 'type_town', 'type_rural']
-teacher = ['teachers_tenure_ave', 'teachers_turnover_ratio', 'students_teacher_ratio']
+teacher = ['teachers_tenure_ave', 'teachers_turnover_ratio_d', 'students_teacher_ratio']
 student = ['students_hisp', 'students_white', 'students_black', 'students_frpl', 'avescores']
 
 labels = {
@@ -9,7 +9,7 @@ labels = {
     'type_rural': 'Rural',
     'teachers_exp_ave' : 'Ave. Experience in District',
     'teachers_tenure_ave' : 'Ave. Experience Teaching',
-    'teachers_turnover_ratio': 'Teacher Turnover Ratio',
+    'teachers_turnover_ratio_d': 'Teacher Turnover Ratio',
     'students_teacher_ratio': 'Student-Teacher Ratio',
     'students_black' : 'Percent Black',
     'students_hisp': 'Percent Hispanic',

@@ -159,6 +159,8 @@ def gen_vars(data):
     algebra = ['alg_std']
     biology = ['bio_std']
     eng1 = ['eng1_std']
+    math = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std']
+    reading = ['r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std']
 
     all_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std', 'm_7th_std', 'm_8th_std',
             'r_3rd_std', 'r_4th_std', 'r_5th_std', 'r_6th_std', 'r_7th_std', 'r_8th_std',
@@ -177,6 +179,9 @@ def gen_vars(data):
     data['algebra'] = data[algebra].mean(axis = 1)
     data['biology'] = data[biology].mean(axis = 1)
     data['eng1'] = data[eng1].mean(axis = 1)
+
+    data['math'] = data[math].mean(axis = 1)
+    data['reading'] = data[reading].mean(axis = 1)
 
     data['avescores'] = data[all_scores].mean(axis=1)
 
@@ -245,7 +250,7 @@ data.to_csv(os.path.join(start.data_path, 'clean', 'master_data_school.csv'),
 #data = data[data.distischarter == "N"]
 cols = [c for c in data.columns if c.lower()[:3] != 'reg']
 data = data[cols]
-#data['doi_year'] = np.where((data.doi_year == 2015), np.nan, data.doi_year) #drop first implementer (one district)
+data['doi_year'] = np.where((data.doi_year == 2015), np.nan, data.doi_year) #drop first implementer (one district)
 #data['doi_year'] = np.where((data.doi_year == 2019), np.nan, data.doi_year) # set aside 2019 districts for now
 data['treatpost'] = np.where(((data.year > data.doi_year) &(data.doi == True)), True, False)
 data.to_csv(os.path.join(start.data_path, 'clean', 'gdid.csv'), sep=",")
