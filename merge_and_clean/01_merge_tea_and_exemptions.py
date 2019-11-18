@@ -23,12 +23,13 @@ def merge_school_and_exemptions():
     tea = import_tea_school()
     laws = import_laws()
     geo = import_geo()
+    teachers = import_teachers()
     tea, laws = resolve_merge_errors(tea, laws)
     # add back teachers
     data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
     data.loc[(data['_merge'] == 'both'), 'doi'] = True
     data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
-    #data = data.merge(teachers, left_on = ['campus', 'year'], right_on = ['campus', 'year'], how = 'left')
+    data = data.merge(teachers, left_on = ['campus', 'year'], right_on = ['campus', 'year'], how = 'left')
     data = data.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
     print(laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique())
     print(tea.campus.nunique(), data.campus.nunique())
@@ -90,6 +91,12 @@ def import_geo():
     geo = clean_for_merge.uppercase_column(geo, 'county')
 
     return geo
+
+def import_teachers():
+    teachers = pd.read_csv(os.path.join(start.data_path, 'tea', 'certification_rates_long.csv'),
+            sep=",", low_memory = False)
+    
+    return teachers
 
 def resolve_merge_errors(tea, laws):
     # problems with district name from scraping
