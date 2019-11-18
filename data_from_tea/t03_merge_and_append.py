@@ -17,6 +17,7 @@ for year in years:
     teachers = assignments.merge(certification, on = ['teacher_id'], how = 'left', indicator = '_merge')
 
     teachers['certification'] = teachers.certification.astype(bool)
+    teachers['certification_report'] = teachers.certification_report.astype(bool)
     teachers['vocational'] = teachers.vocational.astype(bool)
     teachers['cert_elem'] = teachers.cert_elem.astype(bool)
     teachers['cert_middle'] = teachers.cert_middle.astype(bool)
@@ -35,6 +36,10 @@ for year in years:
     # Any Certification
     any_cert = teachers[['campus', 'certification']]
     any_cert = any_cert.groupby(['campus']).mean()
+
+    # Report Certification
+    cert_report = teachers[['campus', 'certification_report']]
+    cert_report = cert_report.groupby(['campus']).mean()
 
     # Elementary
     elem = teachers[(teachers.course_ela == True)]
@@ -73,7 +78,8 @@ for year in years:
     all_certs = all_certs.merge(high_ela, on = 'campus', how = 'left')
     all_certs = all_certs.merge(high_sci, on = 'campus', how = 'left')
     all_certs = all_certs.merge(cte, on = 'campus', how = 'left', indicator = '_merge')
-    
+    all_certs = all_certs.merge(cert_report, on = 'campus', how = 'left')
+
     # Add year variable
     years = {'yr1112': 2012,'yr1213': 2013, 'yr1314': 2014, 'yr1415': 2015, 'yr1516': 2016, 'yr1617':2017, 'yr1718': 2018, 'yr1819': 2019}
     all_certs['year'] = years[year]

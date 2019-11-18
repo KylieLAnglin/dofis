@@ -54,7 +54,18 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
                    'One Year': True,
                   'Visiting International Teacher': True,
                   'Professional': True, 'Standard Professional': True}
+    cert_types_tea_report = {'Emergency Non-Certified': False, 'Emergency Certified': False,
+                  'Emergency': False, 'Emergency Teaching': False,
+                  'Temporary Exemption': False, 'Temporary Teaching Certificate': False,
+                  'Unknown Permit': False, 'Unknown': False,
+                  'Special Assignment': False,
+                  'Paraprofessional': False, 'Standard Paraprofessional': False, 'Non-renewable': False,
+                  'Standard': True, 'Provisional': True,
+                  'Probationary': True, 'Probationary Extension': True, 'Probationary Second Extension': True,
+                   'One Year': True,
+                  'Visiting International Teacher': True}
     certification['certification'] = certification['cert_type'].map(cert_types)
+    certification['certification_report'] = certification['cert_type'].map(cert_types_tea_report)
     certification['vocational'] = np.where((certification['cert_type'] == "Vocational"), True, False)
     certification.head()
 
@@ -108,7 +119,8 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
         certification.district != 'San Antonio']  # three teachers don't link to district number
 
     # Just keep relevant variables
-    certification = certification[['teacher_id', 'district', 'cert_level', 'cert_area', 'certification', 'vocational',
+    certification = certification[['teacher_id', 'district', 'cert_level', 'cert_area', 'certification', 'certification_report',
+                                    'vocational',
                                    'cert_elem', 'cert_middle', 'cert_high',
                                    'cert_area_elem', 'cert_area_ela', 'cert_area_math', 'cert_area_sci',
                                    'cert_area_voc',
@@ -116,6 +128,7 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
 
     certification['district'] = certification.district.astype(int)
     certification['certification'] = certification.certification.astype(bool)
+    certification['certification_report'] = certification.certification_report.astype(bool)
     certification['vocational'] = certification.vocational.astype(bool)
     certification['cert_elem'] = certification.cert_elem.astype(bool)
     certification['cert_middle'] = certification.cert_middle.astype(bool)
@@ -132,7 +145,7 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     certification.to_csv(os.path.join(start.data_path, 'tea', 'teachers', filename))
 
     # Collapse to teacher level
-    teacher_cert = certification[['teacher_id', 'district', 'certification', 'vocational',
+    teacher_cert = certification[['teacher_id', 'district', 'certification', 'certification_report', 'vocational',
                                   'cert_elem', 'cert_middle', 'cert_high',
                                   'cert_area_elem', 'cert_area_ela', 'cert_area_math', 'cert_area_sci', 'cert_area_voc',
                                   'cert_secondary_ela', 'cert_secondary_math', 'cert_secondary_sci']]
