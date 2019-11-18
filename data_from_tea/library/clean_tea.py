@@ -2,7 +2,8 @@ import os
 import pandas as pd
 import numpy as np
 import shutil
-from data_from_tea.library.start import data_path
+try: from data_from_tea.library.start import data_path
+except: from library.start import data_path
 #from start import data_path TODO: import start
 
 
