@@ -31,34 +31,38 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
 
     # Rename and keep
     if year > 'yr1415':
-        vars_to_keep = {'PERSONID_SCRAM': 'teacher_id', 'DISTRICT': 'district',
+        vars_to_keep = {'PERSONID_SCRAM': 'teacher_id', 'DISTRICT': 'district', 'ROLE_CREDENTIALED_FOR': 'role',
                         'CREDENTIAL_TYPE': 'cert_type', 'CERTIFICATE_PREPARATION_ROUTE': 'cert_route',
                         'CERTIFICATION_LEVEL': 'cert_level', 'CREDENTIALED_GRADES': 'cert_grades',
                         'SUBJECT_AREA': 'cert_area', 'SUBJECT': 'cert_subject'}
     else:
-        vars_to_keep = {'personid_SCRAM': 'teacher_id', 'DISTRICT': 'district',
+        vars_to_keep = {'personid_SCRAM': 'teacher_id', 'DISTRICT': 'district', 'ROLE_CREDENTIALED FOR': 'role',
                         'CREDENTIAL TYPE': 'cert_type', 'CERTIFICATE PREPARATION ROUTE': 'cert_route',
                         'CERTIFICATION LEVEL': 'cert_level', 'CREDENTIALED GRADES': 'cert_grades',
                         'SUBJECT AREA': 'cert_area', 'SUBJECT': 'cert_subject'}
     certification = clean_tea.filter_and_rename_cols(certification, vars_to_keep)
 
     # Generate binary certified variable
-    cert_types = {'Emergency Non-Certified': False, 'Emergency Certified': False,
+    # http://ritter.tea.state.tx.us/sbecrules/tac/chapter230/index.html
+    
+
+    cert_types = {'Emergency Non-Certified': False, 'Emergency Certified': True,
                   'Emergency': False, 'Emergency Teaching': False,
-                  'Temporary Exemption': False, 'Temporary Teaching Certificate': False,
+                  'Temporary Exemption': True, 'Temporary Teaching Certificate': False,
                   'Unknown Permit': False, 'Unknown': False,
-                  'Special Assignment': False,
+                  'Special Assignment': True,
                   'Paraprofessional': False, 'Standard Paraprofessional': False, 'Non-renewable': False,
                   'Standard': True, 'Provisional': True,
                   'Probationary': True, 'Probationary Extension': True, 'Probationary Second Extension': True,
                    'One Year': True,
                   'Visiting International Teacher': True,
                   'Professional': True, 'Standard Professional': True}
-    cert_types_tea_report = {'Emergency Non-Certified': False, 'Emergency Certified': False,
+    # drop professional to match PEIMS report. 
+    cert_types_tea_report = {'Emergency Non-Certified': False, 'Emergency Certified': True,
                   'Emergency': False, 'Emergency Teaching': False,
-                  'Temporary Exemption': False, 'Temporary Teaching Certificate': False,
+                  'Temporary Exemption': True, 'Temporary Teaching Certificate': False,
                   'Unknown Permit': False, 'Unknown': False,
-                  'Special Assignment': False,
+                  'Special Assignment': True,
                   'Paraprofessional': False, 'Standard Paraprofessional': False, 'Non-renewable': False,
                   'Standard': True, 'Provisional': True,
                   'Probationary': True, 'Probationary Extension': True, 'Probationary Second Extension': True,
@@ -69,7 +73,7 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     certification['vocational'] = np.where((certification['cert_type'] == "Vocational"), True, False)
     certification.head()
 
-    # Generate binary grades certified variables
+    # Generate binary grades certified variables. True if certified for any grades
     grades_elem = {'Grades EC-4': True, 'Grades EC-6': True, 'Grades EC-12': True,
                    'Grades PK-KG': True, 'Grades PK-3': True, 'Grades PK-5': True, 'Grades PK-12': True,
                    'Grades 1-8': True, 'Grades 1-6': True,
@@ -92,7 +96,7 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
                    'Grades 7-12': True,
                    'Grades 8-12': True}
 
-    certification['cert_elem'] = np.where((certification['cert_level'] == "Elementary"), True, False)
+    certification['cert_elem'] = np.where((certification['cert_level'] == "Elementary"), True, False)   
 
     certification['cert_middle'] = certification['cert_grades'].map(grades_middle)
     certification['cert_middle'] = np.where((certification.certification is False), False, certification.cert_middle)
@@ -103,6 +107,13 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     # Generate binary area certification variables
     certification['cert_area_elem'] = np.where(certification['cert_area'] == "General Elementary (Self-Contained)",
                                                True, False)
+    certification['cert_area_elem'] = np.where((certification['cert_area'] == "Bilingual Education") & 
+                                        ((certification['cert_level'] == "Elementary") | (certification['cert_level'] == "All Level")),
+                                        True, certification.cert_area_elem)
+    certification['cert_area_elem'] = np.where((certification['cert_area'] == "Special Education") & 
+                                        ((certification['cert_level'] == "Elementary") | (certification['cert_level'] == "All Level")),
+                                        True, certification.cert_area_elem)
+
     certification['cert_area_ela'] = np.where(certification['cert_area'] == "English Language Arts", True, False)
     certification['cert_area_math'] = np.where(certification['cert_area'] == "Mathematics", True, False)
     certification['cert_area_sci'] = np.where(certification['cert_area'] == "Science", True, False)
@@ -115,8 +126,7 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     certification['cert_secondary_sci'] = np.where(((certification.cert_level == "Secondary") &
                                                     (certification.cert_area_sci  == True)), True, False)
 
-    certification = certification[
-        certification.district != 'San Antonio']  # three teachers don't link to district number
+    certification = certification[certification.district != 'San Antonio']  # three teachers don't link to district number
 
     # Just keep relevant variables
     certification = certification[['teacher_id', 'district', 'cert_level', 'cert_area', 'certification', 'certification_report',
