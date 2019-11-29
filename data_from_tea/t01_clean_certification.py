@@ -33,31 +33,65 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     if year > 'yr1415':
         vars_to_keep = {'PERSONID_SCRAM': 'teacher_id', 'DISTRICT': 'district', 'ROLE_CREDENTIALED_FOR': 'role',
                         'CREDENTIAL_TYPE': 'cert_type', 'CERTIFICATE_PREPARATION_ROUTE': 'cert_route',
+                        'CERTIFICATE_EXPIRATION_DATE': 'expiration',
                         'CERTIFICATION_LEVEL': 'cert_level', 'CREDENTIALED_GRADES': 'cert_grades',
                         'SUBJECT_AREA': 'cert_area', 'SUBJECT': 'cert_subject'}
     else:
         vars_to_keep = {'personid_SCRAM': 'teacher_id', 'DISTRICT': 'district', 'ROLE_CREDENTIALED FOR': 'role',
+                        'CERTIFICATE EXPIRATION DATE': 'expiration',
                         'CREDENTIAL TYPE': 'cert_type', 'CERTIFICATE PREPARATION ROUTE': 'cert_route',
                         'CERTIFICATION LEVEL': 'cert_level', 'CREDENTIALED GRADES': 'cert_grades',
                         'SUBJECT AREA': 'cert_area', 'SUBJECT': 'cert_subject'}
     certification = clean_tea.filter_and_rename_cols(certification, vars_to_keep)
 
-    # Generate binary certified variable
-    # http://ritter.tea.state.tx.us/sbecrules/tac/chapter230/index.html
-    
+    # Grades
+    certification['cert_grades'] = certification['cert_grades'].replace({'Grades ':''}, regex = True)
+    grades = {'12-Aug': '8-12', '12-Jul': '7-12',
+            '12-Jun': '6-12', '6-Jan': '1-6',
+            '8-Apr': '4-8', '8-Jan': '1-8', 'EC-12': '0-12',
+            'EC-4': '0-4', 'EC-6': '0-6', 'PK-12': '0-12',
+            'PK-3': '0-3', 'PK-6': '0-6', 'PK-KG': '0-1'}
+    certification['cert_grades'] = certification['cert_grades'].replace(grades)
+    certification['cert_grade_low'],certification['cert_grade_high'] = certification['cert_grades'].str.split('-').str
+    certification['cert_grade_low'] = pd.to_numeric(certification.cert_grade_low, errors = 'coerce')
+    certification['cert_grade_high'] = pd.to_numeric(certification.cert_grade_high, errors = 'coerce')
 
+    #Expiration
+    certification['expiration'] = certification['expiration'].str[0:9]
+    certification['expiration']= pd.to_datetime(certification['expiration'], errors = 'coerce') 
+    certification.sample(5)
+    # Fix grades
+    certification['cert_grades'] = certification['cert_grades'].replace({'Grades ':''}, regex = True)
+    grades = {'12-Aug': '8-12', '12-Jul': '7-12',
+            '12-Jun': '6-12', '6-Jan': '1-6',
+            '8-Apr': '4-8', '8-Jan': '1-8', 'EC-12': '0-12',
+            'EC-4': '0-4', 'EC-6': '0-6', 'PK-12': '0-12',
+            'PK-3': '0-3', 'PK-6': '0-6', 'PK-KG': '0-1'}
+    certification['cert_grades'] = certification['cert_grades'].replace(grades)
+    certification['cert_grade_low'],certification['cert_grade_high'] = certification['cert_grades'].str.split('-').str
+
+    certification = certification[certification.role == 'Teacher']
+    timestamps = {'yr1213': '2012-07-01', 'yr1314': '2013-07-01', 'yr1415': '2014-07-01', 'yr1516': '2015-07-01',
+                'yr1617': '2016-07-01', 'yr1718': '2017-07-01', 'yr1819': '2017-0701'}
+    certification['expired'] = np.where(certification.expiration < pd.Timestamp(timestamps[year]), True, False)
+    certification = certification[certification.expired == False]
+
+    # Create certification variable
     cert_types = {'Emergency Non-Certified': False, 'Emergency Certified': True,
-                  'Emergency': False, 'Emergency Teaching': False,
-                  'Temporary Exemption': True, 'Temporary Teaching Certificate': False,
-                  'Unknown Permit': False, 'Unknown': False,
-                  'Special Assignment': True,
-                  'Paraprofessional': False, 'Standard Paraprofessional': False, 'Non-renewable': False,
-                  'Standard': True, 'Provisional': True,
-                  'Probationary': True, 'Probationary Extension': True, 'Probationary Second Extension': True,
-                   'One Year': True,
-                  'Visiting International Teacher': True,
-                  'Professional': True, 'Standard Professional': True}
-    # drop professional to match PEIMS report. 
+                    'Emergency': False, 'Emergency Teaching': False,
+                    'Temporary Exemption': True, 'Temporary Teaching Certificate': False,
+                    'Unknown Permit': False, 'Unknown': False,
+                    'Special Assignment': True,
+                    'Paraprofessional': False, 'Standard Paraprofessional': False, 'Non-renewable': False,
+                    'Standard': True, 'Provisional': True,
+                    'Probationary': True, 'Probationary Extension': True, 'Probationary Second Extension': True,
+                    'One Year': True,
+                    'Visiting International Teacher': True,
+                    'Professional': True, 'Standard Professional': True}
+    certification['certified'] = certification['cert_type'].map(cert_types)
+
+    certification['vocational'] = np.where((certification['cert_type'] == "Vocational"), True, False)
+
     cert_types_tea_report = {'Emergency Non-Certified': False, 'Emergency Certified': True,
                   'Emergency': False, 'Emergency Teaching': False,
                   'Temporary Exemption': True, 'Temporary Teaching Certificate': False,
@@ -68,100 +102,84 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
                   'Probationary': True, 'Probationary Extension': True, 'Probationary Second Extension': True,
                    'One Year': True,
                   'Visiting International Teacher': True}
-    certification['certification'] = certification['cert_type'].map(cert_types)
-    certification['certification_report'] = certification['cert_type'].map(cert_types_tea_report)
-    certification['vocational'] = np.where((certification['cert_type'] == "Vocational"), True, False)
-    certification.head()
+    certification['certified_report'] = certification['cert_type'].map(cert_types_tea_report)
 
     # Generate binary grades certified variables. True if certified for any grades
-    grades_elem = {'Grades EC-4': True, 'Grades EC-6': True, 'Grades EC-12': True,
-                   'Grades PK-KG': True, 'Grades PK-3': True, 'Grades PK-5': True, 'Grades PK-12': True,
-                   'Grades 1-8': True, 'Grades 1-6': True,
-                   'Grades 4-8': True,
-                   'Grades 6-8': False, 'Grades 6-10': False, 'Grades 6-12': False,
-                   'Grades 7-12': False,
-                   'Grades 8-12': False}
-    grades_middle = {'Grades EC-4': False, 'Grades EC-6': True, 'Grades EC-12': True,
-                     'Grades PK-KG': False, 'Grades PK-3': False, 'Grades PK-5': False, 'Grades PK-12': True,
-                     'Grades 1-8': True, 'Grades 1-6': True,
-                     'Grades 4-8': True,
-                     'Grades 6-8': True, 'Grades 6-10': True, 'Grades 6-12': True,
-                     'Grades 7-12': True,
-                     'Grades 8-12': True}
-    grades_high = {'Grades EC-4': False, 'Grades EC-6': False, 'Grades EC-12': True,
-                   'Grades PK-KG': False, 'Grades PK-3': False, 'Grades PK-5': False, 'Grades PK-12': True,
-                   'Grades 1-8': False, 'Grades 1-6': False,
-                   'Grades 4-8': False,
-                   'Grades 6-8': False, 'Grades 6-10': True, 'Grades 6-12': True,
-                   'Grades 7-12': True,
-                   'Grades 8-12': True}
+    area = {'General Elementary (Self-Contained)': 'elem', 'Bilingual Education': 'biling', 'English Language Arts': 'ela',
+        'Special Education': 'sped', 'Health and Physical Education': 'pe', 'Social Studies': 'ss','Mathematics': 'math',
+        'Science': 'science', 'Vocational Education': 'voc', 'Fine Arts': 'art', 'Foreign Language': 'for',
+        'Computer Science': 'cs', 'Other': 'other' }
 
-    certification['cert_elem'] = np.where((certification['cert_level'] == "Elementary"), True, False)   
-
-    certification['cert_middle'] = certification['cert_grades'].map(grades_middle)
-    certification['cert_middle'] = np.where((certification.certification is False), False, certification.cert_middle)
-
-    certification['cert_high'] = certification['cert_grades'].map(grades_high)
-    certification['cert_high'] = np.where((certification.certification is False), False, certification.cert_high)
-
-    # Generate binary area certification variables
-    certification['cert_area_elem'] = np.where(certification['cert_area'] == "General Elementary (Self-Contained)",
-                                               True, False)
-    certification['cert_area_elem'] = np.where((certification['cert_area'] == "Bilingual Education") & 
-                                        ((certification['cert_level'] == "Elementary") | (certification['cert_level'] == "All Level")),
+    # Elementary
+    certification['cert_area_elem'] = np.where(certification['cert_area'] == "elem",
+                                           True, False)
+    certification['cert_area_elem'] = np.where((certification['cert_area'] == "biling") & 
+                                        ((certification['cert_level'] == "Elementary") | 
+                                        (certification['cert_level'] == "All Level")), True, certification.cert_area_elem)
+    certification['cert_area_elem'] = np.where((certification['cert_area'] == "spend") & 
+                                        ((certification['cert_level'] == "Elementary") | 
+                                        (certification['cert_level'] == "All Level")),
                                         True, certification.cert_area_elem)
-    certification['cert_area_elem'] = np.where((certification['cert_area'] == "Special Education") & 
-                                        ((certification['cert_level'] == "Elementary") | (certification['cert_level'] == "All Level")),
-                                        True, certification.cert_area_elem)
+    # Math
+    certification['cert_area_high_math'] = np.where(certification['cert_area'] == "math",
+                                           True, False)
+    certification['cert_area_high_math'] = np.where(certification.cert_grade_high > 8,
+                                           certification.cert_area_high_math, False)
 
-    certification['cert_area_ela'] = np.where(certification['cert_area'] == "English Language Arts", True, False)
-    certification['cert_area_math'] = np.where(certification['cert_area'] == "Mathematics", True, False)
-    certification['cert_area_sci'] = np.where(certification['cert_area'] == "Science", True, False)
-    certification['cert_area_voc'] = np.where(certification['cert_area'] == "Vocational Education", True, False)
-
-    certification['cert_secondary_ela'] = np.where(((certification.cert_level == "Secondary") &
-                                                    (certification.cert_area_ela == True )), True, False)
-    certification['cert_secondary_math'] = np.where(((certification.cert_level == "Secondary") &
-                                                     (certification.cert_area_math  == True)), True, False)
-    certification['cert_secondary_sci'] = np.where(((certification.cert_level == "Secondary") &
-                                                    (certification.cert_area_sci  == True)), True, False)
-
+    # Science
+    certification['cert_area_high_science'] = np.where(certification['cert_area'] == "science",
+                                           True, False)
+    certification['cert_area_high_science'] = np.where(certification.cert_grade_high > 8,
+                                           certification.cert_area_high_math, False)
+    
     certification = certification[certification.district != 'San Antonio']  # three teachers don't link to district number
 
-    # Just keep relevant variables
-    certification = certification[['teacher_id', 'district', 'cert_level', 'cert_area', 'certification', 'certification_report',
-                                    'vocational',
-                                   'cert_elem', 'cert_middle', 'cert_high',
-                                   'cert_area_elem', 'cert_area_ela', 'cert_area_math', 'cert_area_sci',
-                                   'cert_area_voc',
-                                   'cert_secondary_ela', 'cert_secondary_math', 'cert_secondary_sci']]
+    ###
+    # Create any certification dataframe
+    ###
 
-    certification['district'] = certification.district.astype(int)
-    certification['certification'] = certification.certification.astype(bool)
-    certification['certification_report'] = certification.certification_report.astype(bool)
-    certification['vocational'] = certification.vocational.astype(bool)
-    certification['cert_elem'] = certification.cert_elem.astype(bool)
-    certification['cert_middle'] = certification.cert_middle.astype(bool)
-    certification['cert_high'] = certification.cert_high.astype(bool)
-    certification['cert_area_elem'] = certification.cert_area_elem.astype(bool)
-    certification['cert_area_ela'] = certification.cert_area_ela.astype(bool)
-    certification['cert_area_math'] = certification.cert_area_math.astype(bool)
-    certification['cert_area_sci'] = certification.cert_area_sci.astype(bool)
-    certification['cert_area_voc'] = certification.cert_area_voc.astype(bool)
+    teacher_yesno = certification[['teacher_id', 'district', 'certified', 'vocational',
+                              'cert_area_elem', 'cert_area_high_math']]
+    teacher_yesno = teacher_yesno.groupby(['teacher_id']).max()
+
+    # Reshape long to wide 
+    df = certification[['teacher_id', 'district',
+                    'cert_area', 'cert_subject',
+                    'cert_grade_low', 'cert_grade_high']]
+    df['idx'] = df.groupby('teacher_id').cumcount()
+    certs = certification[['teacher_id','certified', 'vocational']].groupby('teacher_id').max()
+    df = df.merge(certs, how = 'left', on = 'teacher_id')
+    df['cert_area_idx'] = 'cert_area_' + df.idx.astype(str)
+    df['cert_subject_idx'] = 'cert_subject_' + df.idx.astype(str)
+    df['cert_grade_low_idx'] = 'cert_grade_low_' + df.idx.astype(str)
+    df['cert_grade_high_idx'] = 'cert_grade_high_' + df.idx.astype(str)
+
+    areas = df.pivot(index='teacher_id',columns='cert_area_idx', values='cert_area')
+    subjects = df.pivot(index='teacher_id',columns='cert_subject_idx', values='cert_subject')
+    low_grades = df.pivot(index='teacher_id',columns='cert_grade_low_idx', values='cert_grade_low')
+    high_grades = df.pivot(index='teacher_id',columns='cert_grade_high_idx', values='cert_grade_high')
+
+    teacher_cert_wide = pd.concat([areas, subjects, low_grades, high_grades], axis = 1)
+    max_certs = len(list(teacher_cert.filter(regex = ("cert_area"))))
+    variables = []
+    for num in range(0, max_certs):
+        string = '_' + str(num) + '$'
+        variables = variables + list(areas.filter(regex = (string)))
+        variables = variables + list(subjects.filter(regex = (string)))
+        variables = variables + list(low_grades.filter(regex = (string)))
+        variables = variables + list(high_grades.filter(regex = (string)))
+    teacher_cert_wide = teacher_cert_wide[variables]
+
+    teacher_cert = teacher_yesno.merge(teacher_cert_wide, left_index = True, right_index = True)
 
     # Save to CSV
-    certification.sort_values(by=['teacher_id'], axis=0)
     filename = 'certs_' + year + '.csv'
     certification.to_csv(os.path.join(start.data_path, 'tea', 'teachers', filename))
 
     # Collapse to teacher level
-    teacher_cert = certification[['teacher_id', 'district', 'certification', 'certification_report', 'vocational',
-                                  'cert_elem', 'cert_middle', 'cert_high',
-                                  'cert_area_elem', 'cert_area_ela', 'cert_area_math', 'cert_area_sci', 'cert_area_voc',
-                                  'cert_secondary_ela', 'cert_secondary_math', 'cert_secondary_sci']]
-    teacher_cert = teacher_cert.groupby(['teacher_id']).max()
+    #teacher_cert = teacher_cert.groupby(['teacher_id']).max()
 
     # Save to CSV
-    teacher_cert.sort_values(by=['teacher_id'], axis=0)
-    filename = 'teacher_cert_' + year + '.csv'
-    teacher_cert.to_csv(os.path.join(start.data_path, 'tea', 'teachers', filename))
+    #teacher_cert.sort_values(by=['teacher_id'], axis=0)
+    #filename = 'teacher_cert_' + year + '.csv'
+    #teacher_cert.to_csv(os.path.join(start.data_path, 'tea', 'teachers', filename))

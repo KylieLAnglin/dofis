@@ -141,8 +141,6 @@ def gen_vars(data):
         'teachers_num', 'teachers_exp_ave',
         'teachers_tenure_ave', 'teachers_turnover_ratio_d', 'stu_teach_ratio']
         data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
-    # # Create variables
-
 
     # Student characteristics
 
@@ -152,8 +150,46 @@ def gen_vars(data):
     data['students_white'] = data['students_white_num'] / data['students_num']
 
     data['students_teacher_ratio'] = data['students_num'] / data['teachers_num']
+# District Characteristics
 
-    # Performance
+    geography = {'A': 'Urban', 'C': 'Urban',
+            'B': 'Suburban', 'D': 'Suburban',
+            'E': 'Town', 'F': 'Town', 'G': 'Town',
+            'H': 'Rural'}
+    data['geography'] = data['type'].map(geography)
+
+    data['charter'] = np.where((data['distischarter'] == "Y"), True, False)
+
+    data['district_status'] = np.where((data['doi'] == False) & (data['charter'] == False), 'tps',
+                                np.where((data['doi'] == True), 'doi',
+                                        np.where((data['charter'] == True), 'charter', 'missing')))
+
+
+    # Geography indicators
+    data['type_urban'] = np.where(data['geography'] == 'Urban', 1, 0)
+    data['type_suburban'] = np.where(data['geography'] == 'Suburban', 1, 0)
+    data['type_town'] = np.where(data['geography'] == 'Town', 1, 0)
+    data['type_rural'] = np.where(data['geography'] == 'Rural', 1, 0)
+
+    data['eligible'] = np.where((data.distischarter == 'Y') | (data.rating_academic == 'F') |(data.rating_financial == 'Fail'), 0, 1)
+
+    # Always eligible?
+    #df_filter = data[['distname', 'year', 'eligible']]
+    #df_filter = df_filter[~df_filter['year'].isin(['yr1112', 'yr1213', 'yr1314'])]
+    #always_eligible = pd.DataFrame(df_filter.groupby(['distname'])['eligible'].min()).reset_index()
+    #always_eligible.columns = ['distname', 'always_eligible']
+    #data = data.merge(always_eligible.reset_index(), left_on='distname', right_on='distname', how='left')
+
+    #  Teacher Characteristics
+    data['teachers_nodegree'] = data['teachers_nodegree_num'] / data['teachers_num']
+    data['teachers_badegree'] = data['teachers_badegree_num'] / data['teachers_num']
+    data['teachers_msdegree'] = data['teachers_msdegree_num'] / data['teachers_num']
+    data['teachers_phddegree'] = data['teachers_phddegree_num'] / data['teachers_num']
+
+    return data
+
+def gen_vars_scores(data):
+       # Performance
 
     # Standardize within subject using mean and standard deviation from 2014-15
     data = clean_for_merge.standardize_scores(data=data, std_year=2015)
@@ -192,43 +228,6 @@ def gen_vars(data):
 
     data['avescores'] = data[all_scores].mean(axis=1)
 
-
-    # District Characteristics
-
-    geography = {'A': 'Urban', 'C': 'Urban',
-            'B': 'Suburban', 'D': 'Suburban',
-            'E': 'Town', 'F': 'Town', 'G': 'Town',
-            'H': 'Rural'}
-    data['geography'] = data['type'].map(geography)
-
-    data['charter'] = np.where((data['distischarter'] == "Y"), True, False)
-
-    data['district_status'] = np.where((data['doi'] == False) & (data['charter'] == False), 'tps',
-                                np.where((data['doi'] == True), 'doi',
-                                        np.where((data['charter'] == True), 'charter', 'missing')))
-
-
-    # Geography indicators
-    data['type_urban'] = np.where(data['geography'] == 'Urban', 1, 0)
-    data['type_suburban'] = np.where(data['geography'] == 'Suburban', 1, 0)
-    data['type_town'] = np.where(data['geography'] == 'Town', 1, 0)
-    data['type_rural'] = np.where(data['geography'] == 'Rural', 1, 0)
-
-    data['eligible'] = np.where((data.distischarter == 'Y') | (data.rating_academic == 'F') |(data.rating_financial == 'Fail'), 0, 1)
-
-    # Always eligible?
-    #df_filter = data[['distname', 'year', 'eligible']]
-    #df_filter = df_filter[~df_filter['year'].isin(['yr1112', 'yr1213', 'yr1314'])]
-    #always_eligible = pd.DataFrame(df_filter.groupby(['distname'])['eligible'].min()).reset_index()
-    #always_eligible.columns = ['distname', 'always_eligible']
-    #data = data.merge(always_eligible.reset_index(), left_on='distname', right_on='distname', how='left')
-
-    #  Teacher Characteristics
-    data['teachers_nodegree'] = data['teachers_nodegree_num'] / data['teachers_num']
-    data['teachers_badegree'] = data['teachers_badegree_num'] / data['teachers_num']
-    data['teachers_msdegree'] = data['teachers_msdegree_num'] / data['teachers_num']
-    data['teachers_phddegree'] = data['teachers_phddegree_num'] / data['teachers_num']
-
     return data
 
 
@@ -237,6 +236,8 @@ def gen_vars(data):
 ###
 data_district = merge_district_and_exemptions()
 data_district = gen_vars(data_district)
+data_district = gen_vars_scores(data_district)
+
 #data_district['doi_year'] = np.where((data_district.doi_year == 2019), np.nan, data_district.doi_year) # set aside 2019 districts for now
 data_district.to_csv(os.path.join(start.data_path, 'clean', 'master_data_district.csv'),
     sep=",")
@@ -247,6 +248,8 @@ data_district.to_csv(os.path.join(start.data_path, 'clean', 'master_data_distric
 ###
 data = merge_school_and_exemptions()
 data = gen_vars(data)
+data = gen_vars_scores(data)
+
 #data['doi_year'] = np.where((data.doi_year == 2019), np.nan, data.doi_year) # set aside 2019 districts for now
 
 data.to_csv(os.path.join(start.data_path, 'clean', 'master_data_school.csv'),
@@ -261,3 +264,33 @@ data['doi_year'] = np.where((data.doi_year == 2015), np.nan, data.doi_year) #dro
 #data['doi_year'] = np.where((data.doi_year == 2019), np.nan, data.doi_year) # set aside 2019 districts for now
 data['treatpost'] = np.where(((data.year > data.doi_year) &(data.doi == True)), True, False)
 data.to_csv(os.path.join(start.data_path, 'clean', 'gdid.csv'), sep=",")
+
+###
+# Subject-Grade-Level
+###
+subjects = (list(data.filter(regex = ("_avescore"))))
+variables = ['campus', 'year'] + subjects
+reshape = data[variables]
+reshape = pd.melt(reshape, id_vars = ['campus', 'year'])
+reshape = reshape.rename(columns = {'variable': 'test', 'value': 'score'})
+reshape = reshape.dropna(axis = 0)
+
+means = []
+sds = []
+for var in subjects:
+    mean = reshape[(reshape.test == var) & (reshape.year == 2015)].score.mean()
+    means.append(mean)
+    sd = reshape[reshape.test == var].score.std()
+    sds.append(sd)
+
+means_sds = pd.DataFrame(list(zip(subjects, means, sds)), 
+               columns =['test', 'test_mean', 'test_std']) 
+
+reshape = reshape.merge(means_sds, left_on = 'test', right_on = 'test')
+reshape['score_std'] = (reshape.score - reshape.test_mean)/reshape.test_std
+reshape = reshape[['campus', 'year', 'test', 'score', 'score_std']]
+
+
+subject_grade = reshape.merge(data, left_on = ['campus', 'year'], right_on = ['campus', 'year'])
+
+subject_grade.to_csv(os.path.join(start.data_path, 'clean', 'gdid_subject.csv'), sep=",")
