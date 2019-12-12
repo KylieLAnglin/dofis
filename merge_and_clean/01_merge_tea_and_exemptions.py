@@ -148,6 +148,9 @@ def gen_vars(data):
     data['students_black'] = data['students_black_num'] / data['students_num']
     data['students_hisp'] = data['students_hisp_num'] / data['students_num']
     data['students_white'] = data['students_white_num'] / data['students_num']
+    data['students_ell'] = data['students_ell_num'] / data['students_num']
+    data['students_sped'] = data['students_sped_num'] / data['students_num']
+    data['students_cte'] = data['students_cte_num'] / data['students_num']
 
     data['students_teacher_ratio'] = data['students_num'] / data['teachers_num']
 # District Characteristics
