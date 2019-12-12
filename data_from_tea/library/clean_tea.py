@@ -247,6 +247,10 @@ def clean_cdem(year):
         'CPETASIC': 'students_asian_num',
         'CPETPCIC': 'students_paci_num',
         'CPETTWOC': 'students_tworaces_num',
+        'CPETLEPC': 'students_ell_num',
+        'CPETSPEC': 'students_sped_num',
+        'CPETVOCC': 'students_cte_num',
+
         # Class Sizes
         'CPCTGKGA': 'class_size_k',
         'CPCTG01A': 'class_size_1',
@@ -289,6 +293,54 @@ def clean_cdem(year):
 
     print("There are ", len(cdem), 'schools in cdem', year)
     return cdem
+
+def clean_cgrad(year):
+    # https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/cothr.html
+    # current year's values are store in next year's dataset
+    fallyr = year[2:4]
+    springyr = year[4:6]
+    nextyr = int(springyr) + 1
+
+    data_year = 'yr' + springyr + str(nextyr)
+
+    if data_year < 'yr1718':
+        filename = 'CAMPPERF.dat'
+    
+    cgrad = pd.read_csv(os.path.join(data_path, 'tea', 'cgrad', data_year, filename), sep=",")
+
+    cgrad_to_keep = {'CAMPUS': 'campus',
+                    'CA0912DR' + springyr + 'R': 'perf_hsdrop',
+                    'CA0AT' + springyr + 'D': 'perf_studays',
+                    'CA0AT' + springyr + 'N': 'perf_stuattend'}
+
+
+    cgrad = filter_and_rename_cols(cgrad, cgrad_to_keep)
+    #cgrad['campus'] = cgrad['campus'].apply(pd.to_numeric, errors='coerce')
+    return cgrad
+
+def clean_dgrad(year):
+    # current year's values are store in next year's dataset
+    # https://rptsvr1.tea.texas.gov/perfreport/tapr/2013/download/dothr.html
+    fallyr = year[2:4]
+    springyr = year[4:6]
+    nextyr = int(springyr) + 1
+
+    data_year = 'yr' + springyr + str(nextyr)
+
+    if data_year < 'yr1718':
+        filename = 'DISTPERF.dat'
+    
+    dgrad = pd.read_csv(os.path.join(data_path, 'tea', 'dgrad', data_year, filename), sep=",")
+
+    dgrad_to_keep = {'DISTRICT': 'district',
+                    'DA0912DR' + springyr + 'R': 'perf_hsdrop',
+                    'DA0AT' + springyr + 'D': 'perf_studays',
+                    'DA0AT' + springyr + 'N': 'perf_stuattend'}
+
+
+    dgrad = filter_and_rename_cols(dgrad, dgrad_to_keep)
+    #cgrad['campus'] = cgrad['campus'].apply(pd.to_numeric, errors='coerce')
+    return dgrad
 
 def fix_duplicate_distname(df, distname_col = 'DISTNAME', cntyname_col = 'CNTYNAME'):
     dist_dict = [{'distname': 'BIG SANDY ISD', 'cntyname': 'UPSHUR', 'newname': 'BIG SANDY ISD (230901)'},
@@ -443,6 +495,12 @@ def clean_ddem(year):
         'DPETASIC': 'students_asian_num',
         'DPETPCIC': 'students_paci_num',
         'DPETTWOC': 'students_tworaces_num',
+        'DPETLEPC': 'students_ell_num',
+        'DPETSPEC': 'students_sped_num',
+        'DPETVOCC': 'students_cte_num',
+
+
+
         # Class Sizes
         'DPCTGKGA': 'class_size_k',
         'DPCTG01A': 'class_size_1',
