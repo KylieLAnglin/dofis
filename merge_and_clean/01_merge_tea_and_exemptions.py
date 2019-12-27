@@ -1,133 +1,10 @@
 import os
 import pandas as pd
-pd.options.display.max_columns = 200
 import numpy as np
+
+pd.options.display.max_columns = 200
 from merge_and_clean.library import start
 from merge_and_clean.library import clean_for_merge
-
-
-def merge_district_and_exemptions():
-    tea = import_tea_district()
-    laws = import_laws()
-    geo = import_geo()
-    tea, laws = resolve_merge_errors(tea, laws)
-    data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
-    data.loc[(data['_merge'] == 'both'), 'doi'] = True
-    data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
-    data = data.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
-    print(laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique())
-
-    return data
-
-def merge_school_and_exemptions():
-    tea = import_tea_school()
-    laws = import_laws()
-    geo = import_geo()
-    teachers = import_teachers()
-    tea, laws = resolve_merge_errors(tea, laws)
-    # add back teachers
-    data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
-    data.loc[(data['_merge'] == 'both'), 'doi'] = True
-    data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
-    data = data.merge(teachers, left_on = ['campus', 'year'], right_on = ['campus', 'year'], how = 'left')
-    data = data.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
-    print(laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique())
-    print(tea.campus.nunique(), data.campus.nunique())
-
-    return data
-
-def import_tea_district():
-    tea = pd.read_csv(os.path.join(start.data_path, 'tea', "desc_long.csv"),
-            sep=",", low_memory = False)
-    variables = ['year', 'district', 'distname', 'distischarter',
-            'rating_academic', 'rating_financial',
-            'type', 'type_description', 'cntyname']
-    variables = variables + (list(tea.filter(regex = ("students"))))
-    variables = variables + (list(tea.filter(regex = ("teachers"))))
-    variables = variables + (list(tea.filter(regex = ("avescore"))))
-    variables = variables + (list(tea.filter(regex = ("numtakers"))))
-    variables = variables + (list(tea.filter(regex = ("days"))))
-    variables = variables + (list(tea.filter(regex = ("class_size"))))
-    variables = variables + ['stu_teach_ratio']
-    tea = tea[variables]
-
-    return tea
-
-def import_tea_school():
-    tea = pd.read_csv(os.path.join(start.data_path, 'tea', 'desc_c_long.csv'),
-            sep=",", low_memory = False)
-    variables = ['year', 'campus', 'campname', 'campischarter', 'district', 'distname', 'distischarter',
-            'rating_academic', 'rating_financial','rating_academic_c',
-            'type', 'type_description', 'cntyname']
-    variables = variables + (list(tea.filter(regex = ("students"))))
-    variables = variables + (list(tea.filter(regex = ("teachers"))))
-    variables = variables + (list(tea.filter(regex = ("avescore"))))
-    variables = variables + (list(tea.filter(regex = ("numtakers"))))
-    variables = variables + (list(tea.filter(regex = ("days"))))
-    variables = variables + (list(tea.filter(regex = ("class_size"))))
-    variables = variables + ['stu_teach_ratio']
-    tea = tea[variables]
-
-    return tea
-# Import TEA data and select columns
-
-def import_laws():
-    # Import DOI data and select columns
-    laws = pd.read_csv(os.path.join(start.data_path, 'plans', 'doi_final.csv'),
-                sep=",")
-    cols = [c for c in laws.columns if c.lower()[:7] != 'Unnamed']
-    laws = laws[cols]
-    laws = laws.rename({'district': 'distname'}, axis=1)
-    return laws
-
-def import_geo():
-    # Geographic data
-    geo = pd.read_csv(os.path.join(start.data_path, 'geo', '2016_txpopest_county.csv'),
-                sep=",")
-    geo = geo[['county', 'july1_2016_pop_est']]
-    geo = geo.rename({'july1_2016_pop_est': 'cnty_pop'}, axis='columns')
-    geo['cnty_pop'] = geo['cnty_pop'] / 1000
-    geo['cnty_pop'] = geo['cnty_pop'].round(0)
-    geo = clean_for_merge.uppercase_column(geo, 'county')
-
-    return geo
-
-def import_teachers():
-    teachers = pd.read_csv(os.path.join(start.data_path, 'tea', 'certification_rates_long.csv'),
-            sep=",", low_memory = False)
-    
-    return teachers
-
-def resolve_merge_errors(tea, laws):
-    # problems with district name from scraping
-    tea = tea.pipe(clean_for_merge.resolve_unicode_problems, 'distname')
-    laws = laws.pipe(clean_for_merge.resolve_unicode_problems, 'distname')
-
-    # scraped names in title case, but tea all caps. change scraped distname to caps
-    laws = laws.pipe(clean_for_merge.uppercase_column, 'distname')
-
-    # Add district numbers to some plans
-    laws = clean_for_merge.add_distnum_to_plan(laws, 'distname')
-
-    # sometimes districts named CISD othertimes ISD. Make all ISD
-    tea = clean_for_merge.replace_column_values(tea, 'distname', 'CISD', 'ISD')
-    laws = clean_for_merge.replace_column_values(laws, 'distname', 'CISD', 'ISD')
-
-    # fix district names that don't match
-    tea = clean_for_merge.sync_district_names(tea, 'distname')
-    laws = clean_for_merge.sync_district_names(laws, 'distname')
-
-    mismatch = clean_for_merge.get_not_in(laws, 'distname', tea, 'distname')
-    mismatch_list = clean_for_merge.strip_distnum_parens(list(mismatch.distname))
-
-    df = clean_for_merge.distnum_in_paren(
-    tea[[elem in mismatch_list for elem in tea.distname]])
-
-    tea.loc[(tea['distname'].isin(mismatch_list)), 'distname'] = (
-    tea.loc[(tea['distname'].isin(mismatch_list))]
-    .pipe(clean_for_merge.distnum_in_paren)['distname']
-    )
-    return tea, laws
 
 def gen_vars(data):
     # # Convert strings to numeric
@@ -233,11 +110,25 @@ def gen_vars_scores(data):
 
     return data
 
+###
+#   Import
+###
+laws = clean_for_merge.import_laws()
+geo = clean_for_merge.import_geo()
+tea_district = clean_for_merge.import_tea_district()
+tea_school = clean_for_merge.import_tea_school()
+teachers = clean_for_merge.import_teachers()
+
 
 ###
 #   District-level
 ###
-data_district = merge_district_and_exemptions()
+tea_district, laws = clean_for_merge.resolve_merge_errors(tea_district, laws)
+data_district = tea_district.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
+data_district.loc[(data_district['_merge'] == 'both'), 'doi'] = True
+data_district.loc[(data_district['_merge'] == 'left_only'), 'doi'] = False
+data_district = data_district.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
+print(laws.distname.nunique(), tea_district.distname.nunique(), data_district.distname.nunique())
 data_district = gen_vars(data_district)
 data_district = gen_vars_scores(data_district)
 
@@ -249,31 +140,42 @@ data_district.to_csv(os.path.join(start.data_path, 'clean', 'master_data_distric
 ###
 #   School-level
 ###
-data = merge_school_and_exemptions()
-data = gen_vars(data)
-data = gen_vars_scores(data)
+
+tea_school, laws = clean_for_merge.resolve_merge_errors(tea_school, laws)
+# add back teachers
+data_school = tea_school.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
+data_school.loc[(data_school['_merge'] == 'both'), 'doi'] = True
+data_school.loc[(data_school['_merge'] == 'left_only'), 'doi'] = False
+data_school = data_school.merge(teachers, left_on = ['campus', 'year'], right_on = ['campus', 'year'], how = 'left')
+data_school = data_school.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
+print(laws.distname.nunique(), tea_school.distname.nunique(), data_school.distname.nunique())
+print(tea_school.campus.nunique(), data_school.campus.nunique())
+
+data_school = gen_vars(data_school)
+data_school = gen_vars_scores(data_school)
 
 #data['doi_year'] = np.where((data.doi_year == 2019), np.nan, data.doi_year) # set aside 2019 districts for now
 
-data.to_csv(os.path.join(start.data_path, 'clean', 'master_data_school.csv'),
+data_school.to_csv(os.path.join(start.data_path, 'clean', 'master_data_school.csv'),
     sep=",")
 
+###
 # GDID
-#data = data[data.always_eligible == True]
-#data = data[data.distischarter == "N"]
-cols = [c for c in data.columns if c.lower()[:3] != 'reg']
-data = data[cols]
-data['doi_year'] = np.where((data.doi_year == 2015), np.nan, data.doi_year) #drop first implementer (one district)
+###
+data_gdid = data_school[data_school.doi == True]
+cols = [c for c in data_gdid.columns if c.lower()[:3] != 'reg']
+data_gdid = data_gdid[cols]
+data_gdid['doi_year'] = np.where((data_gdid.doi_year == 2015), np.nan, data_gdid.doi_year) #drop first implementer (one district)
 #data['doi_year'] = np.where((data.doi_year == 2019), np.nan, data.doi_year) # set aside 2019 districts for now
-data['treatpost'] = np.where(((data.year > data.doi_year) &(data.doi == True)), True, False)
-data.to_csv(os.path.join(start.data_path, 'clean', 'gdid.csv'), sep=",")
+data_gdid['treatpost'] = np.where(((data_gdid.year > data_gdid.doi_year) &(data_gdid.doi == True)), True, False)
+data_gdid.to_csv(os.path.join(start.data_path, 'clean', 'gdid.csv'), sep=",")
 
 ###
 # Subject-Grade-Level
 ###
-subjects = (list(data.filter(regex = ("_avescore"))))
+subjects = (list(data_gdid.filter(regex = ("_avescore"))))
 variables = ['campus', 'year'] + subjects
-reshape = data[variables]
+reshape = data_gdid[variables]
 reshape = pd.melt(reshape, id_vars = ['campus', 'year'])
 reshape = reshape.rename(columns = {'variable': 'test', 'value': 'score'})
 reshape = reshape.dropna(axis = 0)
@@ -294,6 +196,6 @@ reshape['score_std'] = (reshape.score - reshape.test_mean)/reshape.test_std
 reshape = reshape[['campus', 'year', 'test', 'score', 'score_std']]
 
 
-subject_grade = reshape.merge(data, left_on = ['campus', 'year'], right_on = ['campus', 'year'])
+subject_grade = reshape.merge(data_gdid, left_on = ['campus', 'year'], right_on = ['campus', 'year'])
 
 subject_grade.to_csv(os.path.join(start.data_path, 'clean', 'gdid_subject.csv'), sep=",")
