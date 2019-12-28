@@ -166,8 +166,22 @@ data_gdid = data_school[data_school.doi == True]
 cols = [c for c in data_gdid.columns if c.lower()[:3] != 'reg']
 data_gdid = data_gdid[cols]
 data_gdid['doi_year'] = np.where((data_gdid.doi_year == 2015), np.nan, data_gdid.doi_year) #drop first implementer (one district)
-#data['doi_year'] = np.where((data.doi_year == 2019), np.nan, data.doi_year) # set aside 2019 districts for now
+
+## Specification variables
 data_gdid['treatpost'] = np.where(((data_gdid.year > data_gdid.doi_year) &(data_gdid.doi == True)), True, False)
+data_gdid['yearpost'] = np.where(data_gdid.year > data_gdid.doi_year, data_gdid.year - data_gdid.doi_year - 1, 0) # phase-in effect
+data_gdid['yearpre'] = np.where(data_gdid.year <= data_gdid.doi_year, data_gdid.year - data_gdid.doi_year, 0) # pre-trend effect
+# Non-parametric fixed effects for years pre and post - pre# and post#
+data_gdid['pre5'] = np.where(data_gdid.yearpre <= -5, 1, 0)
+data_gdid['pre4'] = np.where(data_gdid.yearpre == -4, 1, 0)
+data_gdid['pre3'] = np.where(data_gdid.yearpre == -3, 1, 0)
+data_gdid['pre2'] = np.where(data_gdid.yearpre == -2, 1, 0)
+data_gdid['pre1'] = np.where(data_gdid.yearpre == -1, 1, 0)
+data_gdid['pre0'] = np.where(data_gdid.yearpre == 0, 1, 0)
+data_gdid['post1'] = np.where((data_gdid.yearpost == 0) & (data_gdid.treatpost == 1), 1, 0)
+data_gdid['post2'] = np.where(data_gdid.yearpost == 1, 1, 0)
+data_gdid['post3'] = np.where(data_gdid.yearpost == 2, 1, 0)
+
 data_gdid.to_csv(os.path.join(start.data_path, 'clean', 'gdid.csv'), sep=",")
 
 ###
@@ -197,5 +211,9 @@ reshape = reshape[['campus', 'year', 'test', 'score', 'score_std']]
 
 
 subject_grade = reshape.merge(data_gdid, left_on = ['campus', 'year'], right_on = ['campus', 'year'])
+subject_grade = subject_grade[(subject_grade.test != 'eng2_avescore') & (subject_grade.test != 'us_avescore') & (subject_grade.test != 's_8th_avescore')]
+
+subject_grade['test_by_year'] = subject_grade['test'] + subject_grade['year'].map(str) # subject-year fixed effects
+
 
 subject_grade.to_csv(os.path.join(start.data_path, 'clean', 'gdid_subject.csv'), sep=",")
