@@ -479,7 +479,7 @@ def clean_ddem(year):
         'DPST00FC': 'teachers_new_num',
         'DPSTEXPA': 'teachers_exp_ave',
         'DPSTTENA': 'teachers_tenure_ave',
-        'DPSTURNR': 'teachers_turnover_ratio',
+        'DPSTURNR': 'teachers_turnover_ratio_d',
         'DPSTNOFC': 'teachers_nodegree_num',
         'DPSTBAFC': 'teachers_badegree_num',
         'DPSTMSFC': 'teachers_msdegree_num',
