@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+import datetime
 
 pd.options.display.max_columns = 200
 from merge_and_clean.library import start
@@ -121,6 +122,31 @@ teachers = clean_for_merge.import_teachers()
 
 
 ###
+#   Define doi_year
+###
+# Treated if plan is implemented before March of year (first possible testing date)
+def next_march(date):
+    print(date)
+    if date.month == 3:
+        year = date.year
+    while date.month != 3:
+        date = date + datetime.timedelta(days = + 32)
+        year = date.year
+    print(year)
+
+def next_month(date: datetime.datetime, month: int, day: int) -> int:
+    """Get the year of the next month matching passed argument."""
+    
+    if date.month < month or (date.month == month and date.day < day):
+        return date.year
+    return date.year + 1
+# doi_year is year of treated test
+laws['doi_year'] = laws['doi_date'].apply(pd.to_datetime).apply(lambda x: next_month(x, month=3, day=29))
+
+
+
+
+###
 #   District-level
 ###
 tea_district, laws = clean_for_merge.resolve_merge_errors(tea_district, laws)
@@ -159,17 +185,19 @@ data_school = gen_vars_scores(data_school)
 data_school.to_csv(os.path.join(start.data_path, 'clean', 'master_data_school.csv'),
     sep=",")
 
+
+
 ###
 # GDID
 ###
 data_gdid = data_school[data_school.doi == True]
 cols = [c for c in data_gdid.columns if c.lower()[:3] != 'reg']
 data_gdid = data_gdid[cols]
-data_gdid['doi_year'] = np.where((data_gdid.doi_year == 2015), np.nan, data_gdid.doi_year) #drop first implementer (one district)
+data_gdid['doi_year'] = np.where((data_gdid.doi_year == 2016), np.nan, data_gdid.doi_year) #drop first implementer (three districts)
 
 ## Specification variables
-data_gdid['treatpost'] = np.where(((data_gdid.year > data_gdid.doi_year) &(data_gdid.doi == True)), True, False)
-data_gdid['yearpost'] = np.where(data_gdid.year > data_gdid.doi_year, data_gdid.year - data_gdid.doi_year - 1, 0) # phase-in effect
+data_gdid['treatpost'] = np.where(((data_gdid.year >= data_gdid.doi_year) &(data_gdid.doi == True)), True, False)
+data_gdid['yearpost'] = np.where(data_gdid.year >= data_gdid.doi_year, data_gdid.year - data_gdid.doi_year, 0) # phase-in effect
 data_gdid['yearpre'] = np.where(data_gdid.year <= data_gdid.doi_year, data_gdid.year - data_gdid.doi_year, 0) # pre-trend effect
 # Non-parametric fixed effects for years pre and post - pre# and post#
 data_gdid['pre5'] = np.where(data_gdid.yearpre <= -5, 1, 0)
