@@ -525,7 +525,7 @@ def clean_ddem(year):
         ddem = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, filename), sep=",")
         ddem_tokeep['DPSTURND'] = 'teachers_turnover_denom'
         ddem_tokeep['DPSTURNN'] = 'teachers_turnover_num'
-        ddem_tokeep['DPSTURNR'] = 'teachers_turnover_ratio'
+        ddem_tokeep['DPSTURNR'] = 'teachers_turnover_ratio_d'
     ddem = filter_and_rename_cols(ddem, ddem_tokeep)
     ddem['teachers_num'] = pd.to_numeric(ddem.teachers_num, errors='coerce')
     print("There are ", len(ddem), 'districts in ddem')
