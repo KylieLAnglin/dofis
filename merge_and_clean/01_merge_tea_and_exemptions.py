@@ -12,7 +12,7 @@ def gen_vars(data):
     try:
         num_cols = ['teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num',
             'teachers_num', 'teachers_exp_ave',
-            'teachers_tenure_ave', 'teachers_turnover_ratio', 'stu_teach_ratio']
+            'teachers_tenure_ave', 'teachers_turnover_ratio_d', 'stu_teach_ratio']
         data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
     except:
         num_cols = ['teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num',
@@ -194,21 +194,24 @@ data_gdid = data_school[data_school.doi == True]
 cols = [c for c in data_gdid.columns if c.lower()[:3] != 'reg']
 data_gdid = data_gdid[cols]
 data_gdid['doi_year'] = np.where((data_gdid.doi_year == 2016), np.nan, data_gdid.doi_year) #drop first implementer (three districts)
+data_gdid = data_gdid[pd.notnull(data_gdid.doi_year)]
 
 ## Specification variables
 data_gdid['treatpost'] = np.where(((data_gdid.year >= data_gdid.doi_year) &(data_gdid.doi == True)), True, False)
 data_gdid['yearpost'] = np.where(data_gdid.year >= data_gdid.doi_year, data_gdid.year - data_gdid.doi_year, 0) # phase-in effect
 data_gdid['yearpre'] = np.where(data_gdid.year <= data_gdid.doi_year, data_gdid.year - data_gdid.doi_year, 0) # pre-trend effect
+data_gdid['yearpre'] = np.where(data_gdid.yearpre <= -6, -6, data_gdid.yearpre) # pre-trend effect
+
 # Non-parametric fixed effects for years pre and post - pre# and post#
 data_gdid['pre5'] = np.where(data_gdid.yearpre <= -5, 1, 0)
 data_gdid['pre4'] = np.where(data_gdid.yearpre == -4, 1, 0)
 data_gdid['pre3'] = np.where(data_gdid.yearpre == -3, 1, 0)
 data_gdid['pre2'] = np.where(data_gdid.yearpre == -2, 1, 0)
 data_gdid['pre1'] = np.where(data_gdid.yearpre == -1, 1, 0)
-data_gdid['pre0'] = np.where(data_gdid.yearpre == 0, 1, 0)
 data_gdid['post1'] = np.where((data_gdid.yearpost == 0) & (data_gdid.treatpost == 1), 1, 0)
 data_gdid['post2'] = np.where(data_gdid.yearpost == 1, 1, 0)
 data_gdid['post3'] = np.where(data_gdid.yearpost == 2, 1, 0)
+
 
 data_gdid.to_csv(os.path.join(start.data_path, 'clean', 'gdid.csv'), sep=",")
 
