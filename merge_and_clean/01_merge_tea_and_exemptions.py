@@ -194,6 +194,7 @@ data_gdid = data_school[data_school.doi == True]
 cols = [c for c in data_gdid.columns if c.lower()[:3] != 'reg']
 data_gdid = data_gdid[cols]
 data_gdid['doi_year'] = np.where((data_gdid.doi_year == 2016), np.nan, data_gdid.doi_year) #drop first implementer (three districts)
+data_gdid['doi_year'] = np.where((data_gdid.doi_year == 2020), np.nan, data_gdid.doi_year) #drop last implementers (14 districts) Can add after updating dataset
 data_gdid = data_gdid[pd.notnull(data_gdid.doi_year)]
 
 ## Specification variables
