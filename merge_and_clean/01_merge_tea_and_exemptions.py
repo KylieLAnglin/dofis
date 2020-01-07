@@ -201,7 +201,7 @@ data_gdid = data_gdid[pd.notnull(data_gdid.doi_year)]
 data_gdid['treatpost'] = np.where(((data_gdid.year >= data_gdid.doi_year) &(data_gdid.doi == True)), True, False)
 data_gdid['yearpost'] = np.where(data_gdid.year >= data_gdid.doi_year, data_gdid.year - data_gdid.doi_year, 0) # phase-in effect
 data_gdid['yearpre'] = np.where(data_gdid.year <= data_gdid.doi_year, data_gdid.year - data_gdid.doi_year, 0) # pre-trend effect
-data_gdid['yearpre'] = np.where(data_gdid.yearpre <= -6, -6, data_gdid.yearpre) # pre-trend effect
+data_gdid['yearpre'] = np.where(data_gdid.yearpre <= -5, -5, data_gdid.yearpre) # pre-trend effect
 
 # Non-parametric fixed effects for years pre and post - pre# and post#
 data_gdid['pre5'] = np.where(data_gdid.yearpre <= -5, 1, 0)
