@@ -247,5 +247,12 @@ subject_grade = subject_grade[(subject_grade.test != 'eng2_avescore') & (subject
 
 subject_grade['test_by_year'] = subject_grade['test'] + subject_grade['year'].map(str) # subject-year fixed effects
 
+math_tests = ['m_3rd_avescore', 'm_4th_avescore', 'm_5th_avescore',
+              'm_6th_avescore', 'm_7th_avescore', 'm_8th_avescore', 'alg_avescore']
+reading_tests = ['r_3rd_avescore', 'r_4th_avescore', 'r_5th_avescore',
+              'r_6th_avescore', 'r_7th_avescore', 'r_8th_avescore', 'eng1_avescore']
+
+subject_grade['math'] = np.where(np.isin(subject_grade.test, math_tests), 1, 0)
+subject_grade['reading'] = np.where(np.isin(subject_grade.test, reading_tests), 1, 0)
 
 subject_grade.to_csv(os.path.join(start.data_path, 'clean', 'gdid_subject.csv'), sep=",")
