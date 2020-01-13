@@ -2,7 +2,10 @@ import pandas as pd
 import numpy as np
 import unicodedata
 import os
-from merge_and_clean.library import start
+try:
+    from merge_and_clean.library import start
+except:
+    from library import start
 
 
 def resolve_unicode_problems(df, col_name):
