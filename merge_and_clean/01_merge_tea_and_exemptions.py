@@ -4,9 +4,13 @@ import numpy as np
 import datetime
 
 pd.options.display.max_columns = 200
-from merge_and_clean.library import start
-from merge_and_clean.library import clean_for_merge
-
+try:
+    from merge_and_clean.library import start
+    from merge_and_clean.library import clean_for_merge
+except:
+    from library import start
+    from library import clean_for_merge
+    
 def gen_vars(data):
     # # Convert strings to numeric
     try:
