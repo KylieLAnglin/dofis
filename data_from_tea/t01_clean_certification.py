@@ -2,8 +2,14 @@ import pandas as pd
 import os
 import fnmatch
 import numpy as np
-from data_from_tea.library import start
-from data_from_tea.library import clean_tea
+import datetime
+try:
+    from data_from_tea.library import start
+    from data_from_tea.library import clean_tea
+except:
+    from library import start
+    from library import clean_tea  
+pd.set_option('display.max_columns', None)
 
 ###
 # Certification
@@ -56,19 +62,11 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     certification['cert_grade_low'] = pd.to_numeric(certification.cert_grade_low, errors = 'coerce')
     certification['cert_grade_high'] = pd.to_numeric(certification.cert_grade_high, errors = 'coerce')
 
+
     #Expiration
     certification['expiration'] = certification['expiration'].str[0:9]
     certification['expiration']= pd.to_datetime(certification['expiration'], errors = 'coerce') 
-    certification.sample(5)
-    # Fix grades
-    certification['cert_grades'] = certification['cert_grades'].replace({'Grades ':''}, regex = True)
-    grades = {'12-Aug': '8-12', '12-Jul': '7-12',
-            '12-Jun': '6-12', '6-Jan': '1-6',
-            '8-Apr': '4-8', '8-Jan': '1-8', 'EC-12': '0-12',
-            'EC-4': '0-4', 'EC-6': '0-6', 'PK-12': '0-12',
-            'PK-3': '0-3', 'PK-6': '0-6', 'PK-KG': '0-1'}
-    certification['cert_grades'] = certification['cert_grades'].replace(grades)
-    certification['cert_grade_low'],certification['cert_grade_high'] = certification['cert_grades'].str.split('-').str
+    
 
     certification = certification[certification.role == 'Teacher']
     timestamps = {'yr1213': '2012-07-01', 'yr1314': '2013-07-01', 'yr1415': '2014-07-01', 'yr1516': '2015-07-01',
@@ -116,21 +114,44 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     certification['cert_area_elem'] = np.where((certification['cert_area'] == "biling") & 
                                         ((certification['cert_level'] == "Elementary") | 
                                         (certification['cert_level'] == "All Level")), True, certification.cert_area_elem)
-    certification['cert_area_elem'] = np.where((certification['cert_area'] == "spend") & 
+    certification['cert_area_elem'] = np.where((certification['cert_area'] == "sped") & 
                                         ((certification['cert_level'] == "Elementary") | 
                                         (certification['cert_level'] == "All Level")),
                                         True, certification.cert_area_elem)
+    # ELA 
+    certification['cert_area_ela'] = np.where(certification['cert_area'] == 'ela', True, False)
+
+    # SPED
+    certification['cert_area_sped'] = np.where(certification['cert_area'] == 'sped', True, False)
+
+    # PE
+    certification['cert_area_pe'] = np.where(certification['cert_area'] == 'pe', True, False)
+
+    # SS
+    certification['cert_area_pe'] = np.where(certification['cert_area'] == 'ss', True, False)
+
     # Math
-    certification['cert_area_high_math'] = np.where(certification['cert_area'] == "math",
-                                           True, False)
+    certification['cert_area_math'] = np.where(certification['cert_area'] == 'math', True, False)
     certification['cert_area_high_math'] = np.where(certification.cert_grade_high > 8,
-                                           certification.cert_area_high_math, False)
+                                           certification.cert_area_math, False)
 
     # Science
-    certification['cert_area_high_science'] = np.where(certification['cert_area'] == "science",
-                                           True, False)
+    certification['cert_area_science'] = np.where(certification['cert_area'] == "science", True, False)
     certification['cert_area_high_science'] = np.where(certification.cert_grade_high > 8,
-                                           certification.cert_area_high_math, False)
+                                           certification.cert_area_science, False)
+
+     # Voc
+    certification['cert_area_voc'] = np.where(certification['cert_area'] == 'voc', True, False)
+
+    # Fine arts
+    certification['cert_area_art'] = np.where(certification['cert_area'] == 'art', True, False)
+
+    # Foreign Language
+    certification['cert_area_for'] = np.where(certification['cert_area'] == 'for', True, False)
+
+
+    # CS
+    certification['cert_area_cs'] = np.where(certification['cert_area'] == 'cs', True, False)
     
     certification = certification[certification.district != 'San Antonio']  # three teachers don't link to district number
 
@@ -153,6 +174,7 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     df['cert_subject_idx'] = 'cert_subject_' + df.idx.astype(str)
     df['cert_grade_low_idx'] = 'cert_grade_low_' + df.idx.astype(str)
     df['cert_grade_high_idx'] = 'cert_grade_high_' + df.idx.astype(str)
+
 
     areas = df.pivot(index='teacher_id',columns='cert_area_idx', values='cert_area')
     subjects = df.pivot(index='teacher_id',columns='cert_subject_idx', values='cert_subject')
