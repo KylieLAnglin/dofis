@@ -158,6 +158,23 @@ print(laws.distname.nunique(), tea_district.distname.nunique(), data_district.di
 data_district = gen_vars(data_district)
 data_district = gen_vars_scores(data_district)
 
+## Specification variables
+data_district['treatpost'] = np.where(((data_district.year >= data_district.doi_year) &(data_district.doi == True)), True, False)
+data_district['yearpost'] = np.where(data_district.year >= data_district.doi_year, data_district.year - data_district.doi_year, 0) # phase-in effect
+data_district['yearpre'] = np.where(data_district.year <= data_district.doi_year, data_district.year - data_district.doi_year, 0) # pre-trend effect
+data_district['yearpre'] = np.where(data_district.yearpre <= -5, -5, data_district.yearpre) # pre-trend effect
+
+# Non-parametric fixed effects for years pre and post - pre# and post#
+data_district['pre5'] = np.where(data_district.yearpre <= -5, 1, 0)
+data_district['pre4'] = np.where(data_district.yearpre == -4, 1, 0)
+data_district['pre3'] = np.where(data_district.yearpre == -3, 1, 0)
+data_district['pre2'] = np.where(data_district.yearpre == -2, 1, 0)
+data_district['pre1'] = np.where(data_district.yearpre == -1, 1, 0)
+data_district['post1'] = np.where((data_district.yearpost == 0) & (data_district.treatpost == 1), 1, 0)
+data_district['post2'] = np.where(data_district.yearpost == 1, 1, 0)
+data_district['post3'] = np.where(data_district.yearpost == 2, 1, 0)
+
+
 #data_district['doi_year'] = np.where((data_district.doi_year == 2019), np.nan, data_district.doi_year) # set aside 2019 districts for now
 data_district.to_csv(os.path.join(start.data_path, 'clean', 'master_data_district.csv'),
     sep=",")
@@ -185,10 +202,37 @@ data_school = gen_vars_scores(data_school)
 data_school.to_csv(os.path.join(start.data_path, 'clean', 'master_data_school.csv'),
     sep=",")
 
+###
+# GDID - School
+###
+data_gdid = data_school[data_school.doi == True]
+cols = [c for c in data_gdid.columns if c.lower()[:3] != 'reg']
+data_gdid = data_gdid[cols]
+data_gdid['doi_year'] = np.where((data_gdid.doi_year == 2016), np.nan, data_gdid.doi_year) #drop first implementer (three districts)
+data_gdid['doi_year'] = np.where((data_gdid.doi_year == 2020), np.nan, data_gdid.doi_year) #drop last implementers (14 districts) Can add after updating dataset
+data_gdid = data_gdid[pd.notnull(data_gdid.doi_year)]
 
+## Specification variables
+data_gdid['treatpost'] = np.where(((data_gdid.year >= data_gdid.doi_year) &(data_gdid.doi == True)), True, False)
+data_gdid['yearpost'] = np.where(data_gdid.year >= data_gdid.doi_year, data_gdid.year - data_gdid.doi_year, 0) # phase-in effect
+data_gdid['yearpre'] = np.where(data_gdid.year <= data_gdid.doi_year, data_gdid.year - data_gdid.doi_year, 0) # pre-trend effect
+data_gdid['yearpre'] = np.where(data_gdid.yearpre <= -5, -5, data_gdid.yearpre) # pre-trend effect
+
+# Non-parametric fixed effects for years pre and post - pre# and post#
+data_gdid['pre5'] = np.where(data_gdid.yearpre <= -5, 1, 0)
+data_gdid['pre4'] = np.where(data_gdid.yearpre == -4, 1, 0)
+data_gdid['pre3'] = np.where(data_gdid.yearpre == -3, 1, 0)
+data_gdid['pre2'] = np.where(data_gdid.yearpre == -2, 1, 0)
+data_gdid['pre1'] = np.where(data_gdid.yearpre == -1, 1, 0)
+data_gdid['post1'] = np.where((data_gdid.yearpost == 0) & (data_gdid.treatpost == 1), 1, 0)
+data_gdid['post2'] = np.where(data_gdid.yearpost == 1, 1, 0)
+data_gdid['post3'] = np.where(data_gdid.yearpost == 2, 1, 0)
+
+
+data_gdid.to_csv(os.path.join(start.data_path, 'clean', 'gdid.csv'), sep=",")
 
 ###
-# GDID
+# GDID - School
 ###
 data_gdid = data_school[data_school.doi == True]
 cols = [c for c in data_gdid.columns if c.lower()[:3] != 'reg']
