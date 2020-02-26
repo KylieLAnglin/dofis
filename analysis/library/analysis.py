@@ -1,6 +1,7 @@
 import pandas as pd
 import statsmodels.formula.api as smf
 from scipy.stats import ttest_ind
+import numpy as np
 
 def coef_with_stars(coef, pvalue):
     if pvalue >.05:
@@ -59,8 +60,9 @@ def many_y_one_x(data, y_list, y_labels, x):
     for y in y_list:
         formula = y + ' ~ + 1 + ' + x
         print(formula)
-        result = smf.ols(formula=formula, data=data).fit()
-        print(result.summary())
+        df = data.replace(np.inf, np.nan).replace(-np.inf, np.nan).dropna(subset = [y])
+        result = smf.ols(formula=formula, data=df).fit()
+        result.summary()
         cons.append(result.params["Intercept"].round(2))
         if str(data[x].dtypes) == 'bool':
             var = x + '[T.True]'
