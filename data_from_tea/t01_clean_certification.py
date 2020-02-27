@@ -19,7 +19,7 @@ year = 'yr1718'
 
 for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
 
-    # Concatenate Files for Year
+    # Concatenate Certification Files for Year
     folder = 'certification_' + year + '/'
     teacher_datapath = os.path.join(start.data_path, 'tea', 'teachers', folder)
 
@@ -70,7 +70,6 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     timestamps = {'yr1213': '2012-07-01', 'yr1314': '2013-07-01', 'yr1415': '2014-07-01', 'yr1516': '2015-07-01',
                 'yr1617': '2016-07-01', 'yr1718': '2017-07-01', 'yr1819': '2017-0701'}
     certification['expired'] = np.where(certification.expiration < pd.Timestamp(timestamps[year]), True, False)
-    certification = certification[certification.expired == False]
 
     # Create certification variable
     cert_types = {'Emergency Non-Certified': False, 'Emergency Certified': True,
@@ -147,13 +146,13 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     ###
     # Create any certification dataframe
     ###
-    cert_yesno = certification[['teacher_id', 'certified', 'cert_area_elem', 
+    cert_yesno = certification[['teacher_id', 'certified', 'vocational', 'cert_area_elem', 
     'cert_area_ela', 'cert_area_sped', 'cert_area_pe', 'cert_area_ss', 
     'cert_area_math', 'cert_area_science', 'cert_area_voc', 'cert_area_for',
-     'cert_area_cs']]
+        'cert_area_cs']]
     teacher_yesno = cert_yesno.groupby(['teacher_id']).max()
 
-    
+
     # Save to CSV
     filename = 'certs_' + year + '.csv'
-    certification.to_csv(os.path.join(start.data_path, 'tea', 'teachers', filename))
+    teacher_yesno.to_csv(os.path.join(start.data_path, 'tea', 'teachers', filename))
