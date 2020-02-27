@@ -47,9 +47,29 @@ for year in years:
     teachers_campus['year'] = years[year]
 
     # Save
-    teachers_campus.to_csv(os.path.join(start.data_path, 'tea', 'teachers', 'campus_teachers_' + year + '.csv'))
+    teachers_campus.to_csv(os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_' + year + '.csv'))
 
     # District-Level
     teachers_district = teachers_campus.groupby(['district']).sum()
-    teachers_district.to_csv(os.path.join(start.data_path, 'tea', 'teachers',  'district_teachers_' + year + '.csv'))
+    teachers_district.to_csv(os.path.join(start.data_path, 'tea', 'teachers',  'teachers_d_' + year + '.csv'))
 
+teachers_c_yr1213 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1213.csv')))
+teachers_c_yr1314 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1314.csv')))
+teachers_c_yr1415 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1415.csv')))
+teachers_c_yr1516 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1516.csv')))
+teachers_c_yr1617 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1617.csv')))
+teachers_c_yr1718 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1718.csv')))
+
+teachers_c_long = pd.concat([teachers_c_yr1213, teachers_c_yr1314, teachers_c_yr1415, teachers_c_yr1516, teachers_c_yr1617, teachers_c_yr1718], sort = True)
+teachers_c_long.to_csv((os.path.join(start.data_path, 'tea', 'teachers_c_long.csv')))
+
+teachers_d_yr1213 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_d_yr1213.csv')))
+teachers_d_yr1314 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_d_yr1314.csv')))
+teachers_d_yr1415 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_d_yr1415.csv')))
+teachers_d_yr1516 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_d_yr1516.csv')))
+teachers_d_yr1617 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_d_yr1617.csv')))
+teachers_d_yr1718 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_d_yr1718.csv')))
+
+teachers_d_long = pd.concat([teachers_d_yr1213, teachers_d_yr1314, teachers_d_yr1415, teachers_d_yr1516, teachers_d_yr1617, teachers_d_yr1718], sort = True)
+
+teachers_d_long.to_csv((os.path.join(start.data_path, 'tea', 'teachers_d_long.csv')))
