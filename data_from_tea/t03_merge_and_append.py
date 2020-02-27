@@ -50,7 +50,7 @@ for year in years:
     teachers_campus.to_csv(os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_' + year + '.csv'))
 
     # District-Level
-    teachers_district = teachers_campus.groupby(['district']).sum()
+    teachers_district = teachers_campus.groupby(['district', 'year']).sum()
     teachers_district.to_csv(os.path.join(start.data_path, 'tea', 'teachers',  'teachers_d_' + year + '.csv'))
 
 teachers_c_yr1213 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1213.csv')))
