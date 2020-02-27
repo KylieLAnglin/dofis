@@ -118,7 +118,11 @@ laws = clean_for_merge.import_laws()
 geo = clean_for_merge.import_geo()
 tea_district = clean_for_merge.import_tea_district()
 tea_school = clean_for_merge.import_tea_school()
-teachers = clean_for_merge.import_teachers()
+teachers_district =  pd.read_csv(os.path.join(start.data_path, 'tea', 'teachers_d_long.csv'),
+            sep=",", low_memory = False)
+teachers_schools = pd.read_csv(os.path.join(start.data_path, 'tea', 'teachers_c_long.csv'),
+            sep=",", low_memory = False)
+
 
 
 ###
@@ -144,8 +148,6 @@ def next_month(date: datetime.datetime, month: int, day: int) -> int:
 laws['doi_year'] = laws['doi_date'].apply(pd.to_datetime).apply(lambda x: next_month(x, month=3, day=29))
 
 
-
-
 ###
 #   District-level
 ###
@@ -154,6 +156,7 @@ data_district = tea_district.merge(laws, left_on='distname', right_on='distname'
 data_district.loc[(data_district['_merge'] == 'both'), 'doi'] = True
 data_district.loc[(data_district['_merge'] == 'left_only'), 'doi'] = False
 data_district = data_district.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
+data_district = data_district.merge(teachers_district, left_on = ['district', 'year'], right_on = ['district', 'year'], how = 'left', indicator = False)
 print(laws.distname.nunique(), tea_district.distname.nunique(), data_district.distname.nunique())
 data_district = gen_vars(data_district)
 data_district = gen_vars_scores(data_district)
@@ -185,12 +188,13 @@ data_district.to_csv(os.path.join(start.data_path, 'clean', 'master_data_distric
 ###
 
 tea_school, laws = clean_for_merge.resolve_merge_errors(tea_school, laws)
-# add back teachers
+# TODO: add back teachers
 data_school = tea_school.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
 data_school.loc[(data_school['_merge'] == 'both'), 'doi'] = True
 data_school.loc[(data_school['_merge'] == 'left_only'), 'doi'] = False
-data_school = data_school.merge(teachers, left_on = ['campus', 'year'], right_on = ['campus', 'year'], how = 'left')
 data_school = data_school.merge(geo, left_on='cntyname', right_on='county', how='left', indicator=False)
+data_school = data_school.merge(teachers_schools, left_on = ['district', 'campus', 'year'], right_on = ['district', 'campus', 'year'], how = 'left', indicator = '_teacher_merge')
+
 print(laws.distname.nunique(), tea_school.distname.nunique(), data_school.distname.nunique())
 print(tea_school.campus.nunique(), data_school.campus.nunique())
 

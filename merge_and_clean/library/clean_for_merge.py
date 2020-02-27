@@ -164,11 +164,6 @@ def import_geo():
 
     return geo
 
-def import_teachers():
-    teachers = pd.read_csv(os.path.join(start.data_path, 'tea', 'certification_rates_long.csv'),
-            sep=",", low_memory = False)
-    
-    return teachers
 
 def resolve_merge_errors(tea, laws):
     # problems with district name from scraping
