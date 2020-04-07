@@ -1,7 +1,11 @@
 import pandas as pd
 import os
-from data_from_tea.library.start import data_path
-from data_from_tea.library import clean_tea
+try:
+    from data_from_tea.library.start import data_path
+    from data_from_tea.library import clean_tea
+except: 
+    from library.start import data_path
+    from library import clean_tea
 
 years = ['yr1112', 'yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718', 'yr1819']
 for year in years:
@@ -22,7 +26,7 @@ for year in years:
     ddem = clean_tea.clean_ddem(year = year) #number of students in district
     ddem_tokeep = {'district': 'district', 
                     'students_num': 'students_num_d',
-                    'teachers_turnover_ratio': 'teachers_turnover_ratio_d'}
+                    'teachers_turnover_ratio_d': 'teachers_turnover_ratio_d'}
     ddem = clean_tea.filter_and_rename_cols(ddem, ddem_tokeep)
 
 

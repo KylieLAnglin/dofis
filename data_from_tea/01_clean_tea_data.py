@@ -1,8 +1,8 @@
 import pandas as pd
 import os
-from data_from_tea.library.start import data_path
-from data_from_tea.library import clean_tea
 
+from library import clean_tea
+from library.start import data_path
 
 years =  ['yr1112', 'yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']
 subjects = ['3rd', '4th', '5th', '6th', '7th', '8th',

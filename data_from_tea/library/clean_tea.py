@@ -55,8 +55,6 @@ def clean_cref(year):
     :param year: year of data set to read
     :return: data frame with variables from dref to keep
     """
-    if year == 'yr1819':
-        year = 'yr1718'
 
     if year == 'yr1112':
         filename = 'cref.dat'
@@ -220,8 +218,6 @@ def clean_cdem(year):
     https://rptsvr1.tea.texas.gov/perfreport/aeis/2012/index.html :param year: year of demographic data to read
     :return: data frame with variables from cdem to keep
     """
-    if year == 'yr1819':
-        year = 'yr1718'
 
     if year == 'yr1213':
         filename = 'CAMPPROF.txt'
@@ -410,9 +406,6 @@ def clean_dref(year):
 
     """
 
-    if year == 'yr1819':
-        year = 'yr1718'
-
     if year == 'yr1112':
         filename = 'DREF.csv'
     elif year == 'yr1213':
@@ -447,7 +440,8 @@ def clean_dref(year):
     if year == 'yr1718':
         failed_districts = [54901, 64903, 71903, 108902, 176902]
         dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
-
+    if year == 'yr1819':
+        dref['rating_financial'] = np.nan
     if year not in ['yr1112', 'yr1213', 'yr1314']:
         dref['eligible'] = np.where((dref['rating_academic'].isin(['M', 'A'])
                                         & (dref['rating_financial'] == 'Pass')
@@ -464,8 +458,6 @@ def clean_ddem(year):
     :param year: year of demographic data to read
     :return: data frame with variables from ddem to keep
     """
-    if year == 'yr1819':
-        year = 'yr1718'
 
     if year == 'yr1213':
         filename = 'DISTPROF.txt'
@@ -584,11 +576,18 @@ def clean_scores(year, subject):
         dscores_tokeep = {"DISTRICT": "district",
                             "a1_all_rs": "alg_avescore",
                             "a1_all_d": "alg_numtakers"}
+        if year == 'yr1819':
+            dscores_tokeep = {'district': 'district',
+                            "a1_all_rs": "alg_avescore",
+                            "a1_all_d": "alg_numtakers"}
     if subject == 'Biology':
         dscores_tokeep = {"DISTRICT": "district",
                             "bi_all_rs": "bio_avescore",
                             "bi_all_d": "bio_numtakers"}
-
+        if year == 'yr1819':
+            dscores_tokeep = {"district": "district",
+                            "bi_all_rs": "bio_avescore",
+                            "bi_all_d": "bio_numtakers"}
     if subject == 'EnglishI':
         if year == 'yr1112' or year == 'yr1213':
             dscores['e1_all_rs'] = dscores['r1_all_rs'] + dscores2['w1_all_rs']
@@ -596,6 +595,10 @@ def clean_scores(year, subject):
         dscores_tokeep = {"DISTRICT": "district",
                             "e1_all_rs": "eng1_avescore",
                             "e1_all_d": "eng1_numtakers"}
+        if year =='yr1819':
+            dscores_tokeep = {"district": "district",
+                            "e1_all_rs": "eng1_avescore",
+                            "e1_all_d": "eng1_numtakers"}           
 
     if subject == 'EnglishII':
         if year == 'yr1112' or year == 'yr1213':
@@ -605,10 +608,20 @@ def clean_scores(year, subject):
         dscores_tokeep = {"DISTRICT": "district",
                             "e2_all_rs": "eng2_avescore",
                             "e2_all_d": "eng2_numtakers"}
+        if year =='yr1819':
+            dscores_tokeep = {"district": "district",
+                            "e2_all_rs": "eng2_avescore",
+                            "e2_all_d": "eng2_numtakers"}           
+
     if subject == 'USHistory':
         dscores_tokeep = {"DISTRICT": "district",
                             "us_all_rs": "us_avescore",
                             "us_all_d": "us_numtakers"}
+        if year =='yr1819':
+            dscores_tokeep = {"district": "district",
+                            "us_all_rs": "us_avescore",
+                            "us_all_d": "us_numtakers"} 
+        
 
     dscores = filter_and_rename_cols(dscores, dscores_tokeep)
     if year == 'yr1112':
