@@ -1,16 +1,26 @@
-*.ipynb_checkpoints
-*.vscode
-*.idea/
-venv
+# Mac OS System Files
+.DS_Store
+
+# Python Files
 *__pycache__
 *.pytest_cache
-*.dominokeep
 *.pyc
-.pyc
-.idea/*
+
+# VS Code Files
+.vscode/
+*.code-workspace
+
+# PyCharm Files
+.idea/
+
+# Jupyter Notebook Files
+.ipynb_checkpoints/
+
+# Domino Files
+*.dominokeep
+
+# Other
+venv
 *.xml
 *.iml
-.idea/code.iml
-.idea/modules.xml
-src.code-workspace
-.gitignore
+
