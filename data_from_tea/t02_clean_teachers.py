@@ -8,10 +8,10 @@ from library import clean_tea
 year = 'yr1718'
 
 for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
-
-    # Concatenate Teacher Files for Year
+    # Read files
     folder = 'certification_' + year + '/'
     teacher_datapath = os.path.join(start.data_path, 'tea', 'teachers', folder)
+
     pattern = "TEACHER_MASTER*.TXT"
     teacher_files = []
     for entry in os.listdir(teacher_datapath):
@@ -23,9 +23,7 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     teachers = pd.concat(df_list)
     teachers = teachers[teachers['ROLE NAME'] == 'TEACHER']
 
-    # Rename and Keep
-    vars_to_keep = {'SCRAMBLED UNIQUE ID': 'teacher_id',
-                    'DISTRICT NUMBER': 'district', 'DISTRICT NAME': 'distname',
+    vars_to_keep = {'SCRAMBLED UNIQUE ID': 'teacher_id', 'DISTRICT NUMBER': 'district', 'DISTRICT NAME': 'distname',
                     'CAMPUS NUMBER': 'campus', 'CAMPUS NAME': 'campname',
                     'CAMPUS GRADE GROUP NAME': 'camp_grade_group',
                     'FTE': 'fte', 'ROLE FULL TIME EQUIVALENT': 'fte_teacher',
@@ -102,5 +100,5 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
         'course_ela', 'course_elem', 'course_math', 'course_science', 'course_cte']]
 
     teachers.sort_values(by=['teacher_id'], axis=0)
-    filename = 'teachers_' + year + '.csv'
+    filename = 'teacher_course_' + year + '.csv'
     teachers.to_csv(os.path.join(start.data_path, 'tea', 'teachers', filename))
