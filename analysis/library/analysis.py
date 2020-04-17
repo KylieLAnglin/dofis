@@ -1,7 +1,6 @@
 import pandas as pd
 import statsmodels.formula.api as smf
 from scipy.stats import ttest_ind
-import numpy as np
 
 def coef_with_stars(coef, pvalue):
     if pvalue >.05:
@@ -14,25 +13,6 @@ def coef_with_stars(coef, pvalue):
         coef = coef + '*'
     return(coef)
 test = coef_with_stars(.1, .005)
-
-def bonferroni(n_tests, coef, pvalue):
-    coef = round(coef, 2)
-    if pvalue >(.05/n_tests):
-        coef = str(coef)
-    if pvalue <= (.05/n_tests):
-        coef = str(coef) + '*'
-    if pvalue <= (.01/n_tests):
-        coef = coef + '*'
-    if pvalue <= (.001/n_tests):
-        coef = coef + '*'
-    return(coef)
-
-def format_se(se):
-    if se < .005:
-        se = '(0.00)'
-    else:
-        se = '(' + str(round(se, 2)) + ')'
-    return se
 
 def create_count_proportion_df(data, list_of_regs, dict_of_reg_labels):
     n_col = []
@@ -80,8 +60,8 @@ def many_y_one_x(data, y_list, y_labels, x):
         formula = y + ' ~ + 1 + ' + x
         print(formula)
         df = data.replace(np.inf, np.nan).replace(-np.inf, np.nan).dropna(subset = [y])
-        result = smf.ols(formula=formula, data=df).fit()
-        result.summary()
+        result = smf.ols(formula=formula, data=data).fit()
+        print(result.summary())
         cons.append(result.params["Intercept"].round(2))
         if str(data[x].dtypes) == 'bool':
             var = x + '[T.True]'
