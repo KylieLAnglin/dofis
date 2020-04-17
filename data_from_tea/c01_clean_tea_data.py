@@ -59,5 +59,5 @@ for year in years:
     descriptives['year'] = year_map[year]
     yr_file = 'desc_c_' + year + '.csv'
 
-    descriptives.to_csv((os.path.join(data_path, 'tea', yr_file)))
+    descriptives.to_csv((os.path.join(start.data_path, 'tea', yr_file)))
 
