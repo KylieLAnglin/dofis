@@ -1,75 +1,107 @@
+
+
 import pandas as pd
 import os
-try:
-    from data_from_tea.library import start
-except: 
-    from library import start
+from data_from_tea.library import start
 
 years = ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']
-year = 'yr1718'
-
 for year in years:
 
-    # Certification Data
-    file = 'certs_' + year + '.csv'
+    file = 'teacher_cert_' + year + '.csv'
     certification = pd.read_csv(os.path.join(start.data_path, 'tea', 'teachers', file))
     certification = certification.rename(columns = {'district': 'district_cert'})
 
-    # Teacher Data
-    file = 'teachers_' + year + '.csv'
+    file = 'teacher_course_' + year + '.csv'
     assignments = pd.read_csv(os.path.join(start.data_path, 'tea', 'teachers', file))
+    
     teachers = assignments.merge(certification, on = ['teacher_id'], how = 'left', indicator = '_merge')
+
+    teachers['certification'] = teachers.certification.astype(bool)
+    teachers['certification_report'] = teachers.certification_report.astype(bool)
+    teachers['vocational'] = teachers.vocational.astype(bool)
+    teachers['cert_elem'] = teachers.cert_elem.astype(bool)
+    teachers['cert_middle'] = teachers.cert_middle.astype(bool)
+    teachers['cert_high'] = teachers.cert_high.astype(bool)
+    teachers['cert_area_elem'] = teachers.cert_area_elem.astype(bool)
+    teachers['cert_area_ela'] = teachers.cert_area_ela.astype(bool)
+    teachers['cert_area_math'] = teachers.cert_area_math.astype(bool)
+    teachers['cert_area_sci'] = teachers.cert_area_sci.astype(bool)
+    teachers['cert_area_voc'] = teachers.cert_area_voc.astype(bool)
+    teachers['cert_secondary_ela'] = teachers.cert_secondary_ela.astype(bool)
+    teachers['cert_secondary_sci'] = teachers.cert_secondary_sci.astype(bool)
+    teachers['cert_secondary_math'] = teachers.cert_secondary_math.astype(bool)
+
     teachers._merge.value_counts()
 
-    # Teacher and Certification Counts and Percent
-    num_teachers = teachers[['district', 'campus', 'teacher_id']].groupby(['district', 'campus']).nunique()
-    num_teachers = num_teachers[['teacher_id']].rename(columns = {'teacher_id': 'teachers_num_total'})
+    # Any Certification
+    any_cert = teachers[['campus', 'certification']]
+    any_cert = any_cert.groupby(['campus']).mean()
 
-    num_certified = teachers[(teachers.certified == True)][['district', 'campus', 'teacher_id']].groupby(['district', 'campus']).nunique()
-    num_certified = num_certified[['teacher_id']].rename(columns = {'teacher_id': 'teachers_num_certified'})
-    teachers_campus = num_teachers.merge(num_certified, left_index = True, right_index = True, how = 'left')
+    # Report Certification
+    cert_report = teachers[['campus', 'certification_report']]
+    cert_report = cert_report.groupby(['campus']).mean()
 
-    num_vocational = teachers[((teachers.vocational == True) & (teachers.certified == False))][['district', 'campus', 'teacher_id']].groupby(['district', 'campus']).nunique()
-    num_vocational = num_vocational[['teacher_id']].rename(columns = {'teacher_id': 'teachers_num_vocational'})
-    teachers_campus = teachers_campus.merge(num_vocational, left_index = True, right_index = True, how = 'left')
+    # Elementary
+    elem = teachers[(teachers.course_ela == True)]
+    elem = elem[(elem.campus_elem == True)]
+    elem = elem.groupby(['campus']).mean()
+    elem = elem[['cert_area_elem']]
 
-    num_uncertified = teachers[(teachers.certified == False)][['district', 'campus', 'teacher_id']].groupby(['district', 'campus']).nunique()
-    num_uncertified = num_uncertified[['teacher_id']].rename(columns = {'teacher_id': 'teachers_num_uncertified'})
-    teachers_campus = teachers_campus.merge(num_uncertified, left_index = True, right_index = True, how = 'left')
 
-    num_nocertdata = teachers[(teachers._merge == 'left_only')][['district', 'campus', 'teacher_id']].groupby(['district', 'campus']).nunique()
-    num_nocertdata = num_nocertdata[['teacher_id']].rename(columns = {'teacher_id': 'teachers_num_nocertdata'})
-    teachers_campus = teachers_campus.merge(num_nocertdata, left_index = True, right_index = True, how = 'left')
-    teachers_campus = teachers_campus.fillna(0)
+    # Secondary Math
+    high_math = teachers[(teachers.course_math == True)]
+    high_math = high_math[(high_math.campus_high == True)]
+    high_math = high_math.groupby(['campus']).mean()
+    high_math = high_math[['cert_secondary_math']]
+
+    # Secondary Science
+    high_sci = teachers[(teachers.course_science == True)]
+    high_sci = high_sci[(high_sci.campus_high == True)]
+    high_sci = high_sci.groupby(['campus']).mean()
+    high_sci = high_sci[['cert_secondary_sci']]
+
+    # Secondary ELA
+    high_ela = teachers[(teachers.course_ela == True)]
+    high_ela = high_ela[(high_ela.campus_high == True)]
+    high_ela = high_ela.groupby(['campus']).mean()
+    high_ela = high_ela[['cert_secondary_ela']]
+
+    # CTE
+    cte = teachers[(teachers.course_cte == True)]
+    cte = cte[(cte.campus_elem == True)]
+    cte = cte.groupby(['campus']).mean()
+    cte = cte[['vocational', 'cert_area_voc']]
+
+    # Merge to one dataset
+    all_certs = any_cert.merge(elem, on = 'campus', how = 'left')
+    all_certs = all_certs.merge(high_math, on = 'campus', how = 'left')
+    all_certs = all_certs.merge(high_ela, on = 'campus', how = 'left')
+    all_certs = all_certs.merge(high_sci, on = 'campus', how = 'left')
+    all_certs = all_certs.merge(cte, on = 'campus', how = 'left', indicator = '_merge')
+    all_certs = all_certs.merge(cert_report, on = 'campus', how = 'left')
 
     # Add year variable
     years = {'yr1112': 2012,'yr1213': 2013, 'yr1314': 2014, 'yr1415': 2015, 'yr1516': 2016, 'yr1617':2017, 'yr1718': 2018, 'yr1819': 2019}
-    teachers_campus['year'] = years[year]
+    all_certs['year'] = years[year]
 
     # Save
-    teachers_campus.to_csv(os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_' + year + '.csv'))
+    file = 'teachers_' + year + '.csv'
+    all_certs.to_csv(os.path.join(start.data_path, 'tea', 'teachers', file))
 
-    # District-Level
-    teachers_district = teachers_campus.groupby(['district', 'year']).sum()
-    teachers_district.to_csv(os.path.join(start.data_path, 'tea', 'teachers',  'teachers_d_' + year + '.csv'))
 
-teachers_c_yr1213 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1213.csv')))
-teachers_c_yr1314 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1314.csv')))
-teachers_c_yr1415 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1415.csv')))
-teachers_c_yr1516 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1516.csv')))
-teachers_c_yr1617 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1617.csv')))
-teachers_c_yr1718 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_c_yr1718.csv')))
+###
+#   Append
+###
 
-teachers_c_long = pd.concat([teachers_c_yr1213, teachers_c_yr1314, teachers_c_yr1415, teachers_c_yr1516, teachers_c_yr1617, teachers_c_yr1718], sort = True)
-teachers_c_long.to_csv((os.path.join(start.data_path, 'tea', 'teachers_c_long.csv')))
+certification_rates_yr1213 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_yr1213.csv')))
+certification_rates_yr1314 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_yr1314.csv')))
+certification_rates_yr1415 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_yr1415.csv')))
+certification_rates_yr1516 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_yr1516.csv')))
+certification_rates_yr1617 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_yr1617.csv')))
+certification_rates_yr1718 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_yr1718.csv')))
 
-teachers_d_yr1213 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_d_yr1213.csv')))
-teachers_d_yr1314 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_d_yr1314.csv')))
-teachers_d_yr1415 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_d_yr1415.csv')))
-teachers_d_yr1516 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_d_yr1516.csv')))
-teachers_d_yr1617 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_d_yr1617.csv')))
-teachers_d_yr1718 = pd.read_csv((os.path.join(start.data_path, 'tea', 'teachers', 'teachers_d_yr1718.csv')))
+certification_rates_long = pd.concat([certification_rates_yr1213, certification_rates_yr1314, certification_rates_yr1415, certification_rates_yr1516, certification_rates_yr1617, certification_rates_yr1718], sort=True)
 
-teachers_d_long = pd.concat([teachers_d_yr1213, teachers_d_yr1314, teachers_d_yr1415, teachers_d_yr1516, teachers_d_yr1617, teachers_d_yr1718], sort = True)
+certification_rates_long.to_csv((os.path.join(start.data_path, 'tea', 'certification_rates_long.csv')))
 
-teachers_d_long.to_csv((os.path.join(start.data_path, 'tea', 'teachers_d_long.csv')))
+
