@@ -55,8 +55,6 @@ def clean_cref(year):
     :param year: year of data set to read
     :return: data frame with variables from dref to keep
     """
-    if year == 'yr1819':
-        year = 'yr1718'
 
     if year == 'yr1112':
         filename = 'cref.dat'
@@ -220,8 +218,6 @@ def clean_cdem(year):
     https://rptsvr1.tea.texas.gov/perfreport/aeis/2012/index.html :param year: year of demographic data to read
     :return: data frame with variables from cdem to keep
     """
-    if year == 'yr1819':
-        year = 'yr1718'
 
     if year == 'yr1213':
         filename = 'CAMPPROF.txt'
@@ -247,6 +243,10 @@ def clean_cdem(year):
         'CPETASIC': 'students_asian_num',
         'CPETPCIC': 'students_paci_num',
         'CPETTWOC': 'students_tworaces_num',
+        'CPETLEPC': 'students_ell_num',
+        'CPETSPEC': 'students_sped_num',
+        'CPETVOCC': 'students_cte_num',
+
         # Class Sizes
         'CPCTGKGA': 'class_size_k',
         'CPCTG01A': 'class_size_1',
@@ -289,6 +289,54 @@ def clean_cdem(year):
 
     print("There are ", len(cdem), 'schools in cdem', year)
     return cdem
+
+def clean_cgrad(year):
+    # https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/cothr.html
+    # current year's values are store in next year's dataset
+    fallyr = year[2:4]
+    springyr = year[4:6]
+    nextyr = int(springyr) + 1
+
+    data_year = 'yr' + springyr + str(nextyr)
+
+    if data_year < 'yr1718':
+        filename = 'CAMPPERF.dat'
+    
+    cgrad = pd.read_csv(os.path.join(data_path, 'tea', 'cgrad', data_year, filename), sep=",")
+
+    cgrad_to_keep = {'CAMPUS': 'campus',
+                    'CA0912DR' + springyr + 'R': 'perf_hsdrop',
+                    'CA0AT' + springyr + 'D': 'perf_studays',
+                    'CA0AT' + springyr + 'N': 'perf_stuattend'}
+
+
+    cgrad = filter_and_rename_cols(cgrad, cgrad_to_keep)
+    #cgrad['campus'] = cgrad['campus'].apply(pd.to_numeric, errors='coerce')
+    return cgrad
+
+def clean_dgrad(year):
+    # current year's values are store in next year's dataset
+    # https://rptsvr1.tea.texas.gov/perfreport/tapr/2013/download/dothr.html
+    fallyr = year[2:4]
+    springyr = year[4:6]
+    nextyr = int(springyr) + 1
+
+    data_year = 'yr' + springyr + str(nextyr)
+
+    if data_year < 'yr1718':
+        filename = 'DISTPERF.dat'
+    
+    dgrad = pd.read_csv(os.path.join(data_path, 'tea', 'dgrad', data_year, filename), sep=",")
+
+    dgrad_to_keep = {'DISTRICT': 'district',
+                    'DA0912DR' + springyr + 'R': 'perf_hsdrop',
+                    'DA0AT' + springyr + 'D': 'perf_studays',
+                    'DA0AT' + springyr + 'N': 'perf_stuattend'}
+
+
+    dgrad = filter_and_rename_cols(dgrad, dgrad_to_keep)
+    #cgrad['campus'] = cgrad['campus'].apply(pd.to_numeric, errors='coerce')
+    return dgrad
 
 def fix_duplicate_distname(df, distname_col = 'DISTNAME', cntyname_col = 'CNTYNAME'):
     dist_dict = [{'distname': 'BIG SANDY ISD', 'cntyname': 'UPSHUR', 'newname': 'BIG SANDY ISD (230901)'},
@@ -358,9 +406,6 @@ def clean_dref(year):
 
     """
 
-    if year == 'yr1819':
-        year = 'yr1718'
-
     if year == 'yr1112':
         filename = 'DREF.csv'
     elif year == 'yr1213':
@@ -395,7 +440,8 @@ def clean_dref(year):
     if year == 'yr1718':
         failed_districts = [54901, 64903, 71903, 108902, 176902]
         dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
-
+    if year == 'yr1819':
+        dref['rating_financial'] = np.nan
     if year not in ['yr1112', 'yr1213', 'yr1314']:
         dref['eligible'] = np.where((dref['rating_academic'].isin(['M', 'A'])
                                         & (dref['rating_financial'] == 'Pass')
@@ -412,8 +458,6 @@ def clean_ddem(year):
     :param year: year of demographic data to read
     :return: data frame with variables from ddem to keep
     """
-    if year == 'yr1819':
-        year = 'yr1718'
 
     if year == 'yr1213':
         filename = 'DISTPROF.txt'
@@ -427,7 +471,7 @@ def clean_ddem(year):
         'DPST00FC': 'teachers_new_num',
         'DPSTEXPA': 'teachers_exp_ave',
         'DPSTTENA': 'teachers_tenure_ave',
-        'DPSTURNR': 'teachers_turnover_ratio',
+        'DPSTURNR': 'teachers_turnover_ratio_d',
         'DPSTNOFC': 'teachers_nodegree_num',
         'DPSTBAFC': 'teachers_badegree_num',
         'DPSTMSFC': 'teachers_msdegree_num',
@@ -443,6 +487,12 @@ def clean_ddem(year):
         'DPETASIC': 'students_asian_num',
         'DPETPCIC': 'students_paci_num',
         'DPETTWOC': 'students_tworaces_num',
+        'DPETLEPC': 'students_ell_num',
+        'DPETSPEC': 'students_sped_num',
+        'DPETVOCC': 'students_cte_num',
+
+
+
         # Class Sizes
         'DPCTGKGA': 'class_size_k',
         'DPCTG01A': 'class_size_1',
@@ -467,7 +517,7 @@ def clean_ddem(year):
         ddem = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, filename), sep=",")
         ddem_tokeep['DPSTURND'] = 'teachers_turnover_denom'
         ddem_tokeep['DPSTURNN'] = 'teachers_turnover_num'
-        ddem_tokeep['DPSTURNR'] = 'teachers_turnover_ratio'
+        ddem_tokeep['DPSTURNR'] = 'teachers_turnover_ratio_d'
     ddem = filter_and_rename_cols(ddem, ddem_tokeep)
     ddem['teachers_num'] = pd.to_numeric(ddem.teachers_num, errors='coerce')
     print("There are ", len(ddem), 'districts in ddem')
@@ -526,11 +576,18 @@ def clean_scores(year, subject):
         dscores_tokeep = {"DISTRICT": "district",
                             "a1_all_rs": "alg_avescore",
                             "a1_all_d": "alg_numtakers"}
+        if year == 'yr1819':
+            dscores_tokeep = {'district': 'district',
+                            "a1_all_rs": "alg_avescore",
+                            "a1_all_d": "alg_numtakers"}
     if subject == 'Biology':
         dscores_tokeep = {"DISTRICT": "district",
                             "bi_all_rs": "bio_avescore",
                             "bi_all_d": "bio_numtakers"}
-
+        if year == 'yr1819':
+            dscores_tokeep = {"district": "district",
+                            "bi_all_rs": "bio_avescore",
+                            "bi_all_d": "bio_numtakers"}
     if subject == 'EnglishI':
         if year == 'yr1112' or year == 'yr1213':
             dscores['e1_all_rs'] = dscores['r1_all_rs'] + dscores2['w1_all_rs']
@@ -538,6 +595,10 @@ def clean_scores(year, subject):
         dscores_tokeep = {"DISTRICT": "district",
                             "e1_all_rs": "eng1_avescore",
                             "e1_all_d": "eng1_numtakers"}
+        if year =='yr1819':
+            dscores_tokeep = {"district": "district",
+                            "e1_all_rs": "eng1_avescore",
+                            "e1_all_d": "eng1_numtakers"}           
 
     if subject == 'EnglishII':
         if year == 'yr1112' or year == 'yr1213':
@@ -547,10 +608,20 @@ def clean_scores(year, subject):
         dscores_tokeep = {"DISTRICT": "district",
                             "e2_all_rs": "eng2_avescore",
                             "e2_all_d": "eng2_numtakers"}
+        if year =='yr1819':
+            dscores_tokeep = {"district": "district",
+                            "e2_all_rs": "eng2_avescore",
+                            "e2_all_d": "eng2_numtakers"}           
+
     if subject == 'USHistory':
         dscores_tokeep = {"DISTRICT": "district",
                             "us_all_rs": "us_avescore",
                             "us_all_d": "us_numtakers"}
+        if year =='yr1819':
+            dscores_tokeep = {"district": "district",
+                            "us_all_rs": "us_avescore",
+                            "us_all_d": "us_numtakers"} 
+        
 
     dscores = filter_and_rename_cols(dscores, dscores_tokeep)
     if year == 'yr1112':

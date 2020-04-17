@@ -1,6 +1,7 @@
 import pandas as pd
 import os
-from data_from_tea.library.start import data_path
+try: from data_from_tea.library.start import data_path
+except: from library.start import data_path
 
 years = ['yr1112', 'yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718', 'yr1819']
 

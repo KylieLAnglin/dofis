@@ -4,7 +4,7 @@ import os
 from library import clean_tea
 from library.start import data_path
 
-years =  ['yr1112', 'yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']
+years =  ['yr1112', 'yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718', 'yr1819']
 subjects = ['3rd', '4th', '5th', '6th', '7th', '8th',
                 'Algebra', 'Biology', 'EnglishI', 'EnglishII', 'USHistory']
 for year in years:
