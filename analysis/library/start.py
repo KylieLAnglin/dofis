@@ -1,5 +1,5 @@
-desktop = 0
-laptop = 1
+desktop = 1
+laptop = 0
 
 if desktop == 1:
     data_path = '/Users/kylie/dofis/data/'

@@ -14,19 +14,17 @@ def gen_vars(data):
     data = gen_district_vars(data)
     data = gen_teacher_vars(data)
     data = gen_score_vars(data)
+    data = gen_gdid_vars(data)
+    data = gen_event_vars(data)
     return data
 
 def destring_vars(data):
-    try:
-        num_cols = ['teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num',
-            'teachers_num', 'teachers_exp_ave',
-            'teachers_tenure_ave', 'teachers_turnover_ratio_d', 'stu_teach_ratio']
-        data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
-    except:
-        num_cols = ['teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num',
-        'teachers_num', 'teachers_exp_ave',
-        'teachers_tenure_ave', 'teachers_turnover_ratio_d', 'stu_teach_ratio']
-        data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
+    data['distischarter'] = np.where(data.distischarter == "Y", "1", "0")
+
+    num_cols = ['teachers_nodegree_num', 'teachers_badegree_num', 'teachers_msdegree_num', 'teachers_phddegree_num',
+    'teachers_num', 'teachers_exp_ave',
+    'teachers_tenure_ave', 'teachers_turnover_ratio_d', 'stu_teach_ratio', 'distischarter']
+    data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
 
     return data
 

@@ -1,5 +1,7 @@
 import pandas as pd
 import unicodedata
+import os
+from library import start
 
 def resolve_unicode_problems(df, col_name):
     """ Resolve Unicode problems from web scraping (e.g., 'Bronte\xa0ISD')"""
@@ -101,3 +103,117 @@ def standardize_scores(data, std_year):
     return data
 
 
+def merge_district_and_exemptions(tea_df, laws_df, geo_df):
+    tea, laws = resolve_merge_errors(tea_df, laws_df)
+    data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
+    data.loc[(data['_merge'] == 'both'), 'doi'] = True
+    data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
+    data = data.merge(geo_df, left_on='cntyname', right_on='county', how='left', indicator=False)
+    print(laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique())
+
+    return data
+
+def merge_school_and_exemptions(tea_df, laws_df, teacher_df, geo_df):
+    tea, laws = resolve_merge_errors(tea_df, laws_df)
+    data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
+    data.loc[(data['_merge'] == 'both'), 'doi'] = True
+    data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
+    data = data.merge(teacher_df, left_on = ['campus', 'year'], right_on = ['campus', 'year'], how = 'left')
+    data = data.merge(geo_df, left_on='cntyname', right_on='county', how='left', indicator=False)
+    print(laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique())
+    print(tea.campus.nunique(), data.campus.nunique())
+
+    return data
+
+def import_tea_district():
+    tea = pd.read_csv(os.path.join(start.data_path, 'tea', "desc_long.csv"),
+            sep=",", low_memory = False)
+    variables = ['year', 'district', 'distname', 'distischarter',
+            'rating_academic', 'rating_financial',
+            'type', 'type_description', 'cntyname']
+    variables = variables + (list(tea.filter(regex = ("students"))))
+    variables = variables + (list(tea.filter(regex = ("teachers"))))
+    variables = variables + (list(tea.filter(regex = ("avescore"))))
+    variables = variables + (list(tea.filter(regex = ("numtakers"))))
+    variables = variables + (list(tea.filter(regex = ("days"))))
+    variables = variables + (list(tea.filter(regex = ("class_size"))))
+    variables = variables + ['stu_teach_ratio']
+    tea = tea[variables]
+
+    return tea
+
+def import_tea_school():
+    tea = pd.read_csv(os.path.join(start.data_path, 'tea', 'desc_c_long.csv'),
+            sep=",", low_memory = False)
+    variables = ['year', 'campus', 'campname', 'campischarter', 'district', 'distname', 'distischarter',
+            'rating_academic', 'rating_financial','rating_academic_c',
+            'type', 'type_description', 'cntyname']
+    variables = variables + (list(tea.filter(regex = ("students"))))
+    variables = variables + (list(tea.filter(regex = ("teachers"))))
+    variables = variables + (list(tea.filter(regex = ("avescore"))))
+    variables = variables + (list(tea.filter(regex = ("numtakers"))))
+    variables = variables + (list(tea.filter(regex = ("days"))))
+    variables = variables + (list(tea.filter(regex = ("class_size"))))
+    variables = variables + ['stu_teach_ratio']
+    tea = tea[variables]
+
+    return tea
+# Import TEA data and select columns
+
+def import_laws():
+    # Import DOI data and select columns
+    laws = pd.read_csv(os.path.join(start.data_path, 'plans', 'doi_final.csv'),
+                sep=",")
+    cols = [c for c in laws.columns if c.lower()[:7] != 'Unnamed']
+    laws = laws[cols]
+    laws = laws.rename({'district': 'distname'}, axis=1)
+    return laws
+
+def import_geo():
+    # Geographic data
+    geo = pd.read_csv(os.path.join(start.data_path, 'geo', '2016_txpopest_county.csv'),
+                sep=",")
+    geo = geo[['county', 'july1_2016_pop_est']]
+    geo = geo.rename({'july1_2016_pop_est': 'cnty_pop'}, axis='columns')
+    geo['cnty_pop'] = geo['cnty_pop'] / 1000
+    geo['cnty_pop'] = geo['cnty_pop'].round(0)
+    geo = uppercase_column(geo, 'county')
+
+    return geo
+
+def import_teachers():
+    teachers = pd.read_csv(os.path.join(start.data_path, 'tea', 'certification_rates_long.csv'),
+            sep=",", low_memory = False)
+    
+    return teachers
+
+def resolve_merge_errors(tea, laws):
+    # problems with district name from scraping
+    tea = tea.pipe(resolve_unicode_problems, 'distname')
+    laws = laws.pipe(resolve_unicode_problems, 'distname')
+
+    # scraped names in title case, but tea all caps. change scraped distname to caps
+    laws = laws.pipe(uppercase_column, 'distname')
+
+    # Add district numbers to some plans
+    laws = add_distnum_to_plan(laws, 'distname')
+
+    # sometimes districts named CISD othertimes ISD. Make all ISD
+    tea = replace_column_values(tea, 'distname', 'CISD', 'ISD')
+    laws = replace_column_values(laws, 'distname', 'CISD', 'ISD')
+
+    # fix district names that don't match
+    tea = sync_district_names(tea, 'distname')
+    laws = sync_district_names(laws, 'distname')
+
+    mismatch = get_not_in(laws, 'distname', tea, 'distname')
+    mismatch_list = strip_distnum_parens(list(mismatch.distname))
+
+    df = distnum_in_paren(
+    tea[[elem in mismatch_list for elem in tea.distname]])
+
+    tea.loc[(tea['distname'].isin(mismatch_list)), 'distname'] = (
+    tea.loc[(tea['distname'].isin(mismatch_list))]
+    .pipe(distnum_in_paren)['distname']
+    )
+    return tea, laws
