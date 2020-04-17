@@ -441,7 +441,8 @@ def clean_dref(year):
         failed_districts = [54901, 64903, 71903, 108902, 176902]
         dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
     if year == 'yr1819':
-        dref['rating_financial'] = np.nan
+        failed_districts = [18902, 100908, 101906, 128901, 133905, 228905, 057906, 124901, 152902, 71903]
+        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
     if year not in ['yr1112', 'yr1213', 'yr1314']:
         dref['eligible'] = np.where((dref['rating_academic'].isin(['M', 'A'])
                                         & (dref['rating_financial'] == 'Pass')
