@@ -19,7 +19,7 @@ table_path = start.table_path
 data = pd.read_csv(os.path.join(start.data_path, 'clean',
                                 'master_data_district.csv'),
                    sep=",", low_memory=False)
-data = data.loc[(data['year'] == 2015) & (data['distischarter'] == 0)]
+data = data.loc[(data['year'] == 2016) & (data['distischarter'] == 0)]
 print("Number of DOIS: ", len(data.loc[data.doi]))
 
 # %% District Characteristics

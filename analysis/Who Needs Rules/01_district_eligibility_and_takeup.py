@@ -32,7 +32,6 @@ data15 = data15[data15.distischarter == 0]
 data18 = data18[data18.distischarter == 0]
 data19 = data19[data19.distischarter == 0]
 
-
 # %%
 print('Number of traditional public school districts in Texas in 2019:')
 print(data19.district.nunique())
@@ -66,8 +65,9 @@ my_dpi = 96
 plt.figure(figsize=(480/my_dpi, 480/my_dpi), dpi=my_dpi)
 
 # Pre
-plt.plot(['2015', '2016', '2017', '2018', '2019'],
+plt.plot(district_counts.index,
          district_counts.doi_year.cumsum(), color='black')
+plt.xticks([int(i) for i in list(district_counts.index)])
 
 plt.ylabel('Number of Districts')
 plt.title('Texas District of Innovation Adoption Over Time')
