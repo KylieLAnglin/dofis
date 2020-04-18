@@ -8,10 +8,12 @@ import os
 from openpyxl import load_workbook
 from library import start
 
-data = pd.read_csv((os.path.join(start.data_path, 'clean/' , 'master_data_district.csv')))
+data = pd.read_csv(
+    (os.path.join(start.data_path, 'clean/', 'master_data_district.csv')))
 data = data[data.year == 2019]
 
-def df_to_excel(file, df, df_columns, start_col, start_row, all_ints = True):
+
+def df_to_excel(file, df, df_columns, start_col, start_row, all_ints=True):
     wb = load_workbook(file)
     ws = wb.active
 
@@ -29,8 +31,8 @@ def df_to_excel(file, df, df_columns, start_col, start_row, all_ints = True):
 
 stubnames = sorted(
     set([match[0] for match in data.columns.str.findall(
-    r'reg.*').values if match != [] ])
-    )
+        r'reg.*').values if match != []])
+)
 
 proportion = []
 number = []
@@ -42,20 +44,13 @@ regs = pd.DataFrame(
     {'law': stubnames,
      'proportion': proportion,
      'number': number
-    }).sort_values(by = ['proportion'], ascending = False)
+     }).sort_values(by=['proportion'], ascending=False)
 regs.head(10)
 
 
 # %%
 
 
-df_to_excel(file = os.path.join(start.table_path, 'table1_exemptions.xlsx'),
-            df = regs, df_columns = ['law', 'proportion'],
-            start_col = 4, start_row = 3)
-
-
-# In[ ]:
-
-
-
-
+df_to_excel(file=os.path.join(start.table_path, 'table1_exemptions.xlsx'),
+            df=regs, df_columns=['law', 'proportion'],
+            start_col=4, start_row=3)
