@@ -6,6 +6,8 @@
 import pandas as pd
 import os
 from openpyxl import load_workbook
+
+sys.path.append("../")
 from library import start
 
 data = pd.read_csv(

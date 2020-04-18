@@ -11,9 +11,9 @@ import statsmodels.formula.api as smf
 from openpyxl import load_workbook
 from patsy import dmatrices
 
+sys.path.append("../")
 from library import start
 
-sys.path.append("../")
 
 plt.style.use('grayscale')
 
@@ -84,3 +84,6 @@ plt.figtext(.5, -.01, txt, wrap=True, horizontalalignment='center', fontsize=8)
 
 plt.savefig(start.table_path + 'takeup.png', dpi=600, bbox_inches="tight")
 plt.show()
+
+
+# %%
