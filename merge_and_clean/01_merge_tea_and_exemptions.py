@@ -58,7 +58,7 @@ gdid_school = data_school[cols]
 # drop first implementer (one district)
 gdid_school['doi_year'] = np.where(
     (gdid_school.doi_year == 2015), np.nan, gdid_school.doi_year)
-# drop last implementers (three districts)
+# drop last implementers (14 districts)
 gdid_school['doi_year'] = np.where(
     (gdid_school.doi_year == 2020), np.nan, gdid_school.doi_year)
 gdid_school = gdid_school[gdid_school.distischarter == 0]
