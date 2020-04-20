@@ -28,6 +28,11 @@ def destring_vars(data):
                 'teachers_num', 'teachers_exp_ave',
                 'teachers_tenure_ave', 'teachers_turnover_ratio_d',
                 'stu_teach_ratio', 'distischarter']
+    for col in list(data.columns):
+        if col.startswith('class_size'):
+            num_cols.append(col)
+
+ #if col.startswith('class_size')
     data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
 
     return data
@@ -52,7 +57,7 @@ def gen_student_vars(data):
 def gen_district_vars(data):
     data['charter'] = np.where((data['distischarter'] == "Y"), True, False)
 
-    tps_districts = data[(data['doi'] is False) & (~data['charter'])]
+    tps_districts = ((data['doi'] is False) & (~data['charter']))
 
     data['district_status'] = np.where(tps_districts, 'tps',
                                        np.where((data['doi']), 'doi',
