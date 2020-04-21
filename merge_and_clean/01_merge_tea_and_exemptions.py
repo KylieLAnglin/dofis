@@ -53,9 +53,9 @@ data_school.to_csv(os.path.join(start.data_path, 'clean',
 # %% GDID
 cols = [c for c in data_school.columns if c.lower()[:3] != 'reg']
 gdid_school = data_school[cols]
-# drop first implementer (one district)
+# drop first implementers (3 districts)
 gdid_school['doi_year'] = np.where(
-    (gdid_school.doi_year == 2015), np.nan, gdid_school.doi_year)
+    (gdid_school.doi_year == 2016), np.nan, gdid_school.doi_year)
 # drop last implementers (14 districts)
 gdid_school['doi_year'] = np.where(
     (gdid_school.doi_year == 2020), np.nan, gdid_school.doi_year)
@@ -94,5 +94,3 @@ subject_grade = reshape.merge(
 subject_grade.to_csv(os.path.join(
     start.data_path, 'clean', 'gdid_subject.csv'), sep=",")
 
-
-# %%
