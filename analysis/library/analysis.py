@@ -16,7 +16,12 @@ def coef_with_stars(coef, pvalue):
     return(coef)
 
 
-test = coef_with_stars(.1, .005)
+def format_se(se):
+    if se < .005:
+        se = '(0.00)'
+    else:
+        se = '(' + str(round(se, 2)) + ')'
+    return se
 
 
 def create_count_proportion_df(data, list_of_regs, dict_of_reg_labels):
