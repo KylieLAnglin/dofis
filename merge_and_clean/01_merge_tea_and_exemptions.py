@@ -65,7 +65,11 @@ gdid_school.to_csv(os.path.join(
 
 # %% Subject-Grade-Level
 
-subjects = (list(gdid_school.filter(regex=("_avescore"))))
+subjects = []
+for col in list(gdid_school.columns):
+    if col.endswith('_avescore') & ~col.startswith('pre'):
+        print(col)
+        subjects.append(col)
 variables = ['campus', 'year'] + subjects
 reshape = gdid_school[variables]
 reshape = pd.melt(reshape, id_vars=['campus', 'year'])
@@ -94,3 +98,6 @@ subject_grade = reshape.merge(
 subject_grade.to_csv(os.path.join(
     start.data_path, 'clean', 'gdid_subject.csv'), sep=",")
 
+
+
+# %%
