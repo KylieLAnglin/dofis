@@ -91,13 +91,22 @@ reshape = reshape.merge(means_sds, left_on='test', right_on='test')
 reshape['score_std'] = (reshape.score - reshape.test_mean)/reshape.test_std
 reshape = reshape[['campus', 'year', 'test', 'score', 'score_std']]
 
-
 subject_grade = reshape.merge(
     gdid_school, left_on=['campus', 'year'], right_on=['campus', 'year'])
 
+math_tests = ['m_3rd_avescore', 'm_4th_avescore', 'm_5th_avescore',
+              'm_6th_avescore', 'm_7th_avescore', 'm_8th_avescore',
+              'alg_avescore']
+
+reading_tests = ['r_3rd_avescore', 'r_4th_avescore', 'r_5th_avescore',
+                 'r_6th_avescore', 'r_7th_avescore', 'r_8th_avescore',
+                 'eng1_avescore']
+
+subject_grade['math'] = np.where(subject_grade.test.isin(math_tests),
+                                 1, 0)
+
+subject_grade['reading'] = np.where(subject_grade.test.isin(reading_tests),
+                                    1, 0)
 subject_grade.to_csv(os.path.join(
     start.data_path, 'clean', 'gdid_subject.csv'), sep=",")
 
-
-
-# %%
