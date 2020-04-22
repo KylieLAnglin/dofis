@@ -107,6 +107,7 @@ subject_grade['math'] = np.where(subject_grade.test.isin(math_tests),
 
 subject_grade['reading'] = np.where(subject_grade.test.isin(reading_tests),
                                     1, 0)
+
+subject_grade['test_by_year'] = subject_grade['test'] + subject_grade['year'].astype(str)
 subject_grade.to_csv(os.path.join(
     start.data_path, 'clean', 'gdid_subject.csv'), sep=",")
-
