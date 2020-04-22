@@ -20,54 +20,121 @@ sys.path.append("../")
 from library import start, analysis
 
 
-# In[5]:
+get_ipython().run_line_magic('matplotlib', 'inline')
 
-data = pd.read_csv(os.path.join(start.data_path, 'clean', 'gdid_subject.csv'),
+
+# In[4]:
+
+
+data_path = '/Users/kylieleblancKylie/domino/dofis/data/'
+table_path = '/Users/kylieleblancKylie/domino/dofis/results/Who Needs Rules/'
+data = pd.read_csv(os.path.join(data_path, 'clean', 'gdid.csv'),
                   sep=",", low_memory= False)
-print(data[(data.doi)].district.nunique())
-data = data[(data.doi)]
-print(data.doi_year.value_counts())
+#load(data)
+print(data[data.doi == True].district.nunique())
+data = data[data.doi == True]
+
 data.sample()
 
-# In[12]:
+data['doi_year'] = np.where((data.doi_year == 2015), np.nan, data.doi_year) #drop first implementer (one district)
 
-# convert year to datetime
+
+# In[5]:
+
+
+data.doi_year.value_counts()
+
+
+# # Create trend and nonparametric variables
+
+# ## Phase-in Effect - yearpost
+
+# In[6]:
+
+
+data['yearpost'] = np.where(data.year > data.doi_year, data.year - data.doi_year, 0)
+data[['year', 'doi_year', 'yearpost']].sample(10)
+
+
+# In[7]:
+
+
+data.yearpost.value_counts()
+
+
+# ## Pretrends - yearpre
+
+# In[8]:
+
+
+data['yearpre'] = np.where(data.year <= data.doi_year, data.year - data.doi_year, 0)
+data[['year', 'doi_year', 'yearpost', 'yearpre']].sample(5)
+
+
+# In[9]:
+
+
+data.yearpre.value_counts()
+
+
+# ## Non-parametric fixed effects for years pre and post - pre# and post#
+
+# In[10]:
+
+
+data['pre5'] = np.where(data.yearpre <= -5, 1, 0)
+data['pre4'] = np.where(data.yearpre == -4, 1, 0)
+data['pre3'] = np.where(data.yearpre == -3, 1, 0)
+data['pre2'] = np.where(data.yearpre == -2, 1, 0)
+data['pre1'] = np.where(data.yearpre == -1, 1, 0)
+data['pre0'] = np.where(data.yearpre == 0, 1, 0)
+data['post1'] = np.where(data.yearpost == 1, 1, 0)
+data['post2'] = np.where(data.yearpost == 2, 1, 0)
+data['post3'] = np.where(data.yearpost == 3, 1, 0)
+
+
+# In[11]:
+
+
+#convert year to datetime
 df = data.reset_index()
 df['year'] = pd.to_datetime(df['year'], format='%Y')
-# add column year to index
+#add column year to index
 df = data.set_index(['year', 'campus'])
-# swap indexes
+#swap indexes
 df.index = df.index.swaplevel(0,1)
 df[['district', 'doi_year','treatpost']].sample(5)
 
 
+# # Specifications
 
-# %% Get table ready
-file_name = start.table_path + 'table3_gdid_and_event_math.xlsx'
-wb = load_workbook(file_name)
+# In[12]:
+
+
+# Get table ready
+file = table_path + 'tableX_gdid_and_event.xlsx'
+wb = load_workbook(file)
 ws = wb.active
 
 
-# %% Simple GDID
+# ## Simple GDID
 
-test = pd.Categorical(df.test)
-mod = PanelOLS.from_formula(
-    "avescores ~ + 1 + treatpost + C(test) + TimeEffects + EntityEffects'", df)
+# In[13]:
+
+
+mod = PanelOLS.from_formula('avescores ~ + 1 + treatpost + students_hisp + students_num + TimeEffects + EntityEffects', df)
 res = mod.fit(cov_type='clustered', cluster_entity=True)
 print(res)
-ws.cell(row=3, column=2).value = analysis.coef_with_stars(
-    res.params['treatpost[T.True]'],
-    res.pvalues['treatpost[T.True]'])
-ws.cell(row=4, column=2).value = analysis.format_se(
-    res.std_errors['treatpost[T.True]'])
+ws.cell(row= 3, column= 2).value = coef_with_stars(res.params['treatpost[T.True]'], res.pvalues['treatpost[T.True]'])
+ws.cell(row= 4, column= 2).value = format_se(res.std_errors['treatpost[T.True]'])
 
 
 # ## GDID with Trends
 
-# In[15]:
+# In[14]:
 
 
-mod = PanelOLS.from_formula('avescores ~ + 1 + treatpost + yearpost + yearpre + students_hisp + students_num + C(test) + TimeEffects + EntityEffects', df)
+mod = PanelOLS.from_formula('avescores ~ + 1 + treatpost + yearpost + yearpre + students_hisp + students_num + TimeEffects + EntityEffects', df)
 res = mod.fit(cov_type='clustered', cluster_entity=True)
 print(res)
 #intercept = res.params['Intercept']
@@ -83,10 +150,10 @@ ws.cell(row= 11, column= 2).value = format_se(res.std_errors['yearpre'])
 wb.save(file)
 
 
-# In[16]:
+# In[15]:
 
 
-mod = PanelOLS.from_formula('avescores ~ + 1 + pre5 + pre4 + pre3 + pre2 + pre1 + post1 + post2 + post3 + students_hisp + students_num + C(test) + TimeEffects + EntityEffects', df)
+mod = PanelOLS.from_formula('avescores ~ + 1 + pre5 + pre4 + pre3 + pre2 + pre1 + post1 + post2 + post3 + students_hisp + students_num + TimeEffects + EntityEffects', df)
 res = mod.fit(cov_type='clustered', cluster_entity=True)
 print(res)
 nonparametric = []
