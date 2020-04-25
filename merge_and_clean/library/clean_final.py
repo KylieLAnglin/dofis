@@ -169,10 +169,12 @@ def gen_hte_chars_vars(data: pd.DataFrame, level_index: str):
                                         'students_white': 'pre_white',
                                         'students_black': 'pre_black',
                                         'students_sped': 'pre_sped',
+                                        'students_frpl': 'pre_frpl',
                                         'avescores': 'pre_avescore',
                                         'students_num': 'pre_num',
                                         'teachers_exp': 'pre_exp',
                                         'teachers_turnover_ratio_d': 'pre_turnover',
+                                        'teachers_tenure_ave': 'pre_tenure',
                                         'students_teacher_ratio': 'pre_ratio'})
     for var in ['pre_hisp', 'pre_ell', 'pre_white', 'pre_black',
                 'pre_sped', 'pre_num', 'pre_turnover', 'pre_avescore']:
