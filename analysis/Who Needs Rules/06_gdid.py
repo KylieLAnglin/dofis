@@ -97,7 +97,8 @@ def results_table(data, file_name):
         ws.cell(row=row, column=4).value = analysis.coef_with_stars(
             res.params[coef], res.pvalues[coef])
         row = row + 1
-        ws.cell(row=row, column=4).value = analysis.format_se(res.std_errors[coef])
+        ws.cell(row=row, column=4).value = analysis.format_se(
+            res.std_errors[coef])
         row = row + 1
 
     wb.save(file)
