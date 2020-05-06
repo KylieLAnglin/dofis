@@ -35,6 +35,8 @@ data19 = data19[data19.distischarter == 0]
 # %%
 print('Number of traditional public school districts in Texas in 2019:')
 print(data19.district.nunique())
+print('Number of ineligible TPSDs in 2019:')
+print(data19[data19.eligible == 0].district.nunique())
 print('What % of traditional public school district were eligible in 2015?')
 print(data15.eligible.mean())
 print('And in 2017-18?')
@@ -44,7 +46,7 @@ print(data19.eligible.mean())
 
 print('How many tradtional public districts are DOIs as of March 2019?')
 print(data.loc[data.doi].district.nunique())
-print('Only', data18.loc[(~data18.doi) & (data18.eligible)
+print('Only', data19.loc[(~data19.doi) & (data19.eligible)
                          ].district.nunique(), 'districts have opted out.')
 print('What percent of districts are DOIs as of March 2019?')
 print(data.loc[data.doi].district.nunique() /
@@ -57,6 +59,7 @@ print(data.loc[data.doi].district.nunique() /
 district_df = pd.DataFrame(data.groupby(
     ['district']).agg({'doi_year': 'mean'}))
 district_counts = pd.DataFrame(district_df.doi_year.value_counts(sort=False))
+print(district_counts)
 district_counts = district_counts.sort_index()
 print('Cumulative count of DOIs in each year:')
 print(district_counts.doi_year.cumsum())
@@ -85,5 +88,3 @@ plt.figtext(.5, -.01, txt, wrap=True, horizontalalignment='center', fontsize=8)
 plt.savefig(start.table_path + 'takeup.png', dpi=600, bbox_inches="tight")
 plt.show()
 
-
-# %%
