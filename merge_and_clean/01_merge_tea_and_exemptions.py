@@ -31,28 +31,43 @@ def next_month(date: datetime.datetime, month: int, day: int) -> int:
 laws['doi_year'] = laws['doi_date'].apply(pd.to_datetime).apply(
     lambda x: next_month(x, month=3, day=29))
 
-
 # %% School-Level
 data_school = clean_for_merge.merge_school_and_exemptions(
     tea_df=tea_school, laws_df=laws, teacher_df=teachers, geo_df=geo)
 data_school = clean_final.gen_vars(data_school)
 data_school = clean_final.gen_hte_chars_vars(data_school, 'campus')
-data_school['doi'] = np.where(data_school.doi_year == 2020, 
-    False, data_school.doi)
-data_school['doi_year'] = np.where(data_school.doi_year == 2020, 
-    np.nan, data_school.doi_year)
+data_school['doi'] = np.where(data_school.doi_year == 2020,
+                              False, data_school.doi)
+data_school['doi_year'] = np.where(data_school.doi_year == 2020,
+                                   np.nan, data_school.doi_year)
+data_school19 = data_school[data_school.year == 2019]
+data_school19 = data_school19[['campus', 'eligible']]
+data_school19 = data_school19.rename({'eligible': 'eligible19'}, axis=1)
+data_school = data_school.merge(data_school19,
+                                how='left',
+                                left_on=['campus'],
+                                right_on=['campus'],
+                                validate='m:1')
+
 data_school.to_csv(os.path.join(start.data_path, 'clean',
                                 'master_data_school.csv'), sep=",")
 
-# %%
-#   District-level
-
+# %% District-level
 data_district = clean_for_merge.merge_district_and_exemptions(
     tea_df=tea_district, laws_df=laws, geo_df=geo)
+
 data_district = clean_final.gen_vars(data_district)
+data_district = clean_final.gen_district_vars(data_district)
 data_district = clean_final.gen_hte_chars_vars(data_district, 'district')
-data_district.to_csv(os.path.join(start.data_path, 'clean',
-                                  'master_data_district.csv'), sep=",")
+
+data_district19 = data_district[data_district.year == 2019]
+data_district19 = data_district19[['district', 'eligible']]
+data_district19 = data_district19.rename({'eligible': 'eligible19'}, axis=1)
+data_district = data_district.merge(data_district19,
+                                    how='left',
+                                    left_on='district',
+                                    right_on='district',
+                                    validate='m:1')
 
 # generate max and min for district
 district_max = data_school[['district', 'campus', 'year', 'avescores']].groupby(
@@ -70,11 +85,11 @@ data_district = data_district.merge(district_spread,
                                     right_on=['district', 'year'],
                                     how='left')
 
-#drop last implementers
-data_district['doi'] = np.where(data_district.doi_year == 2020, 
-    False, data_district.doi)
-data_district['doi_year'] = np.where(data_district.doi_year == 2020, 
-    np.nan, data_district.doi_year)
+# drop last implementers
+data_district['doi'] = np.where(data_district.doi_year == 2020,
+                                False, data_district.doi)
+data_district['doi_year'] = np.where(data_district.doi_year == 2020,
+                                     np.nan, data_district.doi_year)
 data_district.to_csv(os.path.join(start.data_path, 'clean',
                                   'master_data_district.csv'),
                      sep=",")
@@ -86,8 +101,8 @@ gdid_school = data_school[cols]
 gdid_school['doi_year'] = np.where(
     (gdid_school.doi_year == 2016), np.nan, gdid_school.doi_year)
 # drop last implementers (14 districts)
-gdid_school['doi'] = np.where(gdid_school.doi_year == 2020, 
-    False, gdid_school.doi)
+gdid_school['doi'] = np.where(gdid_school.doi_year == 2020,
+                              False, gdid_school.doi)
 gdid_school['doi_year'] = np.where(
     (gdid_school.doi_year == 2020), np.nan, gdid_school.doi_year)
 gdid_school = gdid_school[gdid_school.distischarter == 0]

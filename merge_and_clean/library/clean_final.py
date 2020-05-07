@@ -78,13 +78,6 @@ def gen_district_vars(data):
     data['eligible'] = np.where((data.distischarter == 'Y') | (
         data.rating_academic == 'F') | (data.rating_financial == 'Fail'), 0, 1)
 
-    data19 = data[data.year == 2019][['district', 'eligible']]
-    data19 = data19.rename({'eligible': 'eligible19'}, axis=1)
-
-    data = data.merge(data19, how='left',
-                      left_on='district', right_on='district')
-
-
     return data
 
 

@@ -20,7 +20,9 @@ data = pd.read_csv(os.path.join(start.data_path, 'clean',
                                 'master_data_district.csv'),
                    sep=",", low_memory=False)
 data = data.loc[(data['year'] == 2016) & (data['distischarter'] == 0)]
+data = data.loc[(data['eligible19'] != 0) | (data['doi'] == True)]
 print("Number of DOIS: ", len(data.loc[data.doi]))
+print("Number of Eligible Non-DOIs", len(data.loc[~data.doi]))
 
 # %% District Characteristics
 
@@ -58,9 +60,9 @@ student
 dfs = [district, teacher, student]
 rows = [4, 13, 22]
 tables.n_to_excel(file=table_path + 'balance_tpsVdoi.xlsx',
-                  col=2, row=4, n=len(data[data.doi == 0]))
+                  col=2, row=3, n=len(data[(data.doi)]))
 tables.n_to_excel(file=table_path + 'balance_tpsVdoi.xlsx',
-                  col=3, row=4, n=len(data[data.doi == 1]))
+                  col=3, row=3, n=len(data[~data.doi]))
 for df, row in zip(dfs, rows):
     tables.var_diff_to_excel(file=table_path + 'balance_tpsVdoi.xlsx',
                              df=df,
@@ -68,3 +70,6 @@ for df, row in zip(dfs, rows):
                              diff_col='Difference',
                              se_col='Std. Error', pvalue_col='P-value',
                              start_col=2, start_row=row)
+
+
+# %%

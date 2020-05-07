@@ -35,8 +35,21 @@ data19 = data19[data19.distischarter == 0]
 # %%
 print('Number of traditional public school districts in Texas in 2019:')
 print(data19.district.nunique())
+
 print('Number of ineligible TPSDs in 2019:')
-print(data19[data19.eligible == 0].district.nunique())
+print(data19[(data19.eligible == 0) & (~data19.doi)].district.nunique())
+
+print('Number of DOIs as of March 2019?')
+print(data.loc[data.doi].district.nunique())
+print(data19.loc[data19.doi].district.nunique())
+
+print('Number of eligible non-DOIs as of March 2019')
+print(data19.loc[(~data19.doi) & (data19.eligible == 1)].district.nunique())
+
+print('Some districts lost eligibility')
+print(data19.loc[(data19.doi) & (data19.eligible19 == 0)].district.nunique())
+
+
 print('What % of traditional public school district were eligible in 2015?')
 print(data15.eligible.mean())
 print('And in 2017-18?')
@@ -44,10 +57,6 @@ print(data18.eligible.mean())
 print('And in 2018-19?')
 print(data19.eligible.mean())
 
-print('How many tradtional public districts are DOIs as of March 2019?')
-print(data.loc[data.doi].district.nunique())
-print('Only', data19.loc[(~data19.doi) & (data19.eligible)
-                         ].district.nunique(), 'districts have opted out.')
 print('What percent of districts are DOIs as of March 2019?')
 print(data.loc[data.doi].district.nunique() /
       data[data.distischarter == 0].district.nunique())
@@ -88,3 +97,6 @@ plt.figtext(.5, -.01, txt, wrap=True, horizontalalignment='center', fontsize=8)
 plt.savefig(start.table_path + 'takeup.png', dpi=600, bbox_inches="tight")
 plt.show()
 
+
+
+# %%
