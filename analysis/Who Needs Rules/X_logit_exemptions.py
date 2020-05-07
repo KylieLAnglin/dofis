@@ -22,6 +22,7 @@ data = pd.read_csv(os.path.join(start.data_path, 'clean',
                                 'master_data_district.csv'),
                    sep=",")
 data = data[(data.doi)]
+data = data[(data.year == 2019)]
 data.sample(5)
 
 
@@ -82,7 +83,7 @@ def model_to_excel(data, y, x_list, file, start_row, start_col):
 # In[102]:
 
 
-x_list = ['pre_rural', 'pre_turnover', 'pre_tenure', 'pre_ratio',
+x_list = ['pre_rural', 'pre_town', 'pre_suburban', 'pre_turnover', 'pre_tenure', 'pre_ratio',
           'pre_hisp', 'pre_black', 'pre_frpl', 'pre_avescore']
 
 
