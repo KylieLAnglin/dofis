@@ -60,9 +60,9 @@ student
 dfs = [district, teacher, student]
 rows = [4, 13, 22]
 tables.n_to_excel(file=table_path + 'balance_tpsVdoi.xlsx',
-                  col=2, row=3, n=len(data[(data.doi)]))
+                  col=2, row=3, n=len(data[(~data.doi)]))
 tables.n_to_excel(file=table_path + 'balance_tpsVdoi.xlsx',
-                  col=3, row=3, n=len(data[~data.doi]))
+                  col=3, row=3, n=len(data[data.doi]))
 for df, row in zip(dfs, rows):
     tables.var_diff_to_excel(file=table_path + 'balance_tpsVdoi.xlsx',
                              df=df,
