@@ -100,6 +100,7 @@ def gen_score_vars(data):
     # Standardize within subject using mean and standard deviation from 2014-15
     data = clean_for_merge.standardize_scores(data=data, std_year=2015)
 
+
     elem_math = ['m_3rd_std', 'm_4th_std', 'm_5th_std']
     elem_reading = ['r_3rd_std', 'r_4th_std', 'r_5th_std']
     elem = ['m_3rd_std', 'm_4th_std', 'm_5th_std',
@@ -110,6 +111,12 @@ def gen_score_vars(data):
     algebra = ['alg_std']
     biology = ['bio_std']
     eng1 = ['eng1_std']
+    math = ['m_3rd_std', 'm_4th_std', 'm_5th_std', 'm_6th_std',
+            'm_7th_std', 'm_8th_std',
+            'alg_std']
+    reading = ['r_3rd_std', 'r_4th_std', 'r_5th_std',
+               'r_6th_std', 'r_7th_std', 'r_8th_std',
+               'eng1_std']
     all_scores = ['m_3rd_std', 'm_4th_std', 'm_5th_std',
                   'm_6th_std', 'm_7th_std', 'm_8th_std',
                   'r_3rd_std', 'r_4th_std', 'r_5th_std',
@@ -129,6 +136,8 @@ def gen_score_vars(data):
     data['biology'] = data[biology].mean(axis=1)
     data['eng1'] = data[eng1].mean(axis=1)
 
+    data['math'] = data[math].mean(axis=1)
+    data['reading'] = data[reading].mean(axis=1)
     data['avescores'] = data[all_scores].mean(axis=1)
 
     return data

@@ -105,6 +105,8 @@ def create_group_df(df, outcome):
 
 
 title_labels = {'avescores': 'Average STAR',
+                'math': 'Average Std. Math Scores',
+                'reading': 'Average Std. Reading Scores',
                 'elem_math': 'Elementary Math',
                 'elem_reading': 'Elementary Reading',
                 'middle_math': 'Middle School Math',
