@@ -43,7 +43,12 @@ subjects = ['m_3rd_avescore', 'm_4th_avescore',  'm_5th_avescore',
             'r_6th_avescore', 'r_7th_avescore', 'r_8th_avescore',
             'eng1_avescore',  'bio_avescore']
 
-
+gdid_model = 'score_std ~ + 1 + treatpost + C(test_by_year) + EntityEffects'
+linear_gdid_model = 'score_std ~ + 1 + treatpost + yearpost + ' \
+    'yearpre  + C(test_by_year) + EntityEffects'
+event_study_model = 'score_std ~ + 1 + pre5 + pre4 + pre3 + pre2 + ' \
+    'post1 + post2 + post3  + C(test_by_year) + EntityEffects' 
+    
 # All Subject Table
 file = start.table_path + 'tableA_effect_by_subject.xlsx'
 wb = load_workbook(file)
