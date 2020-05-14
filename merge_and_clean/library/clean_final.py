@@ -11,6 +11,7 @@ except Exception:
 
 def gen_vars(data):
     data = destring_vars(data)
+    data = gen_exempt_categories(data)
     data = gen_student_vars(data)
     data = gen_district_vars(data)
     data = gen_teacher_vars(data)
@@ -32,8 +33,27 @@ def destring_vars(data):
         if col.startswith('class_size'):
             num_cols.append(col)
 
- #if col.startswith('class_size')
     data[num_cols] = data[num_cols].apply(pd.to_numeric, errors='coerce')
+
+    return data
+
+
+def gen_exempt_categories(data):
+    data['exempt_firstday'] = np.where(data['reg25_0811'] == 1, True, False)
+    data['exempt_minutes'] = np.where(data['reg25_081'] == 1, True, False)
+    data['exempt_lastday'] = np.where(data['reg25_0812'] == 1, True, False)
+    data['exempt_certification'] = np.where(((data['reg21_003'] == 1) |
+                                             (data['reg21_057'] == 1) |
+                                             (data['reg21_053'] == 1)),
+                                            True, False)
+    data['exempt_probation'] = np.where(data['reg21_102'] == 1, True, False)
+    data['exempt_servicedays'] = np.where(data['reg21_401'] == 1, True, False)
+    data['exempt_eval'] = np.where(data['reg21_352'] == 1, True, False)
+    data['exempt_classsize'] = np.where(((data['reg25_112'] == 1) |
+                                         (data['reg25_113'] == 1)),
+                                        True, False)
+    data['exempt_attendance'] = np.where(data['reg25_092'] == 1, True, False)
+    data['exempt_behavior'] = np.where(data['reg37_0012'] == 1, True, False)
 
     return data
 
@@ -99,7 +119,6 @@ def gen_score_vars(data):
 
     # Standardize within subject using mean and standard deviation from 2014-15
     data = clean_for_merge.standardize_scores(data=data, std_year=2015)
-
 
     elem_math = ['m_3rd_std', 'm_4th_std', 'm_5th_std']
     elem_reading = ['r_3rd_std', 'r_4th_std', 'r_5th_std']
