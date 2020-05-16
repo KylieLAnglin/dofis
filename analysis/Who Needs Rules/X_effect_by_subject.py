@@ -131,4 +131,26 @@ for subject in subjects:
 wb.save(file)
 
 
+# %% Math Effects without 6th Grade
+
+df_no6th = df[(df.math == 1) & (df.test != 'm_6th_avescore')]
+
+# GDID
+mod = PanelOLS.from_formula(gdid_model, df_no6th)
+res = mod.fit(cov_type='clustered', clusters=df_no6th.district)
+print(res)
+
+# Linear GDID
+mod = PanelOLS.from_formula(linear_gdid_model, df_no6th)
+res = mod.fit(cov_type='clustered', clusters=df_no6th.district)
+print(res)
+
+# Event Study
+mod = PanelOLS.from_formula(event_study_model, df_no6th)
+res = mod.fit(cov_type='clustered', clusters=df_no6th.district)
+print(res)
+
+
+
+
 # %%
