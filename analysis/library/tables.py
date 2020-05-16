@@ -1,7 +1,8 @@
 from openpyxl import load_workbook
 import statsmodels.formula.api as smf
 
-def df_to_excel(file, df, df_columns, start_col, start_row, all_ints = True):
+
+def df_to_excel(file, df, df_columns, start_col, start_row, all_ints=True):
     wb = load_workbook(file)
     ws = wb.active
 
@@ -10,7 +11,7 @@ def df_to_excel(file, df, df_columns, start_col, start_row, all_ints = True):
         row_n = start_row
         for ob in df[col]:
             if all_ints:
-                try: 
+                try:
                     if ob < .01:
                         ob = '<.01'
                 except:
@@ -56,7 +57,8 @@ def model_to_excel(data, y, x_list, file, start_row, start_col):
             coef = str(coef) + '***'
         ws.cell(row=row_n, column=col_n).value = coef
         row_n = row_n + 1
-        ws.cell(row=row_n, column=col_n).value = '(' + str(result.bse[x].round(2)) + ')'
+        ws.cell(row=row_n, column=col_n).value = '(' + \
+            str(result.bse[x].round(2)) + ')'
         row_n = row_n + 1
 
     ws.cell(row=row_n, column=col_n).value = result.nobs
@@ -67,8 +69,6 @@ def model_to_excel(data, y, x_list, file, start_row, start_col):
     wb.save(file)
 
     return result.summary()
-
-
 
 
 def ols_to_excel(data, y, x_list, file, start_row, start_col):
@@ -106,7 +106,8 @@ def ols_to_excel(data, y, x_list, file, start_row, start_col):
             coef = str(coef) + '***'
         ws.cell(row=row_n, column=col_n).value = coef
         row_n = row_n + 1
-        ws.cell(row=row_n, column=col_n).value = '(' + str(result.bse[x].round(2)) + ')'
+        ws.cell(row=row_n, column=col_n).value = '(' + \
+            str(result.bse[x].round(2)) + ')'
         row_n = row_n + 1
 
     ws.cell(row=row_n, column=col_n).value = data[y].sum()
@@ -117,9 +118,8 @@ def ols_to_excel(data, y, x_list, file, start_row, start_col):
     return result.summary()
 
 
-
-
-def var_diff_to_excel(file, df, control_col, diff_col, se_col, pvalue_col, start_col, start_row, change_diff_col = 3):
+def var_diff_to_excel(file, df, control_col, diff_col, se_col, pvalue_col,
+                      start_col, start_row, change_diff_col=3):
     wb = load_workbook(file)
     ws = wb.active
 
@@ -135,7 +135,7 @@ def var_diff_to_excel(file, df, control_col, diff_col, se_col, pvalue_col, start
     col_n = change_diff_col
     row_n = start_row
     for ob, p in zip(df[diff_col], df[pvalue_col]):
-        if p >.05:
+        if p > .05:
             coef = str(ob)
         if p <= .05:
             coef = str(ob) + '*'
@@ -155,7 +155,9 @@ def var_diff_to_excel(file, df, control_col, diff_col, se_col, pvalue_col, start
 
     wb.save(file)
 
-def just_diff_to_excel(file, df, diff_col, se_col, pvalue_col, start_col, start_row):
+
+def just_diff_to_excel(file, df, diff_col, se_col, pvalue_col,
+                       start_col, start_row):
     wb = load_workbook(file)
     ws = wb.active
 
@@ -164,7 +166,7 @@ def just_diff_to_excel(file, df, diff_col, se_col, pvalue_col, start_col, start_
     # coefficient
     row_n = start_row
     for ob, p in zip(df[diff_col], df[pvalue_col]):
-        if p >.05:
+        if p > .05:
             coef = str(ob)
         if p <= .05:
             coef = str(ob) + '*'
@@ -184,13 +186,12 @@ def just_diff_to_excel(file, df, diff_col, se_col, pvalue_col, start_col, start_
 
     wb.save(file)
 
+
 def n_to_excel(file, col, row, n):
     wb = load_workbook(file)
     ws = wb.active
-
 
     str_n = 'N = ' + str(n)
 
     ws.cell(row=row, column=col).value = str_n
     wb.save(file)
-
