@@ -160,7 +160,7 @@ file = table_path + 'table5_hte_math.xlsx'
 wb = load_workbook(file)
 ws = wb.active
 
-results_table(df[df.math == 1], 2, 'pre_', ['suburban', 'town', 'rural'])
+results_table(df[df.math == 1], 2, 'pre_', ['town', 'suburban', 'urban'])
 results_table(df[df.math == 1], 3, 'pre_turnover', ['50', '75', '100'])
 results_table(df[df.math == 1], 4, 'pre_avescore', ['50', '75', '100'])
 results_table(df[df.math == 1], 5, 'pre_hisp', ['50', '75', '100'])
@@ -173,7 +173,7 @@ file = table_path + 'table6_hte_reading.xlsx'
 wb = load_workbook(file)
 ws = wb.active
 
-results_table(df[df.reading == 1], 2, 'pre_', ['suburban', 'town', 'rural'])
+results_table(df[df.reading == 1], 2, 'pre_', ['town', 'suburban', 'urban'])
 results_table(df[df.reading == 1], 3, 'pre_turnover', ['50', '75', '100'])
 results_table(df[df.reading == 1], 4, 'pre_avescore', ['50', '75', '100'])
 results_table(df[df.reading == 1], 5, 'pre_hisp', ['50', '75', '100'])
@@ -260,17 +260,17 @@ def results_graph(data, var, q_vars, labels, saveas, title):
 
 # %% Urbanicity
 
-categories = ['urban', 'suburban', 'town', 'rural']
+categories = ['rural', 'town', 'suburban', 'urban']
 results_graph(df[df.math == 1], 'pre_', categories,
-              ['Urban Schools', 'Suburban Schools', 'Town Schools',
-               'Rural Schools'], 'Event Study Math Urbanicity.png',
+              ['Rural Schools', 'Town Schools', 'Suburban Schools',
+               'Urban Schools'], 'Event Study Math Urbanicity.png',
               'Impact Estimates on Standardized Math Achievement '
               'by Urbanicity')
 
 
 results_graph(df[df.reading == 1], 'pre_', categories,
-              ['Urban Schools', 'Suburban Schools', 'Town Schools',
-               'Rural Schools'],  'Event Study Reading Urbanicity.png',
+              ['Rural Schools', 'Town Schools', 'Suburban Schools',
+               'Urban Schools'],  'Event Study Reading Urbanicity.png',
               'Impact Estimates on Standardized Reading Achievement '
               'by Urbanicity')
 
