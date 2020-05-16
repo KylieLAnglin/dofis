@@ -27,6 +27,16 @@ data = pd.read_csv(os.path.join(start.data_path, 'clean', 'gdid_subject.csv'),
 data = data[(data.doi)]
 print(data[(data.doi)].district.nunique())
 print(data.doi_year.value_counts())
+
+print("Sample Sizes")
+print(len(data[data.math == 1]))
+print(data[data.math == 1].campus.nunique())
+print(data[data.math == 1].district.nunique())
+
+print(len(data[data.reading == 1]))
+print(data[data.reading == 1].campus.nunique())
+print(data[data.reading == 1].district.nunique())
+
 data.sample()
 
 # %%

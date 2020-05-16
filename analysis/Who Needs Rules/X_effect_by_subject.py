@@ -116,7 +116,14 @@ for subject in subjects:
         ws.cell(row=row, column=col).value = analysis.format_se(
             res.std_errors[coef])
         row = row + 1
+        
+    ws.cell(row=29, column=col).value = len(df_sub)
+    ws.cell(row=30, column=col).value = df_sub.reset_index().campus.nunique()
+    ws.cell(row=31, column=col).value = df_sub.district.nunique()
+
     col = col + 1
+
+ 
 wb.save(file)
 
 
