@@ -85,25 +85,30 @@ def results_table(data, file_name):
     mod = PanelOLS.from_formula(linear_gdid_model, data)
     res = mod.fit(cov_type='clustered', clusters=data.district)
     print(res)
+
     ws.cell(row=6, column=2).value = analysis.coef_with_stars(
-        res.params['treatpost[T.True]'], res.pvalues['treatpost[T.True]'])
-    ws.cell(row=7, column=2).value = analysis.format_se(
-        res.std_errors['treatpost[T.True]'])
-    ws.cell(row=8, column=2).value = analysis.coef_with_stars(
-        res.params['yearpost'], res.pvalues['yearpost'])
-    ws.cell(row=9, column=2).value = analysis.format_se(
-        res.std_errors['yearpost'])
-    ws.cell(row=10, column=2).value = analysis.coef_with_stars(
         res.params['yearpre'], res.pvalues['yearpre'])
-    ws.cell(row=11, column=2).value = analysis.format_se(
+    ws.cell(row=7, column=2).value = analysis.format_se(
         res.std_errors['yearpre'])
+
+    ws.cell(row=8, column=2).value = analysis.coef_with_stars(
+        res.params['treatpost[T.True]'], res.pvalues['treatpost[T.True]'])
+    ws.cell(row=9, column=2).value = analysis.format_se(
+        res.std_errors['treatpost[T.True]'])
+
+    ws.cell(row=10, column=2).value = analysis.coef_with_stars(
+        res.params['yearpost'], res.pvalues['yearpost'])
+    ws.cell(row=11, column=2).value = analysis.format_se(
+        res.std_errors['yearpost'])
+
+
 
     # Event Study
     mod = PanelOLS.from_formula(event_study_model, data)
     res = mod.fit(cov_type='clustered', clusters=data.district)
     print(res)
     row = 3
-    for coef in ['post3', 'post2', 'post1', 'pre2', 'pre3', 'pre4', 'pre5']:
+    for coef in ['pre5', 'pre4', 'pre3', 'pre2', 'post1', 'post2', 'post3']:
         ws.cell(row=row, column=4).value = analysis.coef_with_stars(
             res.params[coef], res.pvalues[coef])
         row = row + 1

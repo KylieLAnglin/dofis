@@ -78,20 +78,24 @@ for subject in subjects:
     preslope_se = res.std_errors['yearpre']
     postslope = res.params['yearpost']
     post_slope = res.std_errors['yearpost']
+    
     ws.cell(row=8, column=col).value = analysis.bonferroni(
+        len(subjects), res.params['yearpre'], res.pvalues['yearpre'])
+    ws.cell(row=9, column=col).value = analysis.format_se(
+        res.std_errors['yearpre'])
+
+    ws.cell(row=10, column=col).value = analysis.bonferroni(
         len(subjects),
         res.params['treatpost[T.True]'],
         res.pvalues['treatpost[T.True]'])
-    ws.cell(row=9, column=col).value = analysis.format_se(
-        res.std_errors['treatpost[T.True]'])
-    ws.cell(row=10, column=col).value = analysis.bonferroni(
-        len(subjects), res.params['yearpost'], res.pvalues['yearpost'])
     ws.cell(row=11, column=col).value = analysis.format_se(
-        res.std_errors['yearpost'])
+        res.std_errors['treatpost[T.True]'])
+
     ws.cell(row=12, column=col).value = analysis.bonferroni(
-        len(subjects), res.params['yearpre'], res.pvalues['yearpre'])
+        len(subjects), res.params['yearpost'], res.pvalues['yearpost'])
     ws.cell(row=13, column=col).value = analysis.format_se(
-        res.std_errors['yearpre'])
+        res.std_errors['yearpost'])
+    
     wb.save(file)
 
     # Event Study
@@ -109,14 +113,14 @@ for subject in subjects:
         nonparametric.append(nonpar)
         nonparametric_se.append(nonpar_se)
     row = 15
-    for coef in ['post3', 'post2', 'post1', 'pre2', 'pre3', 'pre4', 'pre5']:
+    for coef in ['pre5', 'pre4', 'pre3', 'pre2', 'post1', 'post2', 'post3']:
         ws.cell(row=row, column=col).value = analysis.coef_with_stars(
             res.params[coef], res.pvalues[coef])
         row = row + 1
         ws.cell(row=row, column=col).value = analysis.format_se(
             res.std_errors[coef])
         row = row + 1
-        
+
     ws.cell(row=29, column=col).value = len(df_sub)
     ws.cell(row=30, column=col).value = df_sub.reset_index().campus.nunique()
     ws.cell(row=31, column=col).value = df_sub.district.nunique()
