@@ -254,8 +254,9 @@ def results_graph(data, var, q_vars, labels, saveas, title):
                                rotation=0)
         ax.set_ylim((-.5, .5))
         ax.set_title(q, fontsize=16)
-    fig.savefig(table_path + saveas)
     fig.suptitle(title, fontsize='xx-large')
+    fig.savefig(table_path + saveas)
+
 
 
 # %% Urbanicity
@@ -264,14 +265,14 @@ categories = ['rural', 'town', 'suburban', 'urban']
 results_graph(df[df.math == 1], 'pre_', categories,
               ['Rural Schools', 'Town Schools', 'Suburban Schools',
                'Urban Schools'], 'Event Study Math Urbanicity.png',
-              'Impact Estimates on Standardized Math Achievement '
+              'Standardized Math Achievement '
               'by Urbanicity')
 
 
 results_graph(df[df.reading == 1], 'pre_', categories,
               ['Rural Schools', 'Town Schools', 'Suburban Schools',
                'Urban Schools'],  'Event Study Reading Urbanicity.png',
-              'Impact Estimates on Standardized Reading Achievement '
+              'Standardized Reading Achievement '
               'by Urbanicity')
 
 
@@ -295,35 +296,39 @@ results_graph(df[df.reading == 1], 'pre_turnover', ['25', '50', '75', '100'],
 
 # %% Prior Achievement
 
+for q in ['25', '50', '75', '100']:
+    print(df[df['pre_avescore' + q] == 1].avescores.mean())
+
 
 results_graph(df[df.math == 1], 'pre_avescore', ['25', '50', '75', '100'],
-              ['Q1 (-0.88 SD)', 'Q2 (-0.09 SD)',
-               'Q3 (0.58 SD)', 'Q4 (1.62 SD)'],
+              ['Q1 (-0.78 SD)', 'Q2 (-0.20 SD)',
+               'Q3 (0.25 SD)', 'Q4 (1.18 SD)'],
               'Event Study Math Prior Achievement.png',
-              'Impact Estimates on Standardized Math Achievement '
-              'by Prior Achievement')
+              'Standardized Math Achievement')
 
 
 results_graph(df[df.reading == 1], 'pre_avescore', ['25', '50', '75', '100'],
-              ['Q1 (-0.88 SD)', 'Q2 (-0.09 SD)',
-               'Q3 (0.58 SD)', 'Q4 (1.62 SD)'],
+              ['Q1 (-0.78 SD)', 'Q2 (-0.20 SD)',
+               'Q3 (0.25 SD)', 'Q4 (1.18 SD)'],
               'Event Study Reading Prior Achievement.png',
-              'Impact Estimates on Standardized Reading Achievement '
-              'by Prior Achievement')
+              'Standardized Reading Achievement')
 
 # %% Percent Hispanic
+for q in ['25', '50', '75', '100']:
+    print(df[df['pre_hisp' + q] == 1].students_hisp.mean())
+
+
 results_graph(df[df.math == 1], 'pre_hisp', ['25', '50', '75', '100'],
-              ['Q1 (14%)', 'Q2 (31%)', 'Q3 (54%)', 'Q4 (86%)'],
+              ['Q1 (15%)', 'Q2 (35%)', 'Q3 (60%)', 'Q4 (91%)'],
               'Event Study Math Percent Hispanic.png',
               'Impact Estimates on Standardized Math Achievement '
               'by Perfect Hispanic Students')
 
 
 results_graph(df[df.reading == 1], 'pre_hisp', ['25', '50', '75', '100'],
-              ['Q1 (14%)', 'Q2 (31%)', 'Q3 (54%)', 'Q4 (86%)'],
+              ['Q1 (15%)', 'Q2 (35%)', 'Q3 (60%)', 'Q4 (91%)'],
               'Event Study Reading Percent Hispanic.png',
-              'Impact Estimates on Standardized Reading Achievement '
-              'by Perfect Hispanic Students')
+              'Standardized Reading Achievement')
 
 # %% Percent Black
 
