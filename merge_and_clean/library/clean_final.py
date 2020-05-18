@@ -39,21 +39,21 @@ def destring_vars(data):
 
 
 def gen_exempt_categories(data):
-    data['exempt_firstday'] = np.where(data['reg25_0811'] == 1, True, False)
-    data['exempt_minutes'] = np.where(data['reg25_081'] == 1, True, False)
-    data['exempt_lastday'] = np.where(data['reg25_0812'] == 1, True, False)
+    data['exempt_firstday'] = np.where(data['reg25_0811'] == 1, 1, 0)
+    data['exempt_minutes'] = np.where(data['reg25_081'] == 1, 1, 0)
+    data['exempt_lastday'] = np.where(data['reg25_0812'] == 1, 1, 0)
     data['exempt_certification'] = np.where(((data['reg21_003'] == 1) |
                                              (data['reg21_057'] == 1) |
                                              (data['reg21_053'] == 1)),
-                                            True, False)
-    data['exempt_probation'] = np.where(data['reg21_102'] == 1, True, False)
-    data['exempt_servicedays'] = np.where(data['reg21_401'] == 1, True, False)
-    data['exempt_eval'] = np.where(data['reg21_352'] == 1, True, False)
+                                            1, 0)
+    data['exempt_probation'] = np.where(data['reg21_102'] == 1, 1, 0)
+    data['exempt_servicedays'] = np.where(data['reg21_401'] == 1, 1, 0)
+    data['exempt_eval'] = np.where(data['reg21_352'] == 1, 1, 0)
     data['exempt_classsize'] = np.where(((data['reg25_112'] == 1) |
                                          (data['reg25_113'] == 1)),
-                                        True, False)
-    data['exempt_attendance'] = np.where(data['reg25_092'] == 1, True, False)
-    data['exempt_behavior'] = np.where(data['reg37_0012'] == 1, True, False)
+                                        1, 0)
+    data['exempt_attendance'] = np.where(data['reg25_092'] == 1, 1, 0)
+    data['exempt_behavior'] = np.where(data['reg37_0012'] == 1, 1, 0)
 
     return data
 
