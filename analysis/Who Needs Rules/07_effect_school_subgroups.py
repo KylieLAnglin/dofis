@@ -321,8 +321,7 @@ for q in ['25', '50', '75', '100']:
 results_graph(df[df.math == 1], 'pre_hisp', ['25', '50', '75', '100'],
               ['Q1 (15%)', 'Q2 (35%)', 'Q3 (60%)', 'Q4 (91%)'],
               'Event Study Math Percent Hispanic.png',
-              'Impact Estimates on Standardized Math Achievement '
-              'by Perfect Hispanic Students')
+              'Standardized Math Achievement')
 
 
 results_graph(df[df.reading == 1], 'pre_hisp', ['25', '50', '75', '100'],
@@ -331,16 +330,18 @@ results_graph(df[df.reading == 1], 'pre_hisp', ['25', '50', '75', '100'],
               'Standardized Reading Achievement')
 
 # %% Percent Black
-
+for q in ['25', '50', '75', '100']:
+    print(df[df['pre_black' + q] == 1].students_black.mean())
 
 results_graph(df[df.math == 1], 'pre_black', ['25', '50', '75', '100'],
-              ['Q1 (1%)', 'Q2 (4%)', 'Q3 (10%)', 'Q4 (31%)'],
+              ['Q1 (1%)', 'Q2 (3%)', 'Q3 (10%)', 'Q4 (32%)'],
               'Event Study Math Percent Black.png',
-              'Impact Estimates on Standardized Math Achievement '
-              'by Percent Black Students')
+              'Standardized Math Achievement')
 
 results_graph(df[df.reading == 1], 'pre_black', ['25', '50', '75', '100'],
-              ['Q1 (1%)', 'Q2 (4%)', 'Q3 (10%)', 'Q4 (31%)'],
+              ['Q1 (1%)', 'Q2 (3%)', 'Q3 (10%)', 'Q4 (32%)'],
               'Event Study Reading Percent Black.png',
-              'Impact Estimates on Standardized Reading Achievement '
-              'by Percent Black Students')
+              'Standardized Reading Achievement')
+
+
+# %%
