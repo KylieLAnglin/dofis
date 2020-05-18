@@ -110,3 +110,66 @@ print(res)
 
 
 # %%
+
+def results_col(data, col, var):
+
+    df = create_interactions(var, data)
+
+    linear_model = create_linear_model_w_interactions(var)
+
+    mod = PanelOLS.from_formula(linear_model, df)
+    res = mod.fit(cov_type='clustered', clusters=df.district)
+    row = 3
+    for coef in ['yearpre', 'treatpost[T.True]', 'yearpost',
+                 'yearpre_' + var, 'treatpost_' + var, 'yearpost_' + var]:
+        ws.cell(row=row, column=col).value = analysis.coef_with_stars(
+            res.params[coef], res.pvalues[coef])
+        row = row + 1
+        ws.cell(row=row, column=col).value = analysis.format_se(
+            res.std_errors[coef])
+        row = row + 1
+        wb.save(file)
+
+
+
+# %%
+
+file = start.table_path + 'effects_by_exemption_math.xlsx'
+wb = load_workbook(file)
+ws = wb.active
+
+col = 2
+for reg in ['exempt_firstday', 'exempt_minutes', 'exempt_lastday',
+            'exempt_certification', 'exempt_classsize', 'exempt_probation',
+            'exempt_servicedays', 'exempt_eval',
+            'exempt_attendance', 'exempt_behavior']:
+    results_col(data=df[df.math == 1], col=col, var=reg)
+    col = col + 1
+
+
+# %%
+
+exemption = 'exempt_certification'
+
+df = create_interactions(exemption, df)
+
+# GDID
+mod = PanelOLS.from_formula(create_gdid_model_w_interactions(exemption),
+                            df[df.math == 1])
+res = mod.fit(cov_type='clustered', clusters=df[df.math == 1].district)
+print(res)
+
+# Linear GDID
+mod = PanelOLS.from_formula(create_linear_model_w_interactions(exemption),
+                            df[df.math == 1])
+res = mod.fit(cov_type='clustered', clusters=df[df.math == 1].district)
+print(res)
+
+# Event Study
+mod = PanelOLS.from_formula(create_event_model_w_interactions(exemption),
+                            df[df.math == 1])
+res = mod.fit(cov_type='clustered', clusters=df[df.math == 1].district)
+print(res)
+
+
+# %%
