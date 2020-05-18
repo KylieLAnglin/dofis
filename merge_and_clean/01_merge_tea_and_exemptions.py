@@ -158,3 +158,6 @@ subject_grade['test_by_year'] = subject_grade['test'] + \
     subject_grade['year'].astype(str)
 subject_grade.to_csv(os.path.join(
     start.data_path, 'clean', 'gdid_subject.csv'), sep=",")
+
+
+# %%
