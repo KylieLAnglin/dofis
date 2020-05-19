@@ -146,10 +146,23 @@ for reg in ['exempt_firstday', 'exempt_minutes', 'exempt_lastday',
     results_col(data=df[df.math == 1], col=col, var=reg)
     col = col + 1
 
+# %%
+file = start.table_path + 'effects_by_exemption_reading.xlsx'
+wb = load_workbook(file)
+ws = wb.active
+
+col = 2
+for reg in ['exempt_firstday', 'exempt_minutes', 'exempt_lastday',
+            'exempt_certification', 'exempt_classsize', 'exempt_probation',
+            'exempt_servicedays', 'exempt_eval',
+            'exempt_attendance', 'exempt_behavior']:
+    results_col(data=df[df.reading == 1], col=col, var=reg)
+    col = col + 1
+
 
 # %%
 
-exemption = 'exempt_certification'
+exemption = 'exempt_firstday'
 
 df = create_interactions(exemption, df)
 
@@ -159,11 +172,6 @@ mod = PanelOLS.from_formula(create_gdid_model_w_interactions(exemption),
 res = mod.fit(cov_type='clustered', clusters=df[df.math == 1].district)
 print(res)
 
-# Linear GDID
-mod = PanelOLS.from_formula(create_linear_model_w_interactions(exemption),
-                            df[df.math == 1])
-res = mod.fit(cov_type='clustered', clusters=df[df.math == 1].district)
-print(res)
 
 # Event Study
 mod = PanelOLS.from_formula(create_event_model_w_interactions(exemption),
