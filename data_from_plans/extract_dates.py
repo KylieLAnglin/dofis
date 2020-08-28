@@ -13,7 +13,6 @@ def get_finalize_month_year_phrase(text, output_dir):
     if phrases:  # phrases not None --> means a document contains years
         narrowed_phrases, cats = narrow_phrase_list(phrases, output_dir)  # dates likely to be finalized
         if narrowed_phrases:
-
             # Append month and year from likely finalization dates to years and months
             for phrase in narrowed_phrases:
                 year, month = get_latest_month_year_pair(phrase)  # gets most recent month + year
@@ -48,7 +47,7 @@ def get_term_date_and_phrase(text, output_dir):
             start_date = get_earliest_date(max_phrase[0])
             phrase = max_phrase[0]
     month = get_earliest_month_year_pair(phrase)
-    return start_date, month, phrase, p
+    return start_date, month[1], phrase, p
 
 
 def get_phrase_list(text, n_tokens_before=8, n_tokens_after=6):
