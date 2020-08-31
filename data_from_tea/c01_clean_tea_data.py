@@ -21,6 +21,8 @@ for year in years:
     # rural, urbam, suburban
     dtype = clean_tea.clean_dtype(year=year)
 
+    dgrad = clean_tea.clean_dgrad(year=year)
+
     # student and teacher characteristics
     cdem = clean_tea.clean_cdem(year=year)
     ddem = clean_tea.clean_ddem(year = year) #number of students in district
@@ -41,6 +43,7 @@ for year in years:
                                 on='campus')
     descriptives = cref.merge(dref, on='distname', how='inner')
     descriptives = descriptives.merge(dtype, on='district', how='inner')
+    descriptives = descriptives.merge(dgrad, on='district', how='left')
     descriptives = descriptives.merge(cdem, on='campus', how='left')
     descriptives = descriptives.merge(ddem, on = 'district', how = 'inner')
     descriptives = descriptives.merge(cscores, on='campus',

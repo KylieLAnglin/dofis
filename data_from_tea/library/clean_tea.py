@@ -98,8 +98,8 @@ def clean_dtype(year):
     if year == 'yr1718' or year == 'yr1819':
         dtype = xls.parse(sheetname)
         dtype_to_keep = {'District Number': 'district',
-            'TEA District Type': 'type',
-            'TEA Description': 'type_description'}
+                        'TEA District Type': 'type',
+                        'TEA Description': 'type_description'}
     dtype = filter_and_rename_cols(dtype, dtype_to_keep)
     dtype = dtype.dropna(axis=0, subset=['district'])
     print("There are ", len(dtype), 'districts in dtype')
@@ -310,22 +310,33 @@ def clean_cgrad(year):
 
     if data_year < 'yr1718':
         filename = 'CAMPPERF.dat'
+    if data_year >= 'yr1718':
+        filename = 'CAMPGRAD.dat'
+    if data_year == 'yr1213':
+        filename = 'CAMPPERF.txt'
 
-    cgrad = pd.read_csv(os.path.join(
-        data_path, 'tea', 'cgrad', data_year, filename), sep=",")
+    if year < 'yr1819':
+        cgrad = pd.read_csv(os.path.join(
+            data_path, 'tea', 'cgrad', data_year, filename), sep=",")
 
-    cgrad_to_keep = {'CAMPUS': 'campus',
-                     'CA0912DR' + springyr + 'R': 'perf_hsdrop',
-                     'CA0AT' + springyr + 'D': 'perf_studays',
-                     'CA0AT' + springyr + 'N': 'perf_stuattend'}
+        cgrad_to_keep = {'CAMPUS': 'campus',
+                         'CA0912DR' + springyr + 'R': 'perf_hsdrop',
+                         'CA0AT' + springyr + 'D': 'perf_studays',
+                         'CA0AT' + springyr + 'N': 'perf_stuattend'}
 
-    cgrad = filter_and_rename_cols(cgrad, cgrad_to_keep)
+        cgrad = filter_and_rename_cols(cgrad, cgrad_to_keep)
+    if year == 'yr1819':
+        cgrad = pd.DataFrame(columns=['campus',
+                                      'perf_hsdrop',
+                                      'perf_studays',
+                                      'perf_stuattend'])
+    
     #cgrad['campus'] = cgrad['campus'].apply(pd.to_numeric, errors='coerce')
     return cgrad
 
-
+ 
 def clean_dgrad(year):
-    # current year's values are store in next year's dataset
+    # current year's values are stored in next year's dataset
     # https://rptsvr1.tea.texas.gov/perfreport/tapr/2013/download/dothr.html
     fallyr = year[2:4]
     springyr = year[4:6]
@@ -335,17 +346,26 @@ def clean_dgrad(year):
 
     if data_year < 'yr1718':
         filename = 'DISTPERF.dat'
+    if data_year >= 'yr1718':
+        filename = 'DISTGRAD.dat'
+    if data_year == 'yr1213':
+        filename = 'DISTPERF.txt'
 
-    dgrad = pd.read_csv(os.path.join(
-        data_path, 'tea', 'dgrad', data_year, filename), sep=",")
+    if data_year < 'yr1819':
+        dgrad = pd.read_csv(os.path.join(
+            data_path, 'tea', 'dgrad', data_year, filename), sep=",")
 
-    dgrad_to_keep = {'DISTRICT': 'district',
-                     'DA0912DR' + springyr + 'R': 'perf_hsdrop',
-                     'DA0AT' + springyr + 'D': 'perf_studays',
-                     'DA0AT' + springyr + 'N': 'perf_stuattend'}
+        dgrad_to_keep = {'DISTRICT': 'district',
+                         'DA0912DR' + springyr + 'R': 'perf_hsdrop',
+                         'DA0AT' + springyr + 'D': 'perf_studays',
+                         'DA0AT' + springyr + 'N': 'perf_stuattend'}
 
-    dgrad = filter_and_rename_cols(dgrad, dgrad_to_keep)
-    #cgrad['campus'] = cgrad['campus'].apply(pd.to_numeric, errors='coerce')
+        dgrad = filter_and_rename_cols(dgrad, dgrad_to_keep)
+    if data_year > 'yr1819':
+        dgrad = pd.DataFrame(columns=['district',
+                                      'perf_hsdrop',
+                                      'perf_studays',
+                                      'perf_stuattend'])
     return dgrad
 
 
