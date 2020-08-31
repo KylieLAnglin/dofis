@@ -2,11 +2,11 @@ import os
 import pandas as pd
 import numpy as np
 import shutil
-try: from data_from_tea.library.start import data_path
-except: from library.start import data_path
+try:
+    from data_from_tea.library.start import data_path
+except:
+    from library.start import data_path
 #from start import data_path TODO: import start
-
-
 
 
 def filter_and_rename_cols(df, mydict):
@@ -45,6 +45,7 @@ def fix_parser_error(input_path):
         file.write(text_contents)
     return (temp_path)
 
+
 def clean_cref(year):
     """
     Reads district reference data from:
@@ -62,7 +63,8 @@ def clean_cref(year):
         filename = 'CREF.txt'
     if year >= 'yr1314':
         filename = 'CREF.dat'
-    cref = pd.read_csv(os.path.join(data_path, 'tea', 'cref', year, filename), sep=",")
+    cref = pd.read_csv(os.path.join(
+        data_path, 'tea', 'cref', year, filename), sep=",")
     # Note: no district number in early files
     cref_tokeep = {'DISTNAME': 'distname',
                    'CAMPUS': 'campus',
@@ -76,32 +78,30 @@ def clean_cref(year):
     cref = filter_and_rename_cols(cref, cref_tokeep)
     return cref
 
-# district type
-# https://tea.texas.gov/acctres/analyze/years.html
+
 def clean_dtype(year):
-    files = {'yr1112': 'district1112.xls',
-             'yr1213': 'district1213.xls',
-             'yr1314': 'district1314.xls',
-             'yr1415': 'district1415.xlsx',
-             'yr1516': 'district1516.xlsx',
-             'yr1617': 'district1617.xls',
-             'yr1718': 'district1617.xls',
-             'yr1819': 'district1617.xls'}  # update when type updates
-    sheets = {'yr1112': 'district1112',
-              'yr1213': 'district1213',
-              'yr1314': 'district1314',
-              'yr1415': 'district1415',
-              'yr1516': 'district1516',
-              'yr1617': 'district1617',
-              'yr1718': 'district1617',
-              'yr1819': 'district1617'}  # update when type undates
-    dtype_to_keep = {'District': 'district',
-                     'Type': 'type',
-                     'Description': 'type_description'}
-    filename = files[year]
+    """
+    https://tea.texas.gov/acctres/analyze/years.html
+    """
+    filename = 'district' + year[2:6] + '.xls'
+    sheetname = 'district' + year[2:6]
+    if year == 'yr1718':
+        sheetname = '2017-18 Data'
+    if year == 'yr1819':
+        sheetname = '1819_Data'
     xls = pd.ExcelFile(os.path.join(data_path, 'tea', 'dtype', filename))
-    dtype = xls.parse(sheets[year], skiprows=2)
+    if year != 'yr1718' and year != 'yr1819':
+        dtype = xls.parse(sheetname, skiprows=2)
+        dtype_to_keep = {'District': 'district',
+                    'Type': 'type',
+                    'Description': 'type_description'}
+    if year == 'yr1718' or year == 'yr1819':
+        dtype = xls.parse(sheetname)
+        dtype_to_keep = {'District Number': 'district',
+            'TEA District Type': 'type',
+            'TEA Description': 'type_description'}
     dtype = filter_and_rename_cols(dtype, dtype_to_keep)
+    dtype = dtype.dropna(axis=0, subset=['district'])
     print("There are ", len(dtype), 'districts in dtype')
     return dtype
 
@@ -127,18 +127,22 @@ def clean_cscores(year, subject):
         file = 'cfy' + file_yr + subject_dict[subject] + '.dat'
         # need two files for early English scores (reading and writing) TODO: combine reading and writing
         try:
-            cscores2 = pd.read_csv(os.path.join(data_path, 'tea', 'cscores', year, file), sep=",")
+            cscores2 = pd.read_csv(os.path.join(
+                data_path, 'tea', 'cscores', year, file), sep=",")
         except:
-            new_path = fix_parser_error(os.path.join(data_path, 'tea', 'cscores', year, file))
+            new_path = fix_parser_error(os.path.join(
+                data_path, 'tea', 'cscores', year, file))
             cscores2 = pd.read_csv(new_path, sep=",")
         subject_dict = {'EnglishI': 'er1', 'EnglishII': 'er2'}
         file = 'cfy' + file_yr + subject_dict[subject] + '.dat'
 
     # Import dataa
     try:
-        cscores = pd.read_csv(os.path.join(data_path, 'tea', 'cscores', year, file), sep=",")
+        cscores = pd.read_csv(os.path.join(
+            data_path, 'tea', 'cscores', year, file), sep=",")
     except:
-        new_path = fix_parser_error(os.path.join(data_path, 'tea', 'cscores', year, file))
+        new_path = fix_parser_error(os.path.join(
+            data_path, 'tea', 'cscores', year, file))
         cscores = pd.read_csv(new_path, sep=",")
     if subject not in ['3rd', '4th', '5th', '6th', '7th', '8th', 'Algebra', 'Biology', 'EnglishI', 'EnglishII',
                        'USHistory']:
@@ -158,16 +162,16 @@ def clean_cscores(year, subject):
                           'a1_all_d': 'alg_numtakers'}
         if year == 'yr1819':
           cscores_tokeep = {'campus': 'campus',
-                          'a1_all_rs': 'alg_avescore',
-                          'a1_all_d': 'alg_numtakers'}  
+                            'a1_all_rs': 'alg_avescore',
+                            'a1_all_d': 'alg_numtakers'}
     if subject == 'Biology':
         cscores_tokeep = {'CAMPUS': 'campus',
                           'bi_all_rs': 'bio_avescore',
                           'bi_all_d': 'bio_numtakers'}
         if year == 'yr1819':
             cscores_tokeep = {'campus': 'campus',
-                            'bi_all_rs': 'bio_avescore',
-                            'bi_all_d': 'bio_numtakers'}    
+                              'bi_all_rs': 'bio_avescore',
+                              'bi_all_d': 'bio_numtakers'}
 
     if subject == 'EnglishI':
         if year == 'yr1112' or year == 'yr1213':
@@ -178,8 +182,8 @@ def clean_cscores(year, subject):
                           "e1_all_d": "eng1_numtakers"}
         if year == 'yr1819':
             cscores_tokeep = {"campus": "campus",
-                          "e1_all_rs": "eng1_avescore",
-                          "e1_all_d": "eng1_numtakers"}
+                              "e1_all_rs": "eng1_avescore",
+                              "e1_all_d": "eng1_numtakers"}
 
     if subject == 'EnglishII':
         if year == 'yr1112' or year == 'yr1213':
@@ -191,16 +195,16 @@ def clean_cscores(year, subject):
                           "e2_all_d": "eng2_numtakers"}
         if year == 'yr1819':
             cscores_tokeep = {"campus": "campus",
-                          "e2_all_rs": "eng2_avescore",
-                          "e2_all_d": "eng2_numtakers"}
+                              "e2_all_rs": "eng2_avescore",
+                              "e2_all_d": "eng2_numtakers"}
     if subject == 'USHistory':
         cscores_tokeep = {"CAMPUS": "campus",
                           "us_all_rs": "us_avescore",
                           "us_all_d": "us_numtakers"}
         if year == "yr1819":
             cscores_tokeep = {"campus": "campus",
-                          "us_all_rs": "us_avescore",
-                          "us_all_d": "us_numtakers"}
+                              "us_all_rs": "us_avescore",
+                              "us_all_d": "us_numtakers"}
 
     cscores = filter_and_rename_cols(cscores, cscores_tokeep)
     cscores['campus'] = cscores['campus'].apply(pd.to_numeric, errors='coerce')
@@ -263,12 +267,15 @@ def clean_cdem(year):
     }
     # import data
     if year == 'yr1112':
-        cdem1 = pd.read_csv(os.path.join(data_path, 'tea', 'cdem', year, 'cstud.dat'), sep=",")
-        cdem2 = pd.read_csv(os.path.join(data_path, 'tea', 'cdem', year, 'cstaf.dat'), sep=",")
+        cdem1 = pd.read_csv(os.path.join(
+            data_path, 'tea', 'cdem', year, 'cstud.dat'), sep=",")
+        cdem2 = pd.read_csv(os.path.join(
+            data_path, 'tea', 'cdem', year, 'cstaf.dat'), sep=",")
         cdem = cdem1.merge(cdem2, on='CAMPUS', how='outer')
         cdem['CAMPUS'] = cdem['CAMPUS'].apply(int)
     else:
-        cdem = pd.read_csv(os.path.join(data_path, 'tea', 'cdem', year, filename), sep=",")
+        cdem = pd.read_csv(os.path.join(
+            data_path, 'tea', 'cdem', year, filename), sep=",")
     # address variable name changes across years
     if year == 'yr1112':
         cdem_tokeep['CPETALLC'] = 'students_num'
@@ -285,10 +292,12 @@ def clean_cdem(year):
     # filter and rename
     cdem = filter_and_rename_cols(cdem, cdem_tokeep)
     cdem['campus'] = cdem['campus'].apply(pd.to_numeric, errors='coerce')
-    cdem['teachers_num'] = cdem['teachers_num'].apply(pd.to_numeric, errors='coerce')
+    cdem['teachers_num'] = cdem['teachers_num'].apply(
+        pd.to_numeric, errors='coerce')
 
     print("There are ", len(cdem), 'schools in cdem', year)
     return cdem
+
 
 def clean_cgrad(year):
     # https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/cothr.html
@@ -301,18 +310,19 @@ def clean_cgrad(year):
 
     if data_year < 'yr1718':
         filename = 'CAMPPERF.dat'
-    
-    cgrad = pd.read_csv(os.path.join(data_path, 'tea', 'cgrad', data_year, filename), sep=",")
+
+    cgrad = pd.read_csv(os.path.join(
+        data_path, 'tea', 'cgrad', data_year, filename), sep=",")
 
     cgrad_to_keep = {'CAMPUS': 'campus',
-                    'CA0912DR' + springyr + 'R': 'perf_hsdrop',
-                    'CA0AT' + springyr + 'D': 'perf_studays',
-                    'CA0AT' + springyr + 'N': 'perf_stuattend'}
-
+                     'CA0912DR' + springyr + 'R': 'perf_hsdrop',
+                     'CA0AT' + springyr + 'D': 'perf_studays',
+                     'CA0AT' + springyr + 'N': 'perf_stuattend'}
 
     cgrad = filter_and_rename_cols(cgrad, cgrad_to_keep)
     #cgrad['campus'] = cgrad['campus'].apply(pd.to_numeric, errors='coerce')
     return cgrad
+
 
 def clean_dgrad(year):
     # current year's values are store in next year's dataset
@@ -325,42 +335,64 @@ def clean_dgrad(year):
 
     if data_year < 'yr1718':
         filename = 'DISTPERF.dat'
-    
-    dgrad = pd.read_csv(os.path.join(data_path, 'tea', 'dgrad', data_year, filename), sep=",")
+
+    dgrad = pd.read_csv(os.path.join(
+        data_path, 'tea', 'dgrad', data_year, filename), sep=",")
 
     dgrad_to_keep = {'DISTRICT': 'district',
-                    'DA0912DR' + springyr + 'R': 'perf_hsdrop',
-                    'DA0AT' + springyr + 'D': 'perf_studays',
-                    'DA0AT' + springyr + 'N': 'perf_stuattend'}
-
+                     'DA0912DR' + springyr + 'R': 'perf_hsdrop',
+                     'DA0AT' + springyr + 'D': 'perf_studays',
+                     'DA0AT' + springyr + 'N': 'perf_stuattend'}
 
     dgrad = filter_and_rename_cols(dgrad, dgrad_to_keep)
     #cgrad['campus'] = cgrad['campus'].apply(pd.to_numeric, errors='coerce')
     return dgrad
 
-def fix_duplicate_distname(df, distname_col = 'DISTNAME', cntyname_col = 'CNTYNAME'):
+
+def fix_duplicate_distname(df, distname_col='DISTNAME', cntyname_col='CNTYNAME'):
     dist_dict = [{'distname': 'BIG SANDY ISD', 'cntyname': 'UPSHUR', 'newname': 'BIG SANDY ISD (230901)'},
-                 {'distname': 'BIG SANDY ISD', 'cntyname': 'POLK', 'newname': 'BIG SANDY ISD (187901)'},
-                 {'distname': 'CENTERVILLE ISD', 'cntyname': 'LEON', 'newname': 'CENTERVILLE ISD (145902)'},
-                 {'distname': 'CENTERVILLE ISD', 'cntyname': 'TRINITY', 'newname': 'CENTERVILLE ISD (228904)'},
-                 {'distname': 'CHAPEL HILL ISD', 'cntyname': 'TITUS', 'newname': 'CHAPEL HILL ISD (225906)'},
-                 {'distname': 'CHAPEL HILL ISD', 'cntyname': 'SMITH', 'newname': 'CHAPEL HILL ISD (212909)'},
-                 {'distname': 'DAWSON ISD', 'cntyname': 'NAVARRO', 'newname': 'DAWSON ISD (175904)'},
-                 {'distname': 'DAWSON ISD', 'cntyname': 'DAWSON', 'newname': 'DAWSON ISD (58902)'},
-                 {'distname': 'EDGEWOOD ISD', 'cntyname': 'BEXAR', 'newname': 'EDGEWOOD ISD (15905)'},
-                 {'distname': 'EDGEWOOD ISD', 'cntyname': 'VAN ZANDT', 'newname': 'EDGEWOOD ISD (234903)'},
-                 {'distname': 'HIGHLAND PARK ISD', 'cntyname': 'DALLAS', 'newname': 'HIGHLAND PARK ISD (57911)'},
-                 {'distname': 'HIGHLAND PARK ISD', 'cntyname': 'POTTER', 'newname': 'HIGHLAND PARK ISD (188903)'},
-                 {'distname': 'HUBBARD ISD', 'cntyname': 'BOWIE', 'newname': 'HUBBARD ISD (19913)'},
-                 {'distname': 'HUBBARD ISD', 'cntyname': 'HILL', 'newname': 'HUBBARD ISD (109905)'},
-                 {'distname': 'MIDWAY ISD', 'cntyname': 'MCLENNAN', 'newname': 'MIDWAY ISD (161903)'},
-                 {'distname': 'MIDWAY ISD', 'cntyname': 'CLAY', 'newname': 'MIDWAY ISD (39905)'},
-                 {'distname': 'NORTHSIDE ISD', 'cntyname': 'BEXAR', 'newname': 'NORTHSIDE ISD (15915)'},
-                 {'distname': 'NORTHSIDE ISD', 'cntyname': 'WILBARGER', 'newname': 'NORTHSIDE ISD (244905)'},
-                 {'distname': 'VALLEY VIEW ISD', 'cntyname': 'HIDALGO', 'newname': 'VALLEY VIEW ISD (108916)'},
-                 {'distname': 'VALLEY VIEW ISD', 'cntyname': 'COOKE', 'newname': 'VALLEY VIEW ISD (49903)'},
-                 {'distname': 'WYLIE ISD', 'cntyname': 'COLLIN', 'newname': 'WYLIE ISD (43914)'},
-                 {'distname': 'WYLIE ISD', 'cntyname': 'TAYLOR', 'newname': 'WYLIE ISD (221912)'},
+                 {'distname': 'BIG SANDY ISD', 'cntyname': 'POLK',
+                     'newname': 'BIG SANDY ISD (187901)'},
+                 {'distname': 'CENTERVILLE ISD', 'cntyname': 'LEON',
+                     'newname': 'CENTERVILLE ISD (145902)'},
+                 {'distname': 'CENTERVILLE ISD', 'cntyname': 'TRINITY',
+                     'newname': 'CENTERVILLE ISD (228904)'},
+                 {'distname': 'CHAPEL HILL ISD', 'cntyname': 'TITUS',
+                     'newname': 'CHAPEL HILL ISD (225906)'},
+                 {'distname': 'CHAPEL HILL ISD', 'cntyname': 'SMITH',
+                     'newname': 'CHAPEL HILL ISD (212909)'},
+                 {'distname': 'DAWSON ISD', 'cntyname': 'NAVARRO',
+                     'newname': 'DAWSON ISD (175904)'},
+                 {'distname': 'DAWSON ISD', 'cntyname': 'DAWSON',
+                     'newname': 'DAWSON ISD (58902)'},
+                 {'distname': 'EDGEWOOD ISD', 'cntyname': 'BEXAR',
+                     'newname': 'EDGEWOOD ISD (15905)'},
+                 {'distname': 'EDGEWOOD ISD', 'cntyname': 'VAN ZANDT',
+                     'newname': 'EDGEWOOD ISD (234903)'},
+                 {'distname': 'HIGHLAND PARK ISD', 'cntyname': 'DALLAS',
+                     'newname': 'HIGHLAND PARK ISD (57911)'},
+                 {'distname': 'HIGHLAND PARK ISD', 'cntyname': 'POTTER',
+                     'newname': 'HIGHLAND PARK ISD (188903)'},
+                 {'distname': 'HUBBARD ISD', 'cntyname': 'BOWIE',
+                     'newname': 'HUBBARD ISD (19913)'},
+                 {'distname': 'HUBBARD ISD', 'cntyname': 'HILL',
+                     'newname': 'HUBBARD ISD (109905)'},
+                 {'distname': 'MIDWAY ISD', 'cntyname': 'MCLENNAN',
+                     'newname': 'MIDWAY ISD (161903)'},
+                 {'distname': 'MIDWAY ISD', 'cntyname': 'CLAY',
+                     'newname': 'MIDWAY ISD (39905)'},
+                 {'distname': 'NORTHSIDE ISD', 'cntyname': 'BEXAR',
+                     'newname': 'NORTHSIDE ISD (15915)'},
+                 {'distname': 'NORTHSIDE ISD', 'cntyname': 'WILBARGER',
+                     'newname': 'NORTHSIDE ISD (244905)'},
+                 {'distname': 'VALLEY VIEW ISD', 'cntyname': 'HIDALGO',
+                     'newname': 'VALLEY VIEW ISD (108916)'},
+                 {'distname': 'VALLEY VIEW ISD', 'cntyname': 'COOKE',
+                     'newname': 'VALLEY VIEW ISD (49903)'},
+                 {'distname': 'WYLIE ISD', 'cntyname': 'COLLIN',
+                     'newname': 'WYLIE ISD (43914)'},
+                 {'distname': 'WYLIE ISD', 'cntyname': 'TAYLOR',
+                     'newname': 'WYLIE ISD (221912)'},
                  {'distname': 'RICHARD MILBURN ALTER HIGH SCHOOL', 'cntyname': 'BELL',
                   'newname': 'RICHARD MILBURN ALTER HIGH SCHOOL (14801)'},
                  {'distname': 'RICHARD MILBURN ALTER HIGH SCHOOL', 'cntyname': 'NUECES',
@@ -380,19 +412,23 @@ def clean_cdays(year):
     Note: only available for yr1617 and 1718
     """
     filename = 'days_' + year + '.csv'
-    cdays = pd.read_csv(os.path.join(data_path, 'tea', 'cdays', filename), sep=",")
-    cdays_to_keep = {'DISTRICT': 'district', 
-                    'CAMPUS': 'campus',
-                    'TRACK': 'track',
-                    'TOTAL_DAYS': 'days'}
+    cdays = pd.read_csv(os.path.join(
+        data_path, 'tea', 'cdays', filename), sep=",")
+    cdays_to_keep = {'DISTRICT': 'district',
+                     'CAMPUS': 'campus',
+                     'TRACK': 'track',
+                     'TOTAL_DAYS': 'days'}
     cdays = filter_and_rename_cols(cdays, cdays_to_keep)
     cdays = cdays[['campus', 'days']]
-    cdays = cdays.groupby(by=['campus']).agg({'days': ['min', 'mean', 'max']}).reset_index()
+    cdays = cdays.groupby(by=['campus']).agg(
+        {'days': ['min', 'mean', 'max']}).reset_index()
     cdays.columns = [' '.join(col).strip() for col in cdays.columns.values]
-    cdays = cdays.rename({'days min': 'days_min', 'days mean': 'days_mean', 'days max': 'days_max'}, axis='columns')
+    cdays = cdays.rename(
+        {'days min': 'days_min', 'days mean': 'days_mean', 'days max': 'days_max'}, axis='columns')
     return cdays
 
     ####
+
 
 def clean_dref(year):
     """
@@ -412,12 +448,13 @@ def clean_dref(year):
         filename = 'DREF.txt'
     else:
         filename = 'DREF.dat'
-    dref = pd.read_csv(os.path.join(data_path, 'tea', 'dref', year, filename), sep=",")
+    dref = pd.read_csv(os.path.join(
+        data_path, 'tea', 'dref', year, filename), sep=",")
     dref_tokeep = {'DISTRICT': 'district',
-                    'DISTNAME': 'distname',
-                    'DFLCHART': 'distischarter',
-                    'CNTYNAME': 'cntyname'
-                    }
+                   'DISTNAME': 'distname',
+                   'DFLCHART': 'distischarter',
+                   'CNTYNAME': 'cntyname'
+                   }
     if year > 'yr1112':
         dref_tokeep['D_RATING'] = 'rating_academic'
     dref = filter_and_rename_cols(dref, dref_tokeep)
@@ -429,28 +466,36 @@ def clean_dref(year):
     if year in ['yr1112', 'yr1213', 'yr1314']:
         dref['rating_financial'] = None
     if year == 'yr1415':
-        failed_districts = [9901, 59902, 115902, 123910, 222901, 242905, 108914, 14905, 131001, 84904, 137904, 237902]
-        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+        failed_districts = [9901, 59902, 115902, 123910, 222901,
+                            242905, 108914, 14905, 131001, 84904, 137904, 237902]
+        dref['rating_financial'] = np.where(
+            (dref['district'].isin(failed_districts)), "Fail", "Pass")
     if year == 'yr1516':
         failed_districts = [37908, 68901, 123910, 227907]
-        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+        dref['rating_financial'] = np.where(
+            (dref['district'].isin(failed_districts)), "Fail", "Pass")
     if year == 'yr1617':
         failed_districts = [92906, 163904, 174902, 70901, 7906]
-        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+        dref['rating_financial'] = np.where(
+            (dref['district'].isin(failed_districts)), "Fail", "Pass")
     if year == 'yr1718':
         failed_districts = [54901, 64903, 71903, 108902, 176902]
-        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+        dref['rating_financial'] = np.where(
+            (dref['district'].isin(failed_districts)), "Fail", "Pass")
     if year == 'yr1819':
-        failed_districts = [18902, 100908, 101906, 128901, 133905, 228905, 57906, 124901, 152902, 71903]
-        dref['rating_financial'] = np.where((dref['district'].isin(failed_districts)), "Fail", "Pass")
+        failed_districts = [18902, 100908, 101906, 128901,
+                            133905, 228905, 57906, 124901, 152902, 71903]
+        dref['rating_financial'] = np.where(
+            (dref['district'].isin(failed_districts)), "Fail", "Pass")
     if year not in ['yr1112', 'yr1213', 'yr1314']:
         dref['eligible'] = np.where((dref['rating_academic'].isin(['M', 'A'])
-                                        & (dref['rating_financial'] == 'Pass')
-                                        & (dref['distischarter'] == 'N')), True,
+                                     & (dref['rating_financial'] == 'Pass')
+                                     & (dref['distischarter'] == 'N')), True,
                                     False)  # M= Meets standard, A = Meets alternative standard
 
     print("There are ", len(dref), 'districts in dref')
     return dref
+
 
 def clean_ddem(year):
     """
@@ -477,7 +522,7 @@ def clean_ddem(year):
         'DPSTBAFC': 'teachers_badegree_num',
         'DPSTMSFC': 'teachers_msdegree_num',
         'DPSTPHFC': 'teachers_phddegree_num',
-        
+
         # Student Characteristics
         'DPETALLC': 'students_num',
         'DPETECOC': 'students_frpl_num',
@@ -509,13 +554,16 @@ def clean_ddem(year):
         'DPCTSOCA': 'class_size_sec_ss'
     }
     if year == 'yr1112':
-        ddem1 = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, 'dstud.csv'), sep=",")
-        ddem2 = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, 'dstaf.csv'), sep=",")
+        ddem1 = pd.read_csv(os.path.join(
+            data_path, 'tea', 'ddem', year, 'dstud.csv'), sep=",")
+        ddem2 = pd.read_csv(os.path.join(
+            data_path, 'tea', 'ddem', year, 'dstaf.csv'), sep=",")
         ddem = ddem1.merge(ddem2, on='DISTRICT', how='outer')
         ddem['DISTRICT'] = ddem['DISTRICT'].str.strip('\'')
         ddem['DISTRICT'] = ddem['DISTRICT'].apply(int)
     else:
-        ddem = pd.read_csv(os.path.join(data_path, 'tea', 'ddem', year, filename), sep=",")
+        ddem = pd.read_csv(os.path.join(
+            data_path, 'tea', 'ddem', year, filename), sep=",")
         ddem_tokeep['DPSTURND'] = 'teachers_turnover_denom'
         ddem_tokeep['DPSTURNN'] = 'teachers_turnover_num'
         ddem_tokeep['DPSTURNR'] = 'teachers_turnover_ratio_d'
@@ -523,6 +571,7 @@ def clean_ddem(year):
     ddem['teachers_num'] = pd.to_numeric(ddem.teachers_num, errors='coerce')
     print("There are ", len(ddem), 'districts in ddem')
     return ddem
+
 
 def clean_scores(year, subject):
     """
@@ -543,63 +592,67 @@ def clean_scores(year, subject):
         file = 'dfy' + file_yr + subject_dict[subject] + '.dat'
         # need two files for early English scores (reading and writing)
         try:
-            dscores2 = pd.read_csv(os.path.join(data_path, 'tea', 'dscores', subject, file), sep=",")
+            dscores2 = pd.read_csv(os.path.join(
+                data_path, 'tea', 'dscores', subject, file), sep=",")
         except:
-            new_path = fix_parser_error(os.path.join(data_path, 'tea', 'dscores', subject, file))
+            new_path = fix_parser_error(os.path.join(
+                data_path, 'tea', 'dscores', subject, file))
             dscores2 = pd.read_csv(new_path, sep=",")
         subject_dict = {'EnglishI': 'er1', 'EnglishII': 'er2'}
         file = 'dfy' + file_yr + subject_dict[subject] + '.dat'
     try:
-        dscores = pd.read_csv(os.path.join(data_path, 'tea', 'dscores', subject, file), sep=",")
+        dscores = pd.read_csv(os.path.join(
+            data_path, 'tea', 'dscores', subject, file), sep=",")
     except:
-        new_path = fix_parser_error(os.path.join(data_path, 'tea', 'dscores', subject, file))
+        new_path = fix_parser_error(os.path.join(
+            data_path, 'tea', 'dscores', subject, file))
         dscores = pd.read_csv(new_path, sep=",")
 
     if subject not in ['3rd', '4th', '5th', '6th', '7th', '8th', 'Algebra', 'Biology', 'EnglishI', 'EnglishII',
-                        'USHistory']:
+                       'USHistory']:
         return 'invalid subject'
     if subject in ['3rd', '4th', '6th', '7th']:
         dscores_tokeep = {'DISTRICT': 'district',
-                            "r_all_rs": "r_" + subject + "_avescore",
-                            "r_all_d": "r_" + subject + "_numtakers",
-                            "m_all_rs": "m_" + subject + "_avescore",
-                            "m_all_d": "m_" + subject + "_numtakers"}
+                          "r_all_rs": "r_" + subject + "_avescore",
+                          "r_all_d": "r_" + subject + "_numtakers",
+                          "m_all_rs": "m_" + subject + "_avescore",
+                          "m_all_d": "m_" + subject + "_numtakers"}
     if subject in ['5th', '8th']:
         dscores_tokeep = {'DISTRICT': 'district',
-                            "r_all_rs": "r_" + subject + "_avescore",
-                            "r_all_d": "r_" + subject + "_numtakers",
-                            "m_all_rs": "m_" + subject + "_avescore",
-                            "m_all_d": "m_" + subject + "_numtakers",
-                            "s_all_rs": "s_" + subject + "_avescore",
-                            "s_all_d": "s_" + subject + "_numtakers"}
+                          "r_all_rs": "r_" + subject + "_avescore",
+                          "r_all_d": "r_" + subject + "_numtakers",
+                          "m_all_rs": "m_" + subject + "_avescore",
+                          "m_all_d": "m_" + subject + "_numtakers",
+                          "s_all_rs": "s_" + subject + "_avescore",
+                          "s_all_d": "s_" + subject + "_numtakers"}
 
     if subject == 'Algebra':
         dscores_tokeep = {"DISTRICT": "district",
-                            "a1_all_rs": "alg_avescore",
-                            "a1_all_d": "alg_numtakers"}
+                          "a1_all_rs": "alg_avescore",
+                          "a1_all_d": "alg_numtakers"}
         if year == 'yr1819':
             dscores_tokeep = {'district': 'district',
-                            "a1_all_rs": "alg_avescore",
-                            "a1_all_d": "alg_numtakers"}
+                              "a1_all_rs": "alg_avescore",
+                              "a1_all_d": "alg_numtakers"}
     if subject == 'Biology':
         dscores_tokeep = {"DISTRICT": "district",
-                            "bi_all_rs": "bio_avescore",
-                            "bi_all_d": "bio_numtakers"}
+                          "bi_all_rs": "bio_avescore",
+                          "bi_all_d": "bio_numtakers"}
         if year == 'yr1819':
             dscores_tokeep = {"district": "district",
-                            "bi_all_rs": "bio_avescore",
-                            "bi_all_d": "bio_numtakers"}
+                              "bi_all_rs": "bio_avescore",
+                              "bi_all_d": "bio_numtakers"}
     if subject == 'EnglishI':
         if year == 'yr1112' or year == 'yr1213':
             dscores['e1_all_rs'] = dscores['r1_all_rs'] + dscores2['w1_all_rs']
             dscores['e1_all_d'] = dscores['r1_all_d']
         dscores_tokeep = {"DISTRICT": "district",
-                            "e1_all_rs": "eng1_avescore",
-                            "e1_all_d": "eng1_numtakers"}
-        if year =='yr1819':
+                          "e1_all_rs": "eng1_avescore",
+                          "e1_all_d": "eng1_numtakers"}
+        if year == 'yr1819':
             dscores_tokeep = {"district": "district",
-                            "e1_all_rs": "eng1_avescore",
-                            "e1_all_d": "eng1_numtakers"}           
+                              "e1_all_rs": "eng1_avescore",
+                              "e1_all_d": "eng1_numtakers"}
 
     if subject == 'EnglishII':
         if year == 'yr1112' or year == 'yr1213':
@@ -607,22 +660,21 @@ def clean_scores(year, subject):
             dscores['e2_all_d'] = dscores['r2_all_d']
 
         dscores_tokeep = {"DISTRICT": "district",
-                            "e2_all_rs": "eng2_avescore",
-                            "e2_all_d": "eng2_numtakers"}
-        if year =='yr1819':
+                          "e2_all_rs": "eng2_avescore",
+                          "e2_all_d": "eng2_numtakers"}
+        if year == 'yr1819':
             dscores_tokeep = {"district": "district",
-                            "e2_all_rs": "eng2_avescore",
-                            "e2_all_d": "eng2_numtakers"}           
+                              "e2_all_rs": "eng2_avescore",
+                              "e2_all_d": "eng2_numtakers"}
 
     if subject == 'USHistory':
         dscores_tokeep = {"DISTRICT": "district",
-                            "us_all_rs": "us_avescore",
-                            "us_all_d": "us_numtakers"}
-        if year =='yr1819':
+                          "us_all_rs": "us_avescore",
+                          "us_all_d": "us_numtakers"}
+        if year == 'yr1819':
             dscores_tokeep = {"district": "district",
-                            "us_all_rs": "us_avescore",
-                            "us_all_d": "us_numtakers"} 
-        
+                              "us_all_rs": "us_avescore",
+                              "us_all_d": "us_numtakers"}
 
     dscores = filter_and_rename_cols(dscores, dscores_tokeep)
     if year == 'yr1112':
@@ -643,16 +695,18 @@ def clean_ddays(year):
     Note: only available for yr1617 and 1718
     """
     filename = 'days_' + year + '.csv'
-    cdays = pd.read_csv(os.path.join(data_path, 'tea', 'cdays', filename), sep=",")
+    cdays = pd.read_csv(os.path.join(
+        data_path, 'tea', 'cdays', filename), sep=",")
     cdays_to_keep = {'DISTRICT': 'district',
-                    'CAMPUS': 'campus',
-                    'TRACK': 'track',
-                    'TOTAL_DAYS': 'days'}
+                     'CAMPUS': 'campus',
+                     'TRACK': 'track',
+                     'TOTAL_DAYS': 'days'}
     cdays = filter_and_rename_cols(cdays, cdays_to_keep)
-    cdays = cdays.groupby(by=['district', 'campus']).max().reset_index() #No definition of tracks. So we keep the max number. May change later.
-    ddays = cdays.groupby(by=['district']).agg({'days': ['min', 'mean', 'max']}).reset_index()
+    # No definition of tracks. So we keep the max number. May change later.
+    cdays = cdays.groupby(by=['district', 'campus']).max().reset_index()
+    ddays = cdays.groupby(by=['district']).agg(
+        {'days': ['min', 'mean', 'max']}).reset_index()
     ddays.columns = ['_'.join(col).strip() for col in ddays.columns.values]
-    ddays = ddays.rename(columns = {'district_': 'district'})
+    ddays = ddays.rename(columns={'district_': 'district'})
 
     return ddays
-
