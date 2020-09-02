@@ -18,21 +18,22 @@ teachers = clean_for_merge.import_teachers()
 
 # %% Set DOI date
 # Prioritize term date
-dates['doi_year'] = laws.term_year
+dates = pd.DataFrame()
+dates['year'] = laws.term_year
 dates['doi_month'] = laws.term_month
 dates.loc[(laws['term_month'].isna()) & (
-    ~dates['doi_year'].isna()), 'doi_month'] = 'August'
+    ~dates['year'].isna()), 'doi_month'] = 'August'
 
 # If missing, go with finalize date
-dates.loc[dates['doi_year'].isna(), 'doi_month'] = laws.finalize_month
-dates.loc[dates['doi_year'].isna(), 'doi_year'] = laws.finalize_year
+dates.loc[dates['year'].isna(), 'doi_month'] = laws.finalize_month
+dates.loc[dates['year'].isna(), 'year'] = laws.finalize_year
 
 dates['day'] = 1
 months_dict = {'January': 1, 'February': 2, 'March': 3, 'April': 4,
                'May': 5, 'June': 6, 'July': 7, 'August': 8,
                'September': 9, 'October': 10, 'November': 11,
                'December': 12}
-dates['month'] = dates['month_str'].map(months_dict)
+dates['month'] = dates['doi_month'].map(months_dict)
 laws['doi_date'] = pd.to_datetime(dates[['year', 'month', 'day']])
 
 # %% Set treatment status
