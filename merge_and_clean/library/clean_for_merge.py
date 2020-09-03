@@ -79,6 +79,28 @@ def get_not_in(df_a, col_a, df_b, col_b):
     a_not_in_b = df_a[[elem not in list(df_b[col_b]) for elem in list(df_a[col_a])]]
     return a_not_in_b
 
+def standardize_scores_within_year(data):
+    score_columns = list(data.filter(regex='.*avescore').columns)
+    df = data[['year','campus'] + score_columns]
+    means = df.groupby('year').mean()
+    means.columns = [i + '_mean' for i in means.columns]
+    sds = df.groupby('year').std()
+    sds.columns = [i + '_sd' for i in sds.columns]
+    df = df.merge(means, how='left', on='year')
+    df = df.merge(sds, how='left', on='year')
+
+    std_vars = []
+    for subject in score_columns:
+        mean_var = subject + '_mean'
+        sd_var = subject + '_sd'
+        new_var = subject + '_std'
+
+        df[new_var] = (df[subject] - df[mean_var])/df[sd_var]
+        std_vars = std_vars + [new_var]
+    df = df[['year', 'campus'] + std_vars]
+    data = data.merge(df, how='left', on=['year','campus'])
+    return data
+
 
 def standardize_scores(data, std_year):
     yr_df = data[data.year == std_year]
