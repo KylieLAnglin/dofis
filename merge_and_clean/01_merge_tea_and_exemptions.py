@@ -57,18 +57,7 @@ data_school = clean_for_merge.merge_school_and_exemptions(
     tea_df=tea_school, laws_df=laws, teacher_df=teachers, geo_df=geo)
 data_school = clean_final.gen_vars(data_school)
 data_school = clean_final.gen_hte_chars_vars(data_school, 'campus')
-data_school['doi'] = np.where(data_school.doi_year == 2020,
-                              False, data_school.doi)
-data_school['doi_year'] = np.where(data_school.doi_year == 2020,
-                                   np.nan, data_school.doi_year)
-data_school19 = data_school[data_school.year == 2019]
-data_school19 = data_school19[['campus', 'eligible']]
-data_school19 = data_school19.rename({'eligible': 'eligible19'}, axis=1)
-data_school = data_school.merge(data_school19,
-                                how='left',
-                                left_on=['campus'],
-                                right_on=['campus'],
-                                validate='m:1')
+data_school = clean_final.gen_eligiblity(data_school, 2019, 'eligiblity19', 'campus')
 
 data_school.to_csv(os.path.join(start.data_path, 'clean',
                                 'master_data_school.csv'), sep=",")
@@ -80,15 +69,7 @@ data_district = clean_for_merge.merge_district_and_exemptions(
 data_district = clean_final.gen_vars(data_district)
 data_district = clean_final.gen_district_vars(data_district)
 data_district = clean_final.gen_hte_chars_vars(data_district, 'district')
-
-data_district19 = data_district[data_district.year == 2019]
-data_district19 = data_district19[['district', 'eligible']]
-data_district19 = data_district19.rename({'eligible': 'eligible19'}, axis=1)
-data_district = data_district.merge(data_district19,
-                                    how='left',
-                                    left_on='district',
-                                    right_on='district',
-                                    validate='m:1')
+data_school = clean_final.gen_eligiblity(data_district, 2019, 'eligiblity19', 'district')
 
 # generate max and min for district
 district_max = data_school[['district', 'campus', 'year', 'avescores']].groupby(

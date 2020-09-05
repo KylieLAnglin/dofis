@@ -43,6 +43,10 @@ def sync_district_names(df, col_name):
                         "HIGHLAND PARK ISD (057911)": "HIGHLAND PARK ISD (57911)",
                         "HIGHLAND PARK ISD (07911)": "HIGHLAND PARK ISD (57911)",
                         "CULBERSON COUNTY-ALLAMOORE ISD": "CULBERSON COUNTY ALLAMOORE ISD",
+                        "VALLEY VIEW ISD (049903)": "VALLEY VIEW ISD (049903)",
+                        "DAWSON ISD (058902)": "DAWSON ISD (58902)",
+                        "BORDEN ISD": "BORDEN COUNTY ISD",
+                        "MIDWAY ISD (039905)": "MIDWAY ISD (39905)"
                         }
     df[col_name] = df[col_name].replace(fix_names)
     return df
@@ -81,24 +85,34 @@ def get_not_in(df_a, col_a, df_b, col_b):
 
 def standardize_scores_within_year(data):
     score_columns = list(data.filter(regex='.*avescore').columns)
-    df = data[['year','campus'] + score_columns]
+    df = data[['year'] + score_columns]
     means = df.groupby('year').mean()
-    means.columns = [i + '_mean' for i in means.columns]
+    means.columns = [i + '_yrmean' for i in means.columns]
     sds = df.groupby('year').std()
-    sds.columns = [i + '_sd' for i in sds.columns]
-    df = df.merge(means, how='left', on='year')
-    df = df.merge(sds, how='left', on='year')
+    sds.columns = [i + '_yrsd' for i in sds.columns]
+    data = data.merge(means, how='left', on='year', validate='m:1')
+    data = data.merge(sds, how='left', on='year', validate='m:1')
 
-    std_vars = []
-    for subject in score_columns:
-        mean_var = subject + '_mean'
-        sd_var = subject + '_sd'
+    subjects = ['r_3rd', 'm_3rd', 'r_4th', 'm_4th', 'r_5th', 'm_5th',
+                'r_6th', 'm_6th', 'r_7th', 'm_7th', 'r_8th', 'm_8th',
+                's_8th',
+                'alg', 'bio', 'eng1', 'eng2', 'us']
+
+    temp_vars = []
+    for subject in subjects:
+        old_var = subject + '_avescore'
+        mean_var = old_var + '_yrmean'
+        sd_var = old_var + '_yrsd'
         new_var = subject + '_std'
 
-        df[new_var] = (df[subject] - df[mean_var])/df[sd_var]
-        std_vars = std_vars + [new_var]
-    df = df[['year', 'campus'] + std_vars]
-    data = data.merge(df, how='left', on=['year','campus'])
+        data[new_var] = (data[old_var] - data[mean_var])/data[sd_var]
+        temp_vars = temp_vars + [mean_var]
+        temp_vars = temp_vars + [sd_var]
+
+    data = data.drop(columns = temp_vars)
+    
+    
+
     return data
 
 
@@ -127,21 +141,28 @@ def standardize_scores(data, std_year):
 
 def merge_district_and_exemptions(tea_df, laws_df, geo_df):
     tea, laws = resolve_merge_errors(tea_df, laws_df)
-    data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
+    data = laws.merge(tea, left_on='distname', right_on='distname', 
+                    how='left', indicator=True, validate='1:m')
     data.loc[(data['_merge'] == 'both'), 'doi'] = True
     data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
-    data = data.merge(geo_df, left_on='cntyname', right_on='county', how='left', indicator=False)
+    data = data.merge(geo_df, left_on='county', right_on='cntyname', 
+                        how='left', indicator=False, validate='m:1')
     print(laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique())
 
     return data
 
 def merge_school_and_exemptions(tea_df, laws_df, teacher_df, geo_df):
     tea, laws = resolve_merge_errors(tea_df, laws_df)
-    data = tea.merge(laws, left_on='distname', right_on='distname', how='left', indicator=True)
+    data = laws.merge(tea, left_on='distname', right_on='distname',
+                     how='left', indicator=True,
+                     validate='1:m')
     data.loc[(data['_merge'] == 'both'), 'doi'] = True
     data.loc[(data['_merge'] == 'left_only'), 'doi'] = False
-    data = data.merge(teacher_df, left_on = ['campus', 'year'], right_on = ['campus', 'year'], how = 'left')
-    data = data.merge(geo_df, left_on='cntyname', right_on='county', how='left', indicator=False)
+    data = data.merge(teacher_df, left_on = ['campus', 'year'], 
+                    right_on = ['campus', 'year'], how='left',
+                    validate='1:1')
+    data = data.merge(geo_df, left_on='county', right_on='cntyname',
+                     how='left', indicator=False, validate='m:1')
     print(laws.distname.nunique(), tea.distname.nunique(), data.distname.nunique())
     print(tea.campus.nunique(), data.campus.nunique())
 

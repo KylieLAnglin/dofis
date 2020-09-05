@@ -117,8 +117,7 @@ def gen_teacher_vars(data):
 
 def gen_score_vars(data):
 
-    # Standardize within subject using mean and standard deviation from 2014-15
-    data = clean_for_merge.standardize_scores(data=data)
+    data = clean_for_merge.standardize_scores_within_year(data=data)
 
     elem_math = ['m_3rd_std', 'm_4th_std', 'm_5th_std']
     elem_reading = ['r_3rd_std', 'r_4th_std', 'r_5th_std']
@@ -159,6 +158,21 @@ def gen_score_vars(data):
     data['reading'] = data[reading].mean(axis=1)
     data['avescores'] = data[all_scores].mean(axis=1)
 
+    return data
+
+
+def gen_eligiblity(data, year, varname, level):
+
+    datayear = data[data.year == 2019]
+    datayear = datayear[[level, 'eligible']]
+    datayear = datayear.rename({'eligible': varname}, axis=1)
+    #datayear = datayear.drop_duplicates(subset=[level, 'year'], keep='first')
+
+    data = data.merge(datayear,
+                      how='left',
+                      left_on=[level],
+                      right_on=[level],
+                      validate='m:1')
     return data
 
 
@@ -223,13 +237,15 @@ def gen_hte_chars_vars(data: pd.DataFrame, level_index: str):
                          'type_suburban', 'type_town', 'type_rural']
     data_pre_geo = data[data.year == 2016][data_pre_geo_vars]
     data_pre = data_pre.merge(data_pre_geo, how='left', left_on=[
-                              level_index], right_on=[level_index])
+                              level_index], right_on=[level_index],
+                              validate='one_to_one')
     data_pre = data_pre.rename(columns={'type_urban': 'pre_urban',
                                         'type_suburban': 'pre_suburban',
                                         'type_town': 'pre_town',
                                         'type_rural': 'pre_rural'})
     data_pre['pre_turnover'] = data_pre.pre_turnover / 100
     data = data.reset_index().merge(data_pre, left_on=level_index,
-                                    right_on=level_index, how='left')
+                                    right_on=level_index, how='left',
+                                    validate='m:1')
 
     return data
