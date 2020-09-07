@@ -166,7 +166,6 @@ def gen_eligiblity(data, year, varname, level):
     datayear = data[data.year == 2019]
     datayear = datayear[[level, 'eligible']]
     datayear = datayear.rename({'eligible': varname}, axis=1)
-    #datayear = datayear.drop_duplicates(subset=[level, 'year'], keep='first')
 
     data = data.merge(datayear,
                       how='left',
@@ -174,6 +173,17 @@ def gen_eligiblity(data, year, varname, level):
                       right_on=[level],
                       validate='m:1')
     return data
+
+
+def gen_analysis_sample(data,
+                        min_doi_year,
+                        max_doi_year):
+    data['analytic_sample'] = np.where((data.doi == True), True, False)
+    data['analytic_sample'] = np.where(data.doi_year > min_doi_year, data.analytic_sample, False)
+    data['analytic_sample'] = np.where(data.doi_year < max_doi_year, data.analytic_sample, False)
+
+    return data
+
 
 
 # Specification variables
