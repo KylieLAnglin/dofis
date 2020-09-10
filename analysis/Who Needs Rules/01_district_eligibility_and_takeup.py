@@ -39,9 +39,11 @@ print(data19.district.nunique())
 print('Number of ineligible TPSDs in 2019:')
 print(data19[(data19.eligible == 0) & (~data19.doi)].district.nunique())
 
-print('Number of DOIs as of March 2019?')
+print('Number of DOIs as of September 2020')
 print(data.loc[data.doi].district.nunique())
 print(data19.loc[data19.doi].district.nunique())
+
+print()
 
 print('Number of eligible non-DOIs as of March 2019')
 print(data19.loc[(~data19.doi) & (data19.eligible == 1)].district.nunique())

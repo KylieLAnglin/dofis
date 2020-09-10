@@ -182,6 +182,7 @@ def gen_analysis_sample(data,
     data['analytic_sample'] = np.where(data.doi_year > min_doi_year, data.analytic_sample, False)
     data['analytic_sample'] = np.where(data.doi_year < max_doi_year, data.analytic_sample, False)
 
+
     return data
 
 

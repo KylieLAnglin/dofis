@@ -49,9 +49,11 @@ def create_group_df(df):
 df_treat2017 = create_group_df(data[data.doi_year == 2017])
 df_treat2018 = create_group_df(data[data.doi_year == 2018])
 df_treat2019 = create_group_df(data[data.doi_year == 2019])
+
 df_charter = create_group_df(data[data.distischarter == 1])
 df_treat2017
 
+# %%
 # Pre
 plt.plot(list(df_treat2017[df_treat2017.index <= 2017].index),
          df_treat2017[df_treat2017.index <= 2017]['avescores']['score_mean'],
@@ -62,6 +64,7 @@ plt.plot(list(df_treat2018[df_treat2018.index <= 2018].index),
 plt.plot(list(df_treat2019[df_treat2019.index <= 2019].index),
          df_treat2019[df_treat2019.index <= 2019]['avescores']['score_mean'],
          color='orange', label='2018-19 DOI Implementers')
+
 
 plt.legend()
 

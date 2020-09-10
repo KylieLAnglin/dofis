@@ -59,6 +59,9 @@ data_school = clean_final.gen_vars(data_school)
 data_school = clean_final.gen_hte_chars_vars(data_school, 'campus')
 data_school = clean_final.gen_eligiblity(data_school, 2019,
                                          'eligiblity19', 'campus')
+data_school = clean_final.gen_analysis_sample(data=data_school,
+                                              min_doi_year=2017,
+                                              max_doi_year=2019)
 
 data_school.to_csv(os.path.join(start.data_path, 'clean',
                                 'master_data_school.csv'), sep=",")
@@ -72,6 +75,10 @@ data_district = clean_final.gen_district_vars(data_district)
 data_district = clean_final.gen_hte_chars_vars(data_district, 'district')
 data_district = clean_final.gen_eligiblity(data_district, 2019,
                                            'eligible19', 'district')
+data_district = clean_final.gen_analysis_sample(data=data_district,
+                                                min_doi_year=2017,
+                                                max_doi_year=2019)
+
 
 # generate max and min for district
 district_max = data_school[['district', 'campus', 'year', 'avescores']].groupby(
@@ -106,6 +113,7 @@ gdid_school = data_school[cols]
 #     (gdid_school.doi_year == 2016), np.nan, gdid_school.doi_year)
 
 gdid_school = gdid_school[gdid_school.distischarter == 0]
+gdid_school = gdid_school[(gdid_school.doi_year < 2020) & (gdid_school.doi_year >= 2017)]
 gdid_school.to_csv(os.path.join(
     start.data_path, 'clean', 'gdid_school.csv'), sep=",")
 
