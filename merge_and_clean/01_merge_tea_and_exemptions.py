@@ -52,6 +52,11 @@ def next_month(date: datetime.datetime, month: int, day: int) -> int:
 laws['doi_year'] = laws['doi_date'].apply(pd.to_datetime).apply(
     lambda x: next_month(x, month=3, day=29))
 
+
+# %% Limit sample to pre 2020 dois
+
+laws = laws[laws.doi_year < 2020]
+
 # %% School-Level
 data_school = clean_for_merge.merge_school_and_exemptions(
     tea_df=tea_school, laws_df=laws, teacher_df=teachers, geo_df=geo)
@@ -62,7 +67,6 @@ data_school = clean_final.gen_eligiblity(data_school, 2019,
 data_school = clean_final.gen_analysis_sample(data=data_school,
                                               min_doi_year=2017,
                                               max_doi_year=2019)
-
 data_school.to_csv(os.path.join(start.data_path, 'clean',
                                 'master_data_school.csv'), sep=",")
 
@@ -113,7 +117,7 @@ gdid_school = data_school[cols]
 #     (gdid_school.doi_year == 2016), np.nan, gdid_school.doi_year)
 
 gdid_school = gdid_school[gdid_school.distischarter == 0]
-gdid_school = gdid_school[(gdid_school.doi_year < 2020) & (gdid_school.doi_year >= 2017)]
+#gdid_school = gdid_school[(gdid_school.doi_year < 2020) & (gdid_school.doi_year >= 2017)]
 gdid_school.to_csv(os.path.join(
     start.data_path, 'clean', 'gdid_school.csv'), sep=",")
 

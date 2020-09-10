@@ -7,8 +7,7 @@ import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import statsmodels.formula.api as smf
-from openpyxl import load_workbook
+
 from patsy import dmatrices
 
 sys.path.append("../")
@@ -23,6 +22,7 @@ plt.style.use('grayscale')
 data = pd.read_csv(os.path.join(start.data_path, 'clean',
                                 'master_data_district.csv'), sep=",",
                    low_memory=False)
+
 data15 = data[data.year == 2015]
 data18 = data[data['year'] == 2018]
 data19 = data[data['year'] == 2019]
