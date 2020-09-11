@@ -315,17 +315,18 @@ def clean_cgrad(year):
     if data_year == 'yr1213':
         filename = 'CAMPPERF.txt'
 
-    if year < 'yr1819':
+    if data_year <= 'yr1819':
         cgrad = pd.read_csv(os.path.join(
             data_path, 'tea', 'cgrad', data_year, filename), sep=",")
 
         cgrad_to_keep = {'CAMPUS': 'campus',
                          'CA0912DR' + springyr + 'R': 'perf_hsdrop',
                          'CA0AT' + springyr + 'D': 'perf_studays',
-                         'CA0AT' + springyr + 'N': 'perf_stuattend'}
+                         'CA0AT' + springyr + 'N': 'perf_stuattend',
+                         'CA0AT' + springyr + 'R': 'perf_attendance'}
 
         cgrad = filter_and_rename_cols(cgrad, cgrad_to_keep)
-    if year == 'yr1819':
+    if year >= 'yr1920':
         cgrad = pd.DataFrame(columns=['campus',
                                       'perf_hsdrop',
                                       'perf_studays',
@@ -351,21 +352,23 @@ def clean_dgrad(year):
     if data_year == 'yr1213':
         filename = 'DISTPERF.txt'
 
-    if data_year < 'yr1819':
+    if data_year <= 'yr1819':
         dgrad = pd.read_csv(os.path.join(
             data_path, 'tea', 'dgrad', data_year, filename), sep=",")
 
         dgrad_to_keep = {'DISTRICT': 'district',
                          'DA0912DR' + springyr + 'R': 'perf_hsdrop',
                          'DA0AT' + springyr + 'D': 'perf_studays',
-                         'DA0AT' + springyr + 'N': 'perf_stuattend'}
+                         'DA0AT' + springyr + 'N': 'perf_stuattend',
+                         'DA0AT' + springyr + 'R': 'perf_attendance'}
 
         dgrad = filter_and_rename_cols(dgrad, dgrad_to_keep)
-    if data_year > 'yr1819':
+    if data_year >= 'yr1920':
         dgrad = pd.DataFrame(columns=['district',
                                       'perf_hsdrop',
                                       'perf_studays',
-                                      'perf_stuattend'])
+                                      'perf_stuattend',
+                                      'perf_attendance'])
     return dgrad
 
 

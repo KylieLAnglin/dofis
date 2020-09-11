@@ -28,7 +28,7 @@ def destring_vars(data):
                 'teachers_msdegree_num', 'teachers_phddegree_num',
                 'teachers_num', 'teachers_exp_ave',
                 'teachers_tenure_ave', 'teachers_turnover_ratio_d',
-                'stu_teach_ratio', 'distischarter']
+                'stu_teach_ratio', 'distischarter', 'perf_studays']
     for col in list(data.columns):
         if col.startswith('class_size'):
             num_cols.append(col)
@@ -66,6 +66,8 @@ def gen_student_vars(data):
     data['students_ell'] = data['students_ell_num'] / data['students_num']
     data['students_sped'] = data['students_sped_num'] / data['students_num']
     data['students_cte'] = data['students_cte_num'] / data['students_num']
+
+    data['days'] = data['perf_studays']/data['students_num']
 
     data['students_teacher_ratio'] = data.students_num / data.teachers_num
 
@@ -178,12 +180,12 @@ def gen_eligiblity(data, year, varname, level):
 def gen_analysis_sample(data,
                         min_doi_year,
                         max_doi_year):
-    data['analytic_sample'] = np.where((data.doi == True), True, False)
-    data['analytic_sample'] = np.where(data.doi_year > min_doi_year, data.analytic_sample, False)
-    data['analytic_sample'] = np.where(data.doi_year < max_doi_year, data.analytic_sample, False)
-
+    data['pre2020_dois'] = np.where((data.doi == True), True, False)
+    data['pre2020_dois'] = np.where(data.doi_year > min_doi_year, data.pre2020_dois, False)
+    data['pre2020_dois'] = np.where(data.doi_year < max_doi_year, data.pre2020_dois, False)
 
     return data
+
 
 
 

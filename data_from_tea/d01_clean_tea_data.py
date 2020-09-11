@@ -12,20 +12,22 @@ for year in years:
     cref = cref[['distname', 'campus']].groupby(['distname']).nunique()
     cref = cref[['campus']].rename(columns = {'campus': 'num_schools'})
     dref = clean_tea.clean_dref(year=year)
-    dref = dref.merge(cref, on = 'distname', how = 'left')
+    dref = dref.merge(cref, on = 'distname', how='left')
     dref = clean_tea.fix_duplicate_distname(dref, distname_col='distname', cntyname_col= 'cntyname')
 
     ddem = clean_tea.clean_ddem(year=year)
     dtype = clean_tea.clean_dtype(year =year)
+    dgrad = clean_tea.clean_dgrad(year=year)
     dscores = pd.DataFrame(columns=['district'])
     for subject in subjects:
         dscores_subject  = clean_tea.clean_scores(year, subject)
         dscores = dscores.merge(dscores_subject, how='outer',
                                 on='district')
-    descriptives = ddem.merge(dref, on='district', how='inner')
-    descriptives = descriptives.merge(dtype, on='district', how='left')
+    descriptives = ddem.merge(dref, on='district', how='inner', validate='1:1')
+    descriptives = descriptives.merge(dtype, on='district', how='left', validate='1:1')
+    descriptives = descriptives.merge(dgrad, on='district', how='left', validate='1:1')
     descriptives = descriptives.merge(dscores, on='district',
-                                      how='left', indicator=True)
+                                      how='left', indicator=True, validate='1:1')
     descriptives = descriptives.dropna(how='all')
     
     print(len(descriptives))
