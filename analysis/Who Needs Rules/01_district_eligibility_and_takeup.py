@@ -31,22 +31,22 @@ data17 = data[data.year == 2017]
 data18 = data[data.year == 2018]
 data19 = data[data.year == 2019]
 
-
+# Use 2015-16 data for descriptives bc one district not in 2018-19 dataset.
 
 # %% Number of districts
 print('Number of traditional public school districts in Texas in 2019:')
-print(data19.district.nunique())
+print(data16.district.nunique())
 
 # %% Eligibility
 
 print('Number of ineligible TPSDs in 2019:')
-print(data19[(data19.eligible == 0) & (~data19.doi)].district.nunique())
+print(data16[(data16.eligible19 == 0) & (~data16.doi)].district.nunique())
 
 print('Number of eligible non-DOIs as of June 2019')
-print(data19.loc[(~data19.doi) & (data19.eligible == 1)].district.nunique())
+print(data16.loc[(~data16.doi) & (data16.eligible19 == 1)].district.nunique())
 
 print('Some districts lost eligibility')
-print(data19.loc[(data19.doi) & (data19.eligible19 == 0)].district.nunique())
+print(data16.loc[(data16.doi) & (data16.eligible19 == 0)].district.nunique())
 
 
 print('What % of traditional public school district were eligible in 2015?')
@@ -64,21 +64,21 @@ print(data19.eligible.mean())
 
 
 print('Number of DOIs as of June 2019')
-print(data19.loc[data19.doi].district.nunique())
+print(data16.loc[data16.doi].district.nunique())
 
 
 print('What percent of districts are DOIs as of June 2019?')
-print(data19.loc[data19.doi].district.nunique() /
-      data19[data19.distischarter == 0].district.nunique())
+print(data16.loc[data16.doi].district.nunique() /
+      data16[data16.distischarter == 0].district.nunique())
 
-print(data19.doi_year.value_counts().sort_index())
+print(data16.doi_year.value_counts().sort_index())
 
-print(len(data19[(data19.doi == True) & (data19.doi_year.isnull())]))
+print(len(data16[(data16.doi == True) & (data16.doi_year.isnull())]))
 
 # %% 
 
 print('Number of DOIs with missing implementation year:')
-print(len(data19[(data19.doi == True) & (data19.doi_year.isnull())]))
+print(len(data16[(data16.doi == True) & (data16.doi_year.isnull())]))
 # %%
 
 
@@ -115,5 +115,11 @@ plt.savefig(start.table_path + 'takeup.png', dpi=600, bbox_inches="tight")
 plt.show()
 
 
+
+# %% Geography of Districts of Innovation
+print(str(data16[data16.doi == True].type_urban.mean().round(2)), "Urban")
+print(str(data16[data16.doi == True].type_suburban.mean().round(2)), "Suburban")
+print(str(data16[data16.doi == True].type_town.mean().round(2)), "Town")
+print(str(data16[data16.doi == True].type_rural.mean().round(2)), "Rural")
 
 # %%
