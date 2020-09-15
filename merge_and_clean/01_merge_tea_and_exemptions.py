@@ -55,7 +55,7 @@ laws['doi_year'] = laws['doi_date'].apply(pd.to_datetime).apply(
 
 # %% Limit sample to pre 2020 dois
 
-laws = laws[laws.doi_year < 2020]
+laws = laws[(laws.doi_year < 2020) | (laws.doi_year.isnull())]
 
 # %% School-Level
 data_school = clean_for_merge.merge_school_and_exemptions(
