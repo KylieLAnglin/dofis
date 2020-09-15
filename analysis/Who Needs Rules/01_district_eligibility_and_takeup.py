@@ -23,29 +23,26 @@ data = pd.read_csv(os.path.join(start.data_path, 'clean',
                                 'master_data_district.csv'), sep=",",
                    low_memory=False)
 
+data = data[data.distischarter == 0]
+
 data15 = data[data.year == 2015]
-data18 = data[data['year'] == 2018]
-data19 = data[data['year'] == 2019]
+data16 = data[data.year == 2016]
+data17 = data[data.year == 2017]
+data18 = data[data.year == 2018]
+data19 = data[data.year == 2019]
 
-# Ignore charters
-data15 = data15[data15.distischarter == 0]
-data18 = data18[data18.distischarter == 0]
-data19 = data19[data19.distischarter == 0]
 
-# %%
+
+# %% Number of districts
 print('Number of traditional public school districts in Texas in 2019:')
 print(data19.district.nunique())
+
+# %% Eligibility
 
 print('Number of ineligible TPSDs in 2019:')
 print(data19[(data19.eligible == 0) & (~data19.doi)].district.nunique())
 
-print('Number of DOIs as of September 2020')
-print(data.loc[data.doi].district.nunique())
-print(data19.loc[data19.doi].district.nunique())
-
-print()
-
-print('Number of eligible non-DOIs as of March 2019')
+print('Number of eligible non-DOIs as of June 2019')
 print(data19.loc[(~data19.doi) & (data19.eligible == 1)].district.nunique())
 
 print('Some districts lost eligibility')
@@ -54,16 +51,32 @@ print(data19.loc[(data19.doi) & (data19.eligible19 == 0)].district.nunique())
 
 print('What % of traditional public school district were eligible in 2015?')
 print(data15.eligible.mean())
+print('And in 2015-16')
+print(data16.eligible.mean())
+print('And in 2016-17')
+print(data17.eligible.mean())
 print('And in 2017-18?')
 print(data18.eligible.mean())
 print('And in 2018-19?')
 print(data19.eligible.mean())
 
-print('What percent of districts are DOIs as of March 2019?')
+# %% Districts of Innovation
+
+
+print('Number of DOIs as of June 2019')
+print(data.loc[data.doi].district.nunique())
+print(data19.loc[data19.doi].district.nunique())
+
+print('What percent of districts are DOIs as of June 2019?')
 print(data.loc[data.doi].district.nunique() /
       data[data.distischarter == 0].district.nunique())
 
+data19.doi_year.value_counts().sort_index()
 
+# %% 
+
+print('Number of DOIs with missing implementation year:')
+print(len(data[(data.doi == True) & (data.doi_year.isnull())]))
 # %%
 
 
@@ -90,7 +103,7 @@ plt.grid(True, alpha=.6)
 
 
 plt.ylim(0, 1022)
-txt = "Notes: Statistics are as of March 2019. "
+txt = "Notes: Statistics are as of June 2019. "
 "There are ten Districts of Innovation (with missing Innovation Plans) \n "
 "that are not included in the figure. "
 "As of 2019, there were 1022 traditional public school districts in Texas."
