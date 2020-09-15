@@ -64,19 +64,21 @@ print(data19.eligible.mean())
 
 
 print('Number of DOIs as of June 2019')
-print(data.loc[data.doi].district.nunique())
 print(data19.loc[data19.doi].district.nunique())
 
-print('What percent of districts are DOIs as of June 2019?')
-print(data.loc[data.doi].district.nunique() /
-      data[data.distischarter == 0].district.nunique())
 
-data19.doi_year.value_counts().sort_index()
+print('What percent of districts are DOIs as of June 2019?')
+print(data19.loc[data19.doi].district.nunique() /
+      data19[data19.distischarter == 0].district.nunique())
+
+print(data19.doi_year.value_counts().sort_index())
+
+print(len(data19[(data19.doi == True) & (data19.doi_year.isnull())]))
 
 # %% 
 
 print('Number of DOIs with missing implementation year:')
-print(len(data[(data.doi == True) & (data.doi_year.isnull())]))
+print(len(data19[(data19.doi == True) & (data19.doi_year.isnull())]))
 # %%
 
 
