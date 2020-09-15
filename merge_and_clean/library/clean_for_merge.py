@@ -191,8 +191,8 @@ def import_tea_district():
     variables = variables + (list(tea.filter(regex=("teachers"))))
     variables = variables + (list(tea.filter(regex=("avescore"))))
     variables = variables + (list(tea.filter(regex=("numtakers"))))
-    variables = variables + (list(tea.filter(regex=("days"))))
     variables = variables + (list(tea.filter(regex=("class_size"))))
+    variables = variables + (list(tea.filter(regex=("perf"))))
     variables = variables + ['stu_teach_ratio']
     tea = tea[variables]
 
@@ -210,8 +210,9 @@ def import_tea_school():
     variables = variables + (list(tea.filter(regex=("teachers"))))
     variables = variables + (list(tea.filter(regex=("avescore"))))
     variables = variables + (list(tea.filter(regex=("numtakers"))))
-    variables = variables + (list(tea.filter(regex=("days"))))
+    variables = variables + (list(tea.filter(regex=("days_"))))
     variables = variables + (list(tea.filter(regex=("class_size"))))
+    variables = variables + (list(tea.filter(regex=("perf_"))))
     variables = variables + ['stu_teach_ratio']
     tea = tea[variables]
 

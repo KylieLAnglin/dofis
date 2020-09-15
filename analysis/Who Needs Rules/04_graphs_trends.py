@@ -49,6 +49,8 @@ def create_group_df(df):
 df_treat2017 = create_group_df(data[data.doi_year == 2017])
 df_treat2018 = create_group_df(data[data.doi_year == 2018])
 df_treat2019 = create_group_df(data[data.doi_year == 2019])
+df_treat2020 = create_group_df(data[data.doi_year == 2020])
+
 
 df_charter = create_group_df(data[data.distischarter == 1])
 df_treat2017
@@ -64,7 +66,9 @@ plt.plot(list(df_treat2018[df_treat2018.index <= 2018].index),
 plt.plot(list(df_treat2019[df_treat2019.index <= 2019].index),
          df_treat2019[df_treat2019.index <= 2019]['avescores']['score_mean'],
          color='orange', label='2018-19 DOI Implementers')
-
+plt.plot(list(df_treat2020[df_treat2020.index <= 2020].index),
+         df_treat2020[df_treat2020.index <= 2020]['avescores']['score_mean'],
+         color='yellow', label='2018-19 DOI Implementers')
 
 plt.legend()
 
@@ -80,7 +84,10 @@ plt.fill_between(list(df_treat2019[df_treat2019.index <= 2019].index),
                  df_treat2019[df_treat2019.index <= 2019].lb,
                  df_treat2019[df_treat2019.index <= 2019].ub,
                  color='orange', alpha=.2)
-
+plt.fill_between(list(df_treat2020[df_treat2020.index <= 2020].index),
+                 df_treat2020[df_treat2020.index <= 2020].lb,
+                 df_treat2020[df_treat2020.index <= 2020].ub,
+                 color='yellow', alpha=.2)
 
 plt.ylabel('Average STAAR Scores (Std.)')
 plt.title('Student Performance by District Type and DOI Implementation Year')

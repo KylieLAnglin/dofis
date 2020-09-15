@@ -326,7 +326,7 @@ def clean_cgrad(year):
                          'CA0AT' + springyr + 'R': 'perf_attendance'}
 
         cgrad = filter_and_rename_cols(cgrad, cgrad_to_keep)
-    if year >= 'yr1920':
+    if data_year >= 'yr1920':
         cgrad = pd.DataFrame(columns=['campus',
                                       'perf_hsdrop',
                                       'perf_studays',
