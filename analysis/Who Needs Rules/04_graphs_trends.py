@@ -140,7 +140,7 @@ for outcome in title_labels:
         data[data.doi_year == 2019], outcome=outcome)
 
     monochrome = (cycler('color', ['k']) *
-                  cycler('linestyle', ['-', '--', ':', '=.']))
+                  cycler('linestyle', ['-', '--', ':', '-.']))
 
     fig, ax = plt.subplots(1, 1)
     ax.set_prop_cycle(monochrome)
@@ -172,3 +172,5 @@ for outcome in title_labels:
 
     fig.savefig(start.table_path + 'trends_by_adoption_' +
                 outcome + '.png', bbox_inches="tight")
+
+# %%
