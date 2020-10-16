@@ -50,7 +50,7 @@ res = mod.fit(cov_type='clustered',
               clusters=df[df.math == 1].district)
 print(res)
 
-# %%
+# %% Linear GDID
 mod = PanelOLS.from_formula(analysis.create_linear_model_w_interactions(
     'total'),
     df[df.math == 1])
@@ -58,6 +58,16 @@ res = mod.fit(cov_type='clustered',
               clusters=df[df.math == 1].district)
 print(res)
 
+# %% Linear GDID - exempt one regulation
+df['one_reg'] = np.where(df.total == 1, 1, 0)
+df = analysis.create_interactions('one_reg', df)
+
+mod = PanelOLS.from_formula(analysis.create_linear_model_w_interactions(
+    'one_reg'),
+    df[df.math == 1])
+res = mod.fit(cov_type='clustered',
+              clusters=df[df.math == 1].district)
+print(res)
 
 # %%
 df = analysis.create_interactions('exempt_classsize', df)
