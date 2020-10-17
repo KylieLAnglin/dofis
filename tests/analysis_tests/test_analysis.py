@@ -1,4 +1,4 @@
-from src.analysis.library import analysis
+from dofis.analysis.library import analysis
 import pytest
 
 
