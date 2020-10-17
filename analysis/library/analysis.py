@@ -5,8 +5,18 @@ import numpy as np
 
 
 def coef_with_stars(coef, pvalue):
-    """Creates rounded formatted values for tables with stars.
+    """Creates rounded formatted values for tables w/stars.
 
+    Numbers are rounded to two decimals, with three stars \
+    for p-value <= .001, two for <= .01, one for <=.05
+
+    coef: numeric
+        Statstic to put in table
+    pvalue: numeric
+        pvalue of statistic
+
+    returns string
+        formatted coefficient
 
     """
     if pvalue > .05:
@@ -21,6 +31,14 @@ def coef_with_stars(coef, pvalue):
 
 
 def bonferroni(n_tests, coef, pvalue):
+    """creates rounded formatted strings with stars adjusted /
+    for multiple hypothesis testing
+
+    Args:
+        n_tests (numeric): number of hypothesis tests
+        coef (numeric): statistic
+        pvalue ([numeric]): p-value
+    """
     coef = round(coef, 2)
     if pvalue > (.05/n_tests):
         coef = str(coef)
@@ -34,6 +52,17 @@ def bonferroni(n_tests, coef, pvalue):
 
 
 def format_se(se):
+    """round and format standard error
+
+    rounded to two decimals. surround by parens.
+
+    Args:
+        se ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
+
     if se < .005:
         se = '(0.00)'
     else:
