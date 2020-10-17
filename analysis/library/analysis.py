@@ -5,6 +5,10 @@ import numpy as np
 
 
 def coef_with_stars(coef, pvalue):
+    """Creates rounded formatted values for tables with stars.
+
+
+    """
     if pvalue > .05:
         coef = str(round(coef, 2))
     if pvalue <= .05:
