@@ -41,13 +41,13 @@ subjects = ['m_3rd_avescore', 'm_4th_avescore',  'm_5th_avescore',
             'alg_avescore',
             'r_3rd_avescore', 'r_4th_avescore', 'r_5th_avescore',
             'r_6th_avescore', 'r_7th_avescore', 'r_8th_avescore',
-            'eng1_avescore',  'bio_avescore']
+            'eng1_avescore']
 
 gdid_model = 'score_std ~ + 1 + treatpost + C(test_by_year) + EntityEffects'
 linear_gdid_model = 'score_std ~ + 1 + treatpost + yearpost + ' \
     'yearpre  + C(test_by_year) + EntityEffects'
 event_study_model = 'score_std ~ + 1 + pre5 + pre4 + pre3 + pre2 + ' \
-    'post1 + post2 + post3  + C(test_by_year) + EntityEffects' 
+    'post1 + post2 + post3  + C(test_by_year) + EntityEffects'
     
 # All Subject Table
 file = start.table_path + 'tableA_effect_by_subject.xlsx'
@@ -63,10 +63,10 @@ for subject in subjects:
     # GDID
     mod = PanelOLS.from_formula(gdid_model, df_sub)
     res = mod.fit(cov_type='clustered', clusters=df_sub.district)
-    ws.cell(row=5, column=col).value = analysis.bonferroni(
-        len(subjects),
-        res.params['treatpost[T.True]'],
-        res.pvalues['treatpost[T.True]'])
+    ws.cell(row=5, column=col).value = analysis.coef_with_stars(
+        coef=res.params['treatpost[T.True]'],
+        pvalue=res.pvalues['treatpost[T.True]'],
+        n_tests=len(subjects))
     ws.cell(row=6, column=col).value = analysis.format_se(
         res.std_errors['treatpost[T.True]'])
 
@@ -79,20 +79,22 @@ for subject in subjects:
     postslope = res.params['yearpost']
     post_slope = res.std_errors['yearpost']
     
-    ws.cell(row=8, column=col).value = analysis.bonferroni(
-        len(subjects), res.params['yearpre'], res.pvalues['yearpre'])
+    ws.cell(row=8, column=col).value = analysis.coef_with_stars(
+        coef=res.params['yearpre'], pvalue=res.pvalues['yearpre'],
+        n_tests=len(subjects))
     ws.cell(row=9, column=col).value = analysis.format_se(
         res.std_errors['yearpre'])
 
-    ws.cell(row=10, column=col).value = analysis.bonferroni(
-        len(subjects),
-        res.params['treatpost[T.True]'],
-        res.pvalues['treatpost[T.True]'])
+    ws.cell(row=10, column=col).value = analysis.coef_with_stars(
+        coef=res.params['treatpost[T.True]'],
+        pvalue=res.pvalues['treatpost[T.True]'],
+        n_tests=len(subjects))
     ws.cell(row=11, column=col).value = analysis.format_se(
         res.std_errors['treatpost[T.True]'])
 
-    ws.cell(row=12, column=col).value = analysis.bonferroni(
-        len(subjects), res.params['yearpost'], res.pvalues['yearpost'])
+    ws.cell(row=12, column=col).value = analysis.coef_with_stars(
+        coef=res.params['yearpost'], pvalue=res.pvalues['yearpost'], 
+        n_tests=len(subjects))
     ws.cell(row=13, column=col).value = analysis.format_se(
         res.std_errors['yearpost'])
     
@@ -115,7 +117,8 @@ for subject in subjects:
     row = 15
     for coef in ['pre5', 'pre4', 'pre3', 'pre2', 'post1', 'post2', 'post3']:
         ws.cell(row=row, column=col).value = analysis.coef_with_stars(
-            res.params[coef], res.pvalues[coef])
+            coef=res.params[coef], pvalue=res.pvalues[coef], 
+            n_tests=len(subjects))
         row = row + 1
         ws.cell(row=row, column=col).value = analysis.format_se(
             res.std_errors[coef])

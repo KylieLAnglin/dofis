@@ -4,30 +4,37 @@ from scipy.stats import ttest_ind
 import numpy as np
 
 
-def coef_with_stars(coef, pvalue):
+def coef_with_stars(coef: float, pvalue: float, n_tests: int = 1):
     """Creates rounded formatted values for tables w/stars.
 
     Numbers are rounded to two decimals, with three stars \
-    for p-value <= .001, two for <= .01, one for <=.05
+    for p-value <= .001, two for <= .01, one for <=.05. If \
+    bonferroni adjustment is appropriate, specify number of tests
 
     coef: numeric
         Statstic to put in table
     pvalue: numeric
         pvalue of statistic
+    n_tests: numeric (optional)
+        number of tests for bonferroni adjustment
 
     returns string
         formatted coefficient
 
     """
-    if pvalue > .05:
-        coef = str(round(coef, 2))
-    if pvalue <= .05:
-        coef = str(round(coef, 2)) + '*'
-    if pvalue <= .01:
+    coef = float(coef)
+    
+    coef = round(coef, 2)
+    if pvalue > (.05/n_tests):
+        coef = str(coef)
+    if pvalue <= (.05/n_tests):
+        coef = str(coef) + '*'
+    if pvalue <= (.01/n_tests):
         coef = coef + '*'
-    if pvalue <= .001:
+    if pvalue <= (.001/n_tests):
         coef = coef + '*'
     return(coef)
+
 
 
 def bonferroni(n_tests, coef, pvalue):

@@ -3,7 +3,10 @@ import pytest
 
 
 def test_coef_with_stars():
-    assert analysis.coef_with_stars(5, 5) == "5"
+    assert analysis.coef_with_stars(5, 5) == "5.0"
+    assert analysis.coef_with_stars(5, .05) == "5.0*"
+    assert analysis.coef_with_stars(2.45, .004, 1) == "2.45**"
+    assert analysis.coef_with_stars(2.45, .05, 2) == "2.45"
 
 
 def test_format_se():
