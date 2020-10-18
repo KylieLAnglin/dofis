@@ -1,5 +1,3 @@
-Ensure that Data folder is a sibling to Code.
-
 To create exemptions and implementation data dataset, notebooks should be run in the following order:
 
 1. gather_documents_notebook

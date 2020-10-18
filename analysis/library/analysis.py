@@ -35,29 +35,6 @@ def coef_with_stars(coef: float, pvalue: float, n_tests: int = 1):
         coef = coef + '*'
     return(coef)
 
-
-
-def bonferroni(n_tests, coef, pvalue):
-    """creates rounded formatted strings with stars adjusted /
-    for multiple hypothesis testing
-
-    Args:
-        n_tests (numeric): number of hypothesis tests
-        coef (numeric): statistic
-        pvalue ([numeric]): p-value
-    """
-    coef = round(coef, 2)
-    if pvalue > (.05/n_tests):
-        coef = str(coef)
-    if pvalue <= (.05/n_tests):
-        coef = str(coef) + '*'
-    if pvalue <= (.01/n_tests):
-        coef = coef + '*'
-    if pvalue <= (.001/n_tests):
-        coef = coef + '*'
-    return(coef)
-
-
 def format_se(se):
     """round and format standard error
 
