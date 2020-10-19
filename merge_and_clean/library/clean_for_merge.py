@@ -1,7 +1,7 @@
 import pandas as pd
 import unicodedata
 import os
-from library import start
+from dofis.merge_and_clean.library import start
 
 
 def resolve_unicode_problems(df, col_name):

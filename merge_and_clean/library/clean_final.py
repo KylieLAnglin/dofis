@@ -1,12 +1,48 @@
 import pandas as pd
 import numpy as np
 
-try:
-    from merge_and_clean.library import start
-    from merge_and_clean.library import clean_for_merge
-except Exception:
-    from library import start
-    from library import clean_for_merge
+from dofis.merge_and_clean.library import start
+from dofis.merge_and_clean.library import clean_for_merge
+
+
+def gen_doi_date(data: pd.DataFrame):
+    """returns datetime for doi plan implementation
+
+    if there is a term date, (i.e. "plan will be in effect \
+        from August 2017 to August 2022") that date is preffered. \
+        if no month is given, assume August. If no term date, \
+        we use the date a plan was finalized (i.e. "August, 5, 2018 - \
+        Board voted to approve DOI plan.")
+
+    Args:
+        data (pd.DataFrame): Dataframe which contains district name (distname)\
+        term_year, term_month, finalize_year, and finalize month. 
+
+    Returns:
+        [pd.DataFrame]: Contains district and doi datetime
+    """
+    dates = pd.DataFrame()
+
+    dates['distname'] = data.distname
+    dates['doi_year'] = data.term_year
+    dates['doi_month'] = data.term_month
+    dates.loc[(data['term_month'].isna()) & (
+        ~dates['doi_year'].isna()), 'doi_month'] = 'August'
+
+    # If missing, go with finalize date
+    dates.loc[dates['doi_year'].isna(), 'doi_month'] = data.finalize_month
+    dates.loc[dates['doi_year'].isna(), 'doi_year'] = data.finalize_year
+
+    dates['day'] = 1
+    months_dict = {'January': 1, 'February': 2, 'March': 3, 'April': 4,
+                   'May': 5, 'June': 6, 'July': 7, 'August': 8,
+                   'September': 9, 'October': 10, 'November': 11,
+                   'December': 12}
+    dates['month'] = dates['doi_month'].map(months_dict)
+    dates['year'] = dates['doi_year']
+    dates['doi_date'] = pd.to_datetime(dates[['year', 'month', 'day']])
+
+    return dates
 
 
 def gen_vars(data):

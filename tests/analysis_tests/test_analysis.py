@@ -14,3 +14,5 @@ def test_format_se():
     assert analysis.format_se(.005) == "(0.01)"
     assert analysis.format_se(.004) == "(0.00)"
     assert analysis.format_se(1.34) == "(1.34)"
+
+    

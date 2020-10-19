@@ -5,7 +5,9 @@ import os
 import numpy as np
 import pandas as pd
 
-from library import clean_final, clean_for_merge, start
+from dofis.merge_and_clean.library import clean_final
+from dofis.merge_and_clean.library import clean_for_merge
+from dofis.merge_and_clean.library import start
 
 pd.options.display.max_columns = 200
 
@@ -17,24 +19,7 @@ geo = clean_for_merge.import_geo()
 teachers = clean_for_merge.import_teachers()
 
 # %% Set DOI date
-# Prioritize term date
-dates = pd.DataFrame()
-dates['year'] = laws.term_year
-dates['doi_month'] = laws.term_month
-dates.loc[(laws['term_month'].isna()) & (
-    ~dates['year'].isna()), 'doi_month'] = 'August'
-
-# If missing, go with finalize date
-dates.loc[dates['year'].isna(), 'doi_month'] = laws.finalize_month
-dates.loc[dates['year'].isna(), 'year'] = laws.finalize_year
-
-dates['day'] = 1
-months_dict = {'January': 1, 'February': 2, 'March': 3, 'April': 4,
-               'May': 5, 'June': 6, 'July': 7, 'August': 8,
-               'September': 9, 'October': 10, 'November': 11,
-               'December': 12}
-dates['month'] = dates['doi_month'].map(months_dict)
-laws['doi_date'] = pd.to_datetime(dates[['year', 'month', 'day']])
+laws['doi_date'] = clean_final.gen_doi_date(data=laws).doi_date
 
 # %% Set treatment status
 # Treated if plan is implemented before March of year
