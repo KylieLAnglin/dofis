@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import datetime
 
 from dofis.merge_and_clean.library import start
 from dofis.merge_and_clean.library import clean_for_merge
@@ -43,6 +44,24 @@ def gen_doi_date(data: pd.DataFrame):
     dates['doi_date'] = pd.to_datetime(dates[['year', 'month', 'day']])
 
     return dates
+
+
+def next_month(date: datetime.datetime, month: int, day: int) -> int:
+    """Get the year of the next month that matches passed argument
+
+    Args:
+        date (datetime.datetime): [current date]
+        month (int): [month of interest]
+        day (int): [day in month of interest]
+
+    Returns:
+        int: [year of month of interest]
+    """
+    # Treated if plan is implemented before March of year
+# (first possible testing date)
+    if date.month < month or (date.month == month and date.day < day):
+        return date.year
+    return date.year + 1
 
 
 def gen_vars(data):

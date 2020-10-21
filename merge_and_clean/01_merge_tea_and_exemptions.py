@@ -22,20 +22,11 @@ teachers = clean_for_merge.import_teachers()
 laws['doi_date'] = clean_final.gen_doi_date(data=laws).doi_date
 
 # %% Set treatment status
-# Treated if plan is implemented before March of year
-# (first possible testing date)
 
 
-def next_month(date: datetime.datetime, month: int, day: int) -> int:
-    """Get the year of the next month matching passed argument."""
-    if date.month < month or (date.month == month and date.day < day):
-        return date.year
-    return date.year + 1
-
-
-# doi_year is year of treated test
+# doi_year is year of first treated test - occurs in march
 laws['doi_year'] = laws['doi_date'].apply(pd.to_datetime).apply(
-    lambda x: next_month(x, month=3, day=29))
+    lambda x: clean_final.next_month(x, month=3, day=29))
 
 
 # %% Limit sample to pre 2020 dois
