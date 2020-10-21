@@ -19,10 +19,10 @@ geo = clean_for_merge.import_geo()
 teachers = clean_for_merge.import_teachers()
 
 # %% Set DOI date
-laws['doi_date'] = clean_final.gen_doi_date(data=laws).doi_date
 
 # %% Set treatment status
 
+laws['doi_date'] = clean_final.gen_doi_date(data=laws).doi_date
 
 # doi_year is year of first treated test - occurs in march
 laws['doi_year'] = laws['doi_date'].apply(pd.to_datetime).apply(
@@ -30,10 +30,10 @@ laws['doi_year'] = laws['doi_date'].apply(pd.to_datetime).apply(
 
 
 # %% Limit sample to pre 2020 dois
-
 laws = laws[(laws.doi_year < 2020) | (laws.doi_year.isnull())]
 
 # %% School-Level
+
 data_school = clean_for_merge.merge_school_and_exemptions(
     tea_df=tea_school, laws_df=laws, teacher_df=teachers, geo_df=geo)
 data_school = clean_final.gen_vars(data_school)
