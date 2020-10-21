@@ -16,8 +16,7 @@ from cycler import cycler
 from matplotlib import lines, markers
 from scipy import stats
 
-sys.path.append("../")
-from library import start
+from dofis.analysis.library import start
 
 # get_ipython().run_line_magic('matplotlib', 'inline')
 plt.style.use('seaborn')

@@ -16,8 +16,8 @@ from linearmodels import PanelOLS
 from openpyxl import load_workbook
 from patsy import dmatrices
 
-sys.path.append("../")
-from library import start, analysis
+from dofis.analysis.library import start
+from dofis.analysis.library import analysis
 
 
 # %%

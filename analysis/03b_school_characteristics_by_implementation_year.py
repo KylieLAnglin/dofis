@@ -17,7 +17,7 @@ from dofis.analysis.library import characteristics
 
 
 data = pd.read_csv(os.path.join(start.data_path, 'clean',
-                                'master_data_district.csv'),
+                                'master_data_school.csv'),
                    sep=",", low_memory=False)
 data = data[data.year == 2016]
 data.doi_year.value_counts().sort_index()
@@ -30,7 +30,6 @@ col_names = ['texas', 2017, 2018, 2019, 'tps']
 
 
 # %% Geography
-
 
 data.type_description.value_counts()
 data.geography.value_counts()
@@ -116,9 +115,9 @@ student_table
 
 
 # %% To Table
-table_file = 'district_characteristics_by_year.xlsx'
+table_file = 'school_characteristics_by_year.xlsx'
 dfs = [geo_table, teacher_table, student_table]
-rows = [4, 13, 20]
+rows = [4, 13, 22]
 for df, row in zip(dfs, rows):
     tables.df_to_excel(file=start.table_path + table_file, df=df,
                        df_columns=col_names, start_col=2, start_row=row)
