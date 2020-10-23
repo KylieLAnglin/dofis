@@ -6,7 +6,7 @@ from dofis.merge_and_clean.library import start
 from dofis.merge_and_clean.library import clean_for_merge
 
 
-def gen_doi_date(data: pd.DataFrame):
+def prioritize_term_date(data: pd.DataFrame):
     """returns datetime for doi plan implementation
 
     if there is a term date, (i.e. "plan will be in effect \

@@ -20,9 +20,11 @@ teachers = clean_for_merge.import_teachers()
 
 # %% Set DOI date
 
+set_doi_date = clean_final.prioritize_term_date
+
 # %% Set treatment status
 
-laws['doi_date'] = clean_final.gen_doi_date(data=laws).doi_date
+laws['doi_date'] = set_doi_date(data=laws).doi_date
 
 # doi_year is year of first treated test - occurs in march
 laws['doi_year'] = laws['doi_date'].apply(pd.to_datetime).apply(

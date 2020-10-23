@@ -13,8 +13,8 @@ test_data['finalize_year'] = [2018, 2019, 2019]
 test_data['finalize_month'] = ['February', 'September', 'October']
 
 
-def test_gen_doi_date():
-    dates = clean_final.gen_doi_date(test_data)
+def test_prioritize_term_date():
+    dates = clean_final.prioritize_term_date(test_data)
     dates = dates.set_index('distname')
 
     assert dates.loc['A']['doi_date'] == pd.Timestamp('2017-01-01 00:00:00')
