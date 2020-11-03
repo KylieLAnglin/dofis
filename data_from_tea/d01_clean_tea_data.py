@@ -13,7 +13,7 @@ for year in years:
     cref = cref[['campus']].rename(columns = {'campus': 'num_schools'})
     dref = clean_tea.clean_dref(year=year)
     dref = dref.merge(cref, on = 'distname', how='left')
-    dref = clean_tea.fix_duplicate_distname(dref, distname_col='distname', cntyname_col= 'cntyname')
+    dref = clean_tea.fix_duplicate_distname(dref, distname_col='distname', cntyname_col='cntyname')
 
     ddem = clean_tea.clean_ddem(year=year)
     dtype = clean_tea.clean_dtype(year =year)
@@ -38,4 +38,4 @@ for year in years:
     descriptives['year'] = year_map[year]
     yr_file = 'desc_' + year + '.csv'
 
-    descriptives.to_csv((os.path.join(data_path, 'tea', yr_file )))
+    descriptives.to_csv((os.path.join(data_path, 'tea', yr_file)))

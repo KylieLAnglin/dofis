@@ -172,4 +172,3 @@ for outcome in title_labels:
     fig.savefig(start.table_path + 'trends_by_adoption_' +
                 outcome + '.png', bbox_inches="tight")
 
-# %%
