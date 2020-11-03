@@ -1,1 +1,26 @@
-sh ./data_from_tea/run_data_from_tea.sh
+#!/bin/bash
+
+# data from TEA
+CAMPUS=0
+DISTRICT=0
+
+echo "running data_from_tea"
+
+if [[ $DISTRICT = 1 ]]
+then
+    python data_from_tea/d01_clean_tea_data.py
+    python data_from_tea/d02_append_years.py
+fi
+
+if [[ $CAMPUS = 1 ]]
+then
+    python data_from_tea/c01_clean_tea_data.py
+    pyton data_from_tea/c01_append_years.py
+fi
+
+
+# merge and clean
+echo "running merge and clean"
+python merge_and_clean/01_merge_tea_and_exemptions.py
+
+"echo done"
