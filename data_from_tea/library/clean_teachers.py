@@ -39,3 +39,22 @@ def split_grades(df: pd.DataFrame, col: str,
     df[high_name] = pd.to_numeric(df[high_name], errors='coerce')
 
     return df
+
+
+def define_certification():
+    # Create certification variable
+    cert_types = {'Emergency Non-Certified': False,
+                  'Emergency Certified': True,
+                  'Emergency': False, 'Emergency Teaching': False,
+                  'Temporary Exemption': True, 'Temporary Teaching Certificate': False,
+                  'Unknown Permit': False, 'Unknown': False,
+                  'Special Assignment': True,
+                  'Paraprofessional': False, 'Standard Paraprofessional': False, 'Non-renewable': False,
+                  'Standard': True, 'Provisional': True,
+                  'Probationary': True, 'Probationary Extension': True, 'Probationary Second Extension': True,
+                  'One Year': True,
+                  'Visiting International Teacher': True,
+                  'Professional': True, 'Standard Professional': True}
+    cert['certified'] = cert['cert_type'].map(cert_types)
+
+    return cert

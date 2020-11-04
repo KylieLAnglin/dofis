@@ -66,7 +66,6 @@ cert = clean_teachers.split_grades(df=cert, col='cert_grades',
 cert['expiration'] = cert['expiration'].str[0:9]
 cert['expiration'] = pd.to_datetime(
     cert['expiration'], errors='coerce')
-
 timestamps = {'yr1213': '2012-07-01', 'yr1314': '2013-07-01', 'yr1415': '2014-07-01', 'yr1516': '2015-07-01',
                 'yr1617': '2016-07-01', 'yr1718': '2017-07-01', 'yr1819': '2017-0701'}
 cert['expired'] = np.where(
@@ -75,37 +74,25 @@ cert['expired'] = np.where(
 # Only keep unexpired
 cert = cert[cert.expired == False]
 
+# Certification Categories - Standard, Other Non-Emergency, Emergency, Exemption
 
+cert_dict = {'Emergency Non-Certified': 'Emergency', 'Emergency Certified': 'Emergency',
+                'Emergency': 'Emergency', 'Emergency Teaching': 'Emergency',
+                'Temporary Exemption': 'Exemption', 'Temporary Teaching Certificate': 'Exemption',
+                'Unknown Permit': 'Other', 'Unknown': 'Other',
+                'Special Assignment': 'Other', 'Non-renewable': 'Other',
+                'Standard': 'Standard', 'Provisional': 'Other',
+                'Probationary': 'Other', 'Probationary Extension': 'Other', 'Probationary Second Extension': 'Other',
+                'One Year': 'Standard',
+                'Visiting International Teacher': 'Other',
+                'Professional': 'Standard', 'Standard Professional': 'Standard'}
 
-# Create certification variable
-cert_types = {'Emergency Non-Certified': False, 'Emergency Certified': True,
-                'Emergency': False, 'Emergency Teaching': False,
-                'Temporary Exemption': True, 'Temporary Teaching Certificate': False,
-                'Unknown Permit': False, 'Unknown': False,
-                'Special Assignment': True,
-                'Paraprofessional': False, 'Standard Paraprofessional': False, 'Non-renewable': False,
-                'Standard': True, 'Provisional': True,
-                'Probationary': True, 'Probationary Extension': True, 'Probationary Second Extension': True,
-                'One Year': True,
-                'Visiting International Teacher': True,
-                'Professional': True, 'Standard Professional': True}
-cert['certified'] = cert['cert_type'].map(cert_types)
+cert['cert_cat'] = cert['cert_type'].map(cert_dict)
+
 
 cert['vocational'] = np.where(
     (cert['cert_type'] == "Vocational"), True, False)
 
-cert_types_tea_report = {'Emergency Non-Certified': False, 'Emergency Certified': True,
-                            'Emergency': False, 'Emergency Teaching': False,
-                            'Temporary Exemption': True, 'Temporary Teaching Certificate': False,
-                            'Unknown Permit': False, 'Unknown': False,
-                            'Special Assignment': True,
-                            'Paraprofessional': False, 'Standard Paraprofessional': False, 'Non-renewable': False,
-                            'Standard': True, 'Provisional': True,
-                            'Probationary': True, 'Probationary Extension': True, 'Probationary Second Extension': True,
-                            'One Year': True,
-                            'Visiting International Teacher': True}
-cert['certified_report'] = cert['cert_type'].map(
-    cert_types_tea_report)
 
 # Generate binary grades certified variables. True if certified for any grades
 area = {'General Elementary (Self-Contained)': 'elem', 'Bilingual Education': 'biling', 'English Language Arts': 'ela',
@@ -119,10 +106,14 @@ cert['cert_area_elem'] = np.where(cert['cert_area'] == "elem",
 cert['cert_area_elem'] = np.where((cert['cert_area'] == "biling") &
                                             ((cert['cert_level'] == "Elementary") |
                                             (cert['cert_level'] == "All Level")), True, cert.cert_area_elem)
-cert['cert_area_elem'] = np.where((cert['cert_area'] == "spend") &
+cert['cert_area_elem'] = np.where((cert['cert_area'] == "sped") &
                                             ((cert['cert_level'] == "Elementary") |
                                             (cert['cert_level'] == "All Level")),
                                             True, cert.cert_area_elem)
+
+cert['cert_area_math'] = np.where(cert['cert_area'] == "math", True, False)
+cert['cert_area_science'] = np.where(cert['cert_area'] == "science", True, False)
+
 # Math
 cert['cert_area_high_math'] = np.where(cert['cert_area'] == "math",
                                                 True, False)
