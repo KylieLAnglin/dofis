@@ -31,3 +31,4 @@ def test_next_month():
     assert 2018 == clean_final.next_month(pd.Timestamp('2017-03-01 00:00:00'),
                                           month=3, day=1)
 
+
