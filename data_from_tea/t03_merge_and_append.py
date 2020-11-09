@@ -4,6 +4,8 @@ import pandas as pd
 import os
 from library import start
 
+no_cert_merge = 'uncertified'
+
 years = ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']
 for year in years:
 
@@ -17,6 +19,8 @@ for year in years:
 
     teachers = teachers.merge(certification, how='left',
                               on='teacher_id', indicator='cert_merge')
+    
+    if no_cert_merge = 'uncertified':
     for var in ['standard', 'cert_area_math', 'cert_area_math_high', 
                 'cert_area_science', 'cert_area_science_high']:
         teachers[var] = np.where(teachers.cert_merge == 'left_only', 0, 
