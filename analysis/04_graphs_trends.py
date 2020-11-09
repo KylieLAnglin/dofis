@@ -125,7 +125,7 @@ title_labels = {'avescores': 'Average STAR',
                 'students_num': 'Number of Students',
                 'students_hisp': 'Percent Hispanic',
                 'stu_teach_ratio': 'Student Teacher Ratio',
-                'certification': 'Certification',
+                'certified': 'Certification',
                 'class_size_5': '5th Grade Class Size'}
 
 
