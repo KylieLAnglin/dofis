@@ -9,8 +9,7 @@ from library import clean_teachers
 
 for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
     # Read files
-    folder = 'certification_' + year + '/'
-    teacher_datapath = os.path.join(start.data_path, 'tea', 'teachers', folder)
+    teacher_datapath = os.path.join(start.data_path, 'teachers', year)
     pattern = "TEACHER_MASTER*.TXT"
 
     teachers = build.concat_files(path=teacher_datapath, pattern=pattern)
@@ -28,4 +27,4 @@ for year in ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']:
 
     teachers.sort_values(by=['teacher_id'], axis=0)
     filename = 'teachers_' + year + '.csv'
-    teachers.to_csv(os.path.join(start.data_path, 'tea', 'teachers', filename))
+    teachers.to_csv(os.path.join(start.data_path, 'teachers', filename))

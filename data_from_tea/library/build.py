@@ -19,7 +19,7 @@ def concat_files(path: str, pattern: str):
         if fnmatch.fnmatch(entry, pattern):
             files.append(entry)
     files.sort()
-    dirs_cert = [path + file for file in files]
+    dirs_cert = [path + '/' + file for file in files]
     df_list = [pd.read_csv(file, sep=",", encoding="ISO-8859-1", dtype=object) for file in dirs_cert]
     df = pd.concat(df_list)
 

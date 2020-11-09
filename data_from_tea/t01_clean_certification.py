@@ -21,8 +21,7 @@ years = ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']
 for year in years:
 
     # Files
-    folder = 'certification_' + year + '/'
-    teacher_datapath = os.path.join(start.data_path, 'tea', 'teachers', folder)
+    teacher_datapath = os.path.join(start.data_path, 'teachers', year)
 
     pattern = 'CERTIFICATION_*.csv'
     if year == 'yr1213' or year == 'yr1314':
@@ -91,5 +90,5 @@ for year in years:
 
     # Save to CSV
     filename = 'teacher_cert_' + year + '.csv'
-    cert.to_csv(os.path.join(
-        start.data_path, 'tea', 'teachers', filename))
+    teacher_yesno.to_csv(os.path.join(
+        start.data_path, 'teachers', filename))
