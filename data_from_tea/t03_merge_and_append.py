@@ -4,7 +4,7 @@ import pandas as pd
 import os
 from library import start
 
-no_cert_merge = 'uncertified'
+no_cert_merge = 'missing'
 
 years = ['yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718']
 for year in years:
