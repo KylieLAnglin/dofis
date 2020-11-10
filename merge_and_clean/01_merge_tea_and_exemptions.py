@@ -90,12 +90,12 @@ data_district.to_csv(os.path.join(start.data_path, 'clean',
 # %% GDID
 cols = [c for c in data_school.columns if c.lower()[:3] != 'reg']
 gdid_school = data_school[cols]
-# drop first implementers (3 districts)
-# gdid_school['doi_year'] = np.where(
-#     (gdid_school.doi_year == 2016), np.nan, gdid_school.doi_year)
 
+# Limit Sample
 gdid_school = gdid_school[gdid_school.distischarter == 0]
-#gdid_school = gdid_school[(gdid_school.doi_year < 2020) & (gdid_school.doi_year >= 2017)]
+gdid_school = gdid_school[(gdid_school.doi)]
+gdid_school = gdid_school[(gdid_school.doi_year < 2020) & (gdid_school.doi_year >= 2017)]
+
 gdid_school.to_csv(os.path.join(
     start.data_path, 'clean', 'gdid_school.csv'), sep=",")
 

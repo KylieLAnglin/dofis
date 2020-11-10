@@ -1,8 +1,10 @@
-
-
-import pandas as pd
 import os
+
+import numpy as np
+import pandas as pd
+
 from library import start
+
 
 no_cert_merge = 'missing'
 
@@ -20,11 +22,11 @@ for year in years:
     teachers = teachers.merge(certification, how='left',
                               on='teacher_id', indicator='cert_merge')
     
-    if no_cert_merge = 'uncertified':
-    for var in ['standard', 'cert_area_math', 'cert_area_math_high', 
-                'cert_area_science', 'cert_area_science_high']:
-        teachers[var] = np.where(teachers.cert_merge == 'left_only', 0, 
-        teachers[var])
+    if no_cert_merge == 'uncertified':
+        for var in ['standard', 'cert_area_math', 'cert_area_math_high',
+                    'cert_area_science', 'cert_area_science_high']:
+            teachers[var] = np.where(teachers.cert_merge == 'left_only', 0,
+                                     teachers[var])
 
 
     # Standard Certification

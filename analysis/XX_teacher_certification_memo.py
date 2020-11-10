@@ -17,6 +17,7 @@ from dofis.analysis.library import start
 data_school = pd.read_csv(os.path.join(start.data_path, 'clean',
                                        'master_data_school.csv'), sep=",",
                           low_memory=False)
+data_school = data_school[data_school.doi]
 # %%
 
 school_df = pd.DataFrame(data_school.groupby(
