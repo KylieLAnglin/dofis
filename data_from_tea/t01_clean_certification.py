@@ -21,38 +21,6 @@ years = ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718"]
 for year in years:
 
     # Files
-    teacher_datapath = os.path.join(start.data_path, "teachers", year)
-
-    pattern = "CERTIFICATION_*.csv"
-    if year == "yr1213" or year == "yr1314":
-        pattern = "CERTIFICATION*.TXT"
-
-    cert = build.concat_files(path=teacher_datapath, pattern=pattern)
-
-    # Rename and keep
-    if year > "yr1415":
-        vars_to_keep = {
-            "PERSONID_SCRAM": "teacher_id",
-            "DISTRICT": "district",
-            "ROLE_CREDENTIALED_FOR": "role",
-            "CREDENTIAL_TYPE": "cert_type",
-            "CERTIFICATE_EXPIRATION_DATE": "expiration",
-            "CERTIFICATION_LEVEL": "cert_level",
-            "SUBJECT_AREA": "cert_area",
-            "SUBJECT": "cert_subject",
-        }
-    else:
-        vars_to_keep = {
-            "personid_SCRAM": "teacher_id",
-            "DISTRICT": "district",
-            "ROLE_CREDENTIALED FOR": "role",
-            "CERTIFICATE EXPIRATION DATE": "expiration",
-            "CREDENTIAL TYPE": "cert_type",
-            "CERTIFICATION LEVEL": "cert_level",
-            "SUBJECT AREA": "cert_area",
-        }
-
-    cert = clean_tea.filter_and_rename_cols(cert, vars_to_keep)
 
     # Keep only teachers
     cert = cert[cert.role == "Teacher"]
