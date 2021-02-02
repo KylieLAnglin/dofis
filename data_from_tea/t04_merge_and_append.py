@@ -9,7 +9,7 @@ from library import start
 if_teacher_not_in_cert_df_set_as = "missing"
 
 year = "yr1718"
-years = ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718"]
+years = ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]
 campus_df = []
 for year in years:
 

@@ -7,7 +7,7 @@ from library import clean_tea
 from library import clean_teachers
 
 year = "yr1718"
-for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718"]:
+for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]:
     # Read files
     teacher_datapath = os.path.join(start.data_path, "teachers", year)
     pattern = "TEACHER_MASTER*.TXT"
