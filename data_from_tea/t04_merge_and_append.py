@@ -5,13 +5,15 @@ import pandas as pd
 
 from library import start
 
+IF_TEACHER_NOT_IN_CERT_DF_SET_AS = "missing"
+# SECONDARY_VALUES = ["HIGH SCHOOL", "MIDDLE SCHOOL", "JUNIOR HIGH SCHOOL"]
+SECONDARY_VALUES = ["HIGH SCHOOL"]
+YEARS = ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]
 
-if_teacher_not_in_cert_df_set_as = "missing"
+# %%
 
-year = "yr1718"
-years = ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]
 campus_df = []
-for year in years:
+for year in YEARS:
 
     filename = "teacher_cert_" + year + ".csv"
     certification = pd.read_csv(os.path.join(start.data_path, "teachers", filename))
@@ -29,7 +31,7 @@ for year in years:
 
     teachers = teachers.merge(classes, how="left", on=["teacher_id", "campus"])
 
-    if if_teacher_not_in_cert_df_set_as == "uncertified":
+    if IF_TEACHER_NOT_IN_CERT_DF_SET_AS == "uncertified":
         for var in [
             "standard",
             "cert_area_math",
@@ -41,9 +43,10 @@ for year in years:
                 teachers.cert_merge == "left_only", 0, teachers[var]
             )
 
-    secondary_values = ["HIGH SCHOOL", "MIDDLE SCHOOL", "JUNIOR HIGH SCHOOL"]
+    # Secondary Math
+
     teachers["secondary"] = np.where(
-        (teachers.camp_grade_group.isin(secondary_values)), True, False
+        (teachers.camp_grade_group.isin(SECONDARY_VALUES)), True, False
     )
 
     teachers["secondary_math_teacher"] = np.where(
@@ -51,7 +54,7 @@ for year in years:
     )
 
     teachers["certified_secondary_math_teacher"] = np.where(
-        (teachers.secondary_math_teacher & teachers.standard & teachers.cert_area_math),
+        (teachers.secondary_math_teacher & teachers.cert_area_math),
         True,
         False,
     )
@@ -69,17 +72,53 @@ for year in years:
         True,
         False,
     )
-    teachers["teachers"] = 1
 
+    # Secondary Science
+    teachers["secondary_science_teacher"] = np.where(
+        (teachers.secondary & teachers.science), True, False
+    )
+
+    teachers["certified_secondary_science_teacher"] = np.where(
+        (teachers.secondary_science_teacher & teachers.cert_area_science),
+        True,
+        False,
+    )
+
+    teachers["uncertified_secondary_science_teacher"] = np.where(
+        (teachers.secondary_science_teacher) & (teachers.standard == False),
+        True,
+        False,
+    )
+
+    teachers["outoffield_secondary_science_teacher"] = np.where(
+        (teachers.secondary_science_teacher)
+        & (teachers.standard)
+        & (teachers.cert_area_science == False),
+        True,
+        False,
+    )
+
+    # Standard certification
+    teachers["teachers"] = 1
+    teachers["teachers_certified"] = teachers.standard
+    teachers["teachers_uncertified"] = np.where(teachers.standard == False, True, False)
+
+    # Create school counts
     campus = (
         teachers[
             [
                 "campus",
                 "teachers",
+                "teachers_certified",
+                "teachers_uncertified",
                 "secondary_math_teacher",
                 "certified_secondary_math_teacher",
                 "uncertified_secondary_math_teacher",
                 "outoffield_secondary_math_teacher",
+                "secondary_science_teacher",
+                "certified_secondary_science_teacher",
+                "uncertified_secondary_science_teacher",
+                "outoffield_secondary_science_teacher",
             ]
         ]
         .groupby(["campus"])
