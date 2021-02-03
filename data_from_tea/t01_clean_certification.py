@@ -14,6 +14,7 @@ from dofis.data_from_tea.library import clean_teachers
 pd.set_option("display.max_columns", None)
 
 # %%
+
 FILE_PATTERNS = {
     "yr1213": "CERTIFICATION*.TXT",
     "yr1314": "CERTIFICATION*.TXT",
