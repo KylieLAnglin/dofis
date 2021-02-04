@@ -121,9 +121,15 @@ print(res.summary())
 # %%
 matching_df["pscore"] = res.predict(X.astype(float))
 
+# TOT weights
+matching_df["ps_weight"] = matching_df.first_implementers + (
+    1 - matching_df.first_implementers
+) * matching_df.pscore / (1 - matching_df.pscore)
+
+
 # %%
 data = data.merge(
-    matching_df[["pscore"]], how="left", left_index=True, right_index=True
+    matching_df[["pscore", "ps_weight"]], how="left", left_index=True, right_index=True
 )
 data["first_implementers"] = np.where(data.doi_year == 2017, 1, 0)
 
