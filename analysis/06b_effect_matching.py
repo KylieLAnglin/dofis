@@ -66,12 +66,14 @@ data = pd.read_csv(
 data = data[data.doi_year != 2016]  # drop 3 early early adopters
 data = data[data.distischarter == False]  # don't include charters
 data["first_implementers"] = np.where(data.doi_year == 2017, 1, 0)
-# data["second_implementers"] = np.where(data.doi_year == 2018, 1, 0)
+data["second_implementers"] = np.where(data.doi_year == 2018, 1, 0)
+data["third_implementers"] = np.where(data.doi_year == 2019, 1, 0)
 
 
 # %%
 matching_df = data[data.year == 2016]  # match on last pre-treatment year
-# matching_df = matching_df[matching_df.second_implementers == 0]
+matching_df = matching_df[matching_df.second_implementers == 0]
+matching_df = matching_df[matching_df.third_implementers == 0]
 matching_df = matching_df[["first_implementers"] + POTENTIAL_COVARIATES]
 matching_df = matching_df.dropna()
 
@@ -117,7 +119,7 @@ res = mod.fit()
 print(res.summary())
 
 # %%
-matching_df["pscore"] = res.predict(X)
+matching_df["pscore"] = res.predict(X.astype(float))
 
 # %%
 data = data.merge(
@@ -135,8 +137,13 @@ mod = smf.ols("math ~ 1 + first_implementers + pscore", data[data.year == 2017])
 res = mod.fit()
 print(res.summary())
 
-
+# %% Second year results
 mod = smf.ols("math ~ 1 + first_implementers + pscore", data[data.year == 2018])
+res = mod.fit()
+print(res.summary())
+
+# %% Third Year Results
+mod = smf.ols("math ~ 1 + first_implementers + pscore", data[data.year == 2019])
 res = mod.fit()
 print(res.summary())
 
