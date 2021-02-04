@@ -126,15 +126,30 @@ matching_df["ps_weight"] = matching_df.first_implementers + (
     1 - matching_df.first_implementers
 ) * matching_df.pscore / (1 - matching_df.pscore)
 
+matching_df["ps_weight2"] = np.where(
+    matching_df.first_implementers == 1, 1, 1 / (1 - matching_df.pscore)
+)
 
 # %%
 data = data.merge(
-    matching_df[["pscore", "ps_weight"]], how="left", left_index=True, right_index=True
+    matching_df[["pscore", "ps_weight", "ps_weight2"]],
+    how="left",
+    left_index=True,
+    right_index=True,
 )
 data["first_implementers"] = np.where(data.doi_year == 2017, 1, 0)
 
 # %% Check balance -- Looks great
 mod = smf.ols("pre_avescore ~ 1 + first_implementers + pscore", data[data.year == 2017])
+res = mod.fit()
+print(res.summary())
+
+# %% Check balance with weighting - truly terrible, worse than if we weren't weighting
+mod = smf.wls(
+    "pre_avescore ~ 1 + first_implementers",
+    data[data.year == 2017],
+    weights=data[data.year == 2017].ps_weight2,
+)
 res = mod.fit()
 print(res.summary())
 
