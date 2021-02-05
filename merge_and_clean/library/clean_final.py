@@ -210,6 +210,7 @@ def gen_certification_vars(data):
     data["teachers_secondary_math_teachers_with_cert"] = (
         data["certified_secondary_math_teacher"] / data["secondary_math_teacher"]
     )
+
     return data
 
 
