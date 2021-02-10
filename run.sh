@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # data from TEA
-CAMPUS=1
-DISTRICT=1
-TEACHERS=0
+CAMPUS=0
+DISTRICT=0
+TEACHERS=1
 
 
 if [[ $DISTRICT = 1 ]]
@@ -25,6 +25,7 @@ then
     echo "building teacher data"
     python data_from_tea/t01_clean_certification.py
     python data_from_tea/t02_clean_teachers.py
+    python data_from_tea/t03_clean_class.py
     python data_from_tea/t03_merge_and_append.py
 
 fi
