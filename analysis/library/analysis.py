@@ -1,7 +1,10 @@
+import numpy as np
+
+
 import pandas as pd
 import statsmodels.formula.api as smf
+import statsmodels.api as sm
 from scipy.stats import ttest_ind
-import numpy as np
 
 
 def coef_with_stars(coef: float, pvalue: float, n_tests: int = 1, digits: int = 2):
@@ -36,7 +39,7 @@ def coef_with_stars(coef: float, pvalue: float, n_tests: int = 1, digits: int = 
     return coef
 
 
-def format_se(se):
+def format_se(se, digits: int = 2):
     """round and format standard error
 
     rounded to two decimals. surround by parens.
@@ -48,11 +51,8 @@ def format_se(se):
         [type]: [description]
     """
 
-    if se < 0.005:
-        se = "(0.00)"
-    else:
-        se = "(" + str(round(se, 2)) + ")"
-    return se
+    se_formatted = "(" + str(round(se, digits)) + ")"
+    return se_formatted
 
 
 def many_y_one_x(data, y_list, y_labels, x):
@@ -204,3 +204,45 @@ def create_event_model_w_interactions(variable: str):
     print(event_study_model)
 
     return event_study_model
+
+
+def double_covariate_selection(
+    outcome1: str,
+    outcome2: str,
+    data: pd.DataFrame,
+    covariates: list,
+    alpha: float = 0.01,
+):
+    data = data.copy()
+    data = data[[outcome1, outcome2] + covariates]
+    data = data.dropna()
+    """Performs the double selection procedure suggested by Belloni, Chernozhukov, Fernández, and Hansen
+
+    Args:
+        outcome1 (str): Column containing treatment indicator variable in data
+        outcome2 (str): Column containing outcome in data
+        data (pd.DataFrame): Data with treatment, outcome, and covariates
+        covariates (list): Potential covariates in data to select from
+        alpha (float): alpha for lasso regression
+
+    Returns:
+        [type]: [description]
+    """
+    variables = []
+    X = data[covariates]
+
+    mod = sm.OLS(data[outcome1], X)
+    res = mod.fit_regularized(alpha=alpha, L1_wt=1, refit=True)
+
+    for variable, coefficient in zip(list(X.columns), list(res.params)):
+        if coefficient > 0:
+            variables.append(variable)
+
+    mod = sm.OLS(data[outcome1], X)
+    res = mod.fit_regularized(alpha=alpha, L1_wt=1, refit=True)
+
+    for variable, coefficient in zip(list(X.columns), list(res.params)):
+        if (variable not in variables) & (coefficient > 0):
+            variables.append(variable)
+
+    return variables

@@ -205,11 +205,60 @@ def gen_teacher_vars(data):
 
 
 def gen_certification_vars(data):
-    data["teachers_certified"] = data["teachers_certified"] / data["teachers"]
-    data["teachers_uncertified"] = data["teachers_uncertified"] / data["teachers"]
-    data["teachers_secondary_math_teachers_with_cert"] = (
-        data["certified_secondary_math_teacher"] / data["secondary_math_teacher"]
-    )
+    data["teachers_certified"] = data["teacher_certified"] / data["teachers"]
+    data["teachers_uncertified"] = data["teacher_uncertified"] / data["teachers"]
+
+    certification_ratios = [
+        {
+            "new_var": "teachers_certified",
+            "numerator": "teacher_certified",
+            "denominator": "teachers",
+        },
+        {
+            "new_var": "teachers_uncertified",
+            "numerator": "teacher_uncertified",
+            "denominator": "teachers",
+        },
+        {
+            "new_var": "teachers_secondary_math_certified",
+            "numerator": "teacher_secondary_math_certified",
+            "denominator": "teacher_secondary_math",
+        },
+        {
+            "new_var": "teachers_secondary_math_uncertified",
+            "numerator": "teacher_secondary_math_uncertified",
+            "denominator": "teacher_secondary_math",
+        },
+        {
+            "new_var": "teachers_secondary_math_outoffield",
+            "numerator": "teacher_secondary_math_outoffield",
+            "denominator": "teacher_secondary_math",
+        },
+        {
+            "new_var": "teachers_secondary_science_outoffield",
+            "numerator": "teacher_secondary_science_outoffield",
+            "denominator": "teacher_secondary_science",
+        },
+        {
+            "new_var": "teachers_secondary_science_uncertified",
+            "numerator": "teacher_secondary_science_uncertified",
+            "denominator": "teacher_secondary_science",
+        },
+        {
+            "new_var": "teachers_secondary_cte_uncertified",
+            "numerator": "teacher_secondary_cte_uncertified",
+            "denominator": "teacher_secondary_cte",
+        },
+        {
+            "new_var": "teachers_secondary_cte_outoffield",
+            "numerator": "teacher_secondary_cte_outoffield",
+            "denominator": "teacher_secondary_cte",
+        },
+    ]
+    for new_var_dict in certification_ratios:
+        data[new_var_dict["new_var"]] = (
+            data[new_var_dict["numerator"]] / data[new_var_dict["denominator"]]
+        )
 
     return data
 

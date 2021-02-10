@@ -61,21 +61,3 @@ POTENTIAL_COVARIATES = [
     "avescores",
     "teachers",
 ]
-INPUTS = [
-    "class_size_k",
-    "class_size_1",
-    "class_size_2",
-    "class_size_3",
-    "class_size_4",
-    "class_size_5",
-    "perf_attendance",
-    "perf_stuattend",
-    "perf_studays",
-    "stu_teach_ratio",
-    "days_max",
-    "days_mean",
-    "days_min",
-    "teachers_certified",
-    "teachers_uncertified",
-    "teachers_secondary_math_teachers_with_cert",
-]
