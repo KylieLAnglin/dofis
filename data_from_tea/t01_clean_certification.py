@@ -122,6 +122,12 @@ for year in YEARS:
         standard_tuple=("standard", True),
     )
 
+    cert = clean_teachers.gen_subject(
+        df=cert,
+        new_col="cert_area_cte",
+        area_tuple=("cert_area", "Vocational Education"),
+        standard_tuple=("standard", True),
+    )
     # three teachers don't link to district number
     cert = cert[cert.district != "San Antonio"]
 
@@ -139,6 +145,7 @@ for year in YEARS:
             "cert_area_math_high",
             "cert_area_science",
             "cert_area_science_high",
+            "cert_area_cte",
         ]
     ]
 

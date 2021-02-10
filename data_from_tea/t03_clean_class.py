@@ -28,10 +28,20 @@ for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819
 
     classes = clean_tea.filter_and_rename_cols(classes, vars_to_keep)
 
-    classes["math"] = np.where(classes.subject_area == "MATHEMATICS", True, False)
-    classes["science"] = np.where(classes.subject_area == "SCIENCE", True, False)
+    classes["teaches_math"] = np.where(
+        classes.subject_area == "MATHEMATICS", True, False
+    )
+    classes["teaches_science"] = np.where(
+        classes.subject_area == "SCIENCE", True, False
+    )
+    classes["teaches_cte"] = np.where(
+        classes.subject_area == "CAREER & TECHNOLOGY EDUCATION", True, False
+    )
 
-    teachers = classes[["teacher_id", "campus", "math", "science"]]
+    class_variables = list(classes.filter(like="teaches", axis=1).columns)
+    variables_to_keep = ["teacher_id", "campus"] + class_variables
+
+    teachers = classes[variables_to_keep]
 
     teachers = teachers.groupby(["teacher_id", "campus"]).max()
 

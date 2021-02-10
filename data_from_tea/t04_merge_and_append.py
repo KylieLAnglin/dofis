@@ -1,3 +1,4 @@
+# %%
 import os
 
 import numpy as np
@@ -32,41 +33,39 @@ for year in YEARS:
     teachers = teachers.merge(classes, how="left", on=["teacher_id", "campus"])
 
     if IF_TEACHER_NOT_IN_CERT_DF_SET_AS == "uncertified":
-        for var in [
-            "standard",
-            "cert_area_math",
-            "cert_area_math_high",
-            "cert_area_science",
-            "cert_area_science_high",
-        ]:
+        certification_variables = list(
+            teachers.filter(like="cert_area", axis=1).columns
+        )
+        certification_variables = ["standard"] + certification_variables
+        for var in certification_variables:
             teachers[var] = np.where(
                 teachers.cert_merge == "left_only", 0, teachers[var]
             )
 
     # Secondary Math
 
-    teachers["secondary"] = np.where(
+    teachers["teacher_secondary"] = np.where(
         (teachers.camp_grade_group.isin(SECONDARY_VALUES)), True, False
     )
 
-    teachers["secondary_math_teacher"] = np.where(
-        (teachers.secondary & teachers.math), True, False
+    teachers["teacher_secondary_math"] = np.where(
+        (teachers.teacher_secondary & teachers.teaches_math), True, False
     )
 
-    teachers["certified_secondary_math_teacher"] = np.where(
-        (teachers.secondary_math_teacher & teachers.cert_area_math),
+    teachers["teacher_secondary_math_certified"] = np.where(
+        (teachers.teacher_secondary_math & teachers.cert_area_math),
         True,
         False,
     )
 
-    teachers["uncertified_secondary_math_teacher"] = np.where(
-        (teachers.secondary_math_teacher) & (teachers.standard == False),
+    teachers["teacher_secondary_math_uncertified"] = np.where(
+        (teachers.teacher_secondary_math) & (teachers.standard == False),
         True,
         False,
     )
 
-    teachers["outoffield_secondary_math_teacher"] = np.where(
-        (teachers.secondary_math_teacher)
+    teachers["teacher_secondary_math_outoffield"] = np.where(
+        (teachers.teacher_secondary_math)
         & (teachers.standard)
         & (teachers.cert_area_math == False),
         True,
@@ -74,56 +73,65 @@ for year in YEARS:
     )
 
     # Secondary Science
-    teachers["secondary_science_teacher"] = np.where(
-        (teachers.secondary & teachers.science), True, False
+    teachers["teacher_secondary_science"] = np.where(
+        (teachers.teacher_secondary & teachers.teaches_science), True, False
     )
 
-    teachers["certified_secondary_science_teacher"] = np.where(
-        (teachers.secondary_science_teacher & teachers.cert_area_science),
+    teachers["teacher_secondary_science_certified"] = np.where(
+        (teachers.teacher_secondary_science & teachers.cert_area_science),
         True,
         False,
     )
 
-    teachers["uncertified_secondary_science_teacher"] = np.where(
-        (teachers.secondary_science_teacher) & (teachers.standard == False),
+    teachers["teacher_secondary_science_uncertified"] = np.where(
+        (teachers.teacher_secondary_science) & (teachers.standard == False),
         True,
         False,
     )
 
-    teachers["outoffield_secondary_science_teacher"] = np.where(
-        (teachers.secondary_science_teacher)
+    teachers["teacher_secondary_science_outoffield"] = np.where(
+        (teachers.teacher_secondary_science)
         & (teachers.standard)
         & (teachers.cert_area_science == False),
         True,
         False,
     )
 
+    # CTE
+    teachers["teacher_secondary_cte"] = np.where(
+        (teachers.teacher_secondary & teachers.teaches_cte), True, False
+    )
+
+    teachers["teacher_secondary_cte_certified"] = np.where(
+        (teachers.teacher_secondary_cte & teachers.cert_area_cte),
+        True,
+        False,
+    )
+
+    teachers["teacher_secondary_cte_uncertified"] = np.where(
+        (teachers.teacher_secondary_cte) & (teachers.standard == False),
+        True,
+        False,
+    )
+
+    teachers["teacher_secondary_cte_outoffield"] = np.where(
+        (teachers.teacher_secondary_cte)
+        & (teachers.standard)
+        & (teachers.cert_area_cte == False),
+        True,
+        False,
+    )
+
     # Standard certification
     teachers["teachers"] = 1
-    teachers["teachers_certified"] = teachers.standard
-    teachers["teachers_uncertified"] = np.where(teachers.standard == False, True, False)
+    teachers["teacher_certified"] = teachers.standard
+    teachers["teacher_uncertified"] = np.where(teachers.standard == False, True, False)
+
+    relevant_variables = list(teachers.filter(like="teacher", axis=1).columns)
+    relevant_variables = ["campus"] + relevant_variables
 
     # Create school counts
-    campus = (
-        teachers[
-            [
-                "campus",
-                "teachers",
-                "teachers_certified",
-                "teachers_uncertified",
-                "secondary_math_teacher",
-                "certified_secondary_math_teacher",
-                "uncertified_secondary_math_teacher",
-                "outoffield_secondary_math_teacher",
-                "secondary_science_teacher",
-                "certified_secondary_science_teacher",
-                "uncertified_secondary_science_teacher",
-                "outoffield_secondary_science_teacher",
-            ]
-        ]
-        .groupby(["campus"])
-        .sum()
-    )
+    campus = teachers[relevant_variables].groupby(["campus"]).sum()
 
     # Add year variable
     years = {
