@@ -20,11 +20,11 @@ teachers = clean_for_merge.import_teachers()
 
 # %% Set DOI date
 
-set_doi_date = clean_final.prioritize_term_date
+SET_DOI_DATE = clean_final.prioritize_term_date
 
 # %% Set treatment status
 
-laws["doi_date"] = set_doi_date(data=laws).doi_date
+laws["doi_date"] = SET_DOI_DATE(data=laws).doi_date
 
 # doi_year is year of first treated test - occurs in march
 laws["doi_year"] = (
@@ -34,7 +34,7 @@ laws["doi_year"] = (
 )
 
 
-# %% Limit sample to pre 2020 dois
+# %% Limit analytic sample to pre 2020 dois (treated as non-dois)
 laws = laws[(laws.doi_year < 2020) | (laws.doi_year.isnull())]
 
 # %% School-Level
@@ -42,13 +42,18 @@ laws = laws[(laws.doi_year < 2020) | (laws.doi_year.isnull())]
 data_school = clean_for_merge.merge_school_and_exemptions(
     tea_df=tea_school, laws_df=laws, teacher_df=teachers, geo_df=geo
 )
-data_school = clean_final.gen_vars(data_school)
+data_school = clean_final.destring_vars(data_school)
+data_school = clean_final.gen_exempt_categories(data_school)
+data_school = clean_final.gen_student_vars(data_school)
+data_school = clean_final.gen_district_vars(data_school)
+data_school = clean_final.gen_teacher_vars(data_school)
+data_school = clean_final.gen_score_vars(data_school)
+data_school = clean_final.gen_gdid_vars(data_school)
+data_school = clean_final.gen_event_vars(data_school)
 data_school = clean_final.gen_certification_vars(data_school)
 data_school = clean_final.gen_hte_chars_vars(data_school, "campus")
 data_school = clean_final.gen_eligiblity(data_school, 2019, "eligiblity19", "campus")
-data_school = clean_final.gen_analysis_sample(
-    data=data_school, min_doi_year=2017, max_doi_year=2019
-)
+
 data_school.to_csv(
     os.path.join(start.data_path, "clean", "master_data_school.csv"), sep=","
 )
@@ -57,15 +62,18 @@ data_school.to_csv(
 data_district = clean_for_merge.merge_district_and_exemptions(
     tea_df=tea_district, laws_df=laws, geo_df=geo
 )
+data_district = clean_final.gen_exempt_categories(data_district)
+data_district = clean_final.gen_student_vars(data_district)
+data_district = clean_final.gen_district_vars(data_district)
+data_district = clean_final.gen_teacher_vars(data_district)
+data_district = clean_final.gen_score_vars(data_district)
+data_district = clean_final.gen_gdid_vars(data_district)
+data_district = clean_final.gen_event_vars(data_district)
 
-data_district = clean_final.gen_vars(data_district)
 data_district = clean_final.gen_district_vars(data_district)
 data_district = clean_final.gen_hte_chars_vars(data_district, "district")
 data_district = clean_final.gen_eligiblity(
     data_district, 2019, "eligible19", "district"
-)
-data_district = clean_final.gen_analysis_sample(
-    data=data_district, min_doi_year=2017, max_doi_year=2019
 )
 
 
@@ -96,11 +104,6 @@ data_district = data_district.merge(
     how="left",
 )
 
-# drop last implementers
-# data_district['doi'] = np.where(data_district.doi_year == 2020,
-#                                 False, data_district.doi)
-# data_district['doi_year'] = np.where(data_district.doi_year == 2020,
-#                                      np.nan, data_district.doi_year)
 data_district.to_csv(
     os.path.join(start.data_path, "clean", "master_data_district.csv"), sep=","
 )
@@ -120,13 +123,8 @@ gdid_school.to_csv(os.path.join(start.data_path, "clean", "gdid_school.csv"), se
 
 # %% Subject-Grade-Level
 
-subjects = []
-for col in list(gdid_school.columns):
-    if col.endswith("std"):
-        print(col)
-        subjects.append(col)
-variables = ["campus", "year"] + subjects
-reshape = gdid_school[variables]
+subjects = [col for col in list(gdid_school.columns) if col.endswith("std")]
+reshape = gdid_school[["campus", "year"] + subjects]
 reshape = pd.melt(reshape, id_vars=["campus", "year"])
 reshape = reshape.rename(columns={"variable": "test", "value": "score_std"})
 reshape = reshape.dropna(axis=0)
