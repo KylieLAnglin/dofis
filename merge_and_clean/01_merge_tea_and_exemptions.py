@@ -122,58 +122,43 @@ gdid_school.to_csv(os.path.join(start.data_path, "clean", "gdid_school.csv"), se
 
 subjects = []
 for col in list(gdid_school.columns):
-    if col.endswith("_avescore") & ~col.startswith("pre"):
+    if col.endswith("std"):
         print(col)
         subjects.append(col)
 variables = ["campus", "year"] + subjects
 reshape = gdid_school[variables]
 reshape = pd.melt(reshape, id_vars=["campus", "year"])
-reshape = reshape.rename(columns={"variable": "test", "value": "score"})
+reshape = reshape.rename(columns={"variable": "test", "value": "score_std"})
 reshape = reshape.dropna(axis=0)
 
-means = []
-sds = []
-for var in subjects:
-    mean = reshape[(reshape.test == var) & (reshape.year == 2015)].score.mean()
-    means.append(mean)
-    sd = reshape[reshape.test == var].score.std()
-    sds.append(sd)
-
-means_sds = pd.DataFrame(
-    list(zip(subjects, means, sds)), columns=["test", "test_mean", "test_std"]
-)
-
-reshape = reshape.merge(means_sds, left_on="test", right_on="test")
-reshape["score_std"] = (reshape.score - reshape.test_mean) / reshape.test_std
-reshape = reshape[["campus", "year", "test", "score", "score_std"]]
 
 subject_grade = reshape.merge(
     gdid_school, left_on=["campus", "year"], right_on=["campus", "year"]
 )
 
 math_tests = [
-    "m_3rd_avescore",
-    "m_4th_avescore",
-    "m_5th_avescore",
-    "m_6th_avescore",
-    "m_7th_avescore",
-    "m_8th_avescore",
-    "alg_avescore",
+    "m_3rd_std",
+    "m_4th_std",
+    "m_5th_std",
+    "m_6th_std",
+    "m_7th_std",
+    "m_8th_std",
+    "alg_std",
 ]
 
 reading_tests = [
-    "r_3rd_avescore",
-    "r_4th_avescore",
-    "r_5th_avescore",
-    "r_6th_avescore",
-    "r_7th_avescore",
-    "r_8th_avescore",
-    "eng1_avescore",
+    "r_3rd_std",
+    "r_4th_std",
+    "r_5th_std",
+    "r_6th_std",
+    "r_7th_std",
+    "r_8th_std",
+    "eng1_std",
 ]
 
-subject_grade["math"] = np.where(subject_grade.test.isin(math_tests), 1, 0)
+subject_grade["math_test"] = np.where(subject_grade.test.isin(math_tests), 1, 0)
 
-subject_grade["reading"] = np.where(subject_grade.test.isin(reading_tests), 1, 0)
+subject_grade["reading_test"] = np.where(subject_grade.test.isin(reading_tests), 1, 0)
 
 subject_grade["test_by_year"] = subject_grade["test"] + subject_grade["year"].astype(
     str

@@ -266,6 +266,7 @@ def gen_certification_vars(data):
 def gen_score_vars(data):
 
     data = clean_for_merge.standardize_scores_within_year(data=data)
+    # data = clean_for_merge.standardize_scores(data=data, std_year=2012)
 
     elem_math = ["m_3rd_std", "m_4th_std", "m_5th_std"]
     elem_reading = ["r_3rd_std", "r_4th_std", "r_5th_std"]
