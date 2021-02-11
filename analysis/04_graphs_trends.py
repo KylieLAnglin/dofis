@@ -272,3 +272,36 @@ ax.grid(False)
 #     start.table_path + "trends_by_adoption_" + outcome + ".png", bbox_inches="tight"
 # )
 # %%
+outcome = "math"
+df_treat = create_group_df(data[data.doi == True], outcome=outcome)
+df_control = create_group_df(data[data.doi == False], outcome=outcome)
+df_charter = create_group_df(data[data.distischarter == False], outcome=outcome)
+
+
+fig, ax = plt.subplots(1, 1)
+
+ax.plot(
+    list(df_treat.index),
+    df_treat["outcome"]["score_mean"],
+    label="DOIs",
+    linestyle="-",
+    color="black",
+)
+ax.plot(
+    list(df_charter.index),
+    df_charter["outcome"]["score_mean"],
+    label="Charter Schools",
+    linestyle="--",
+    color="black",
+)
+ax.axvline(x=2016, linestyle="-", color="black")
+
+
+ax.legend()
+
+
+ax.set_title(title_labels[outcome])
+ax.grid(False)
+
+
+# %%
