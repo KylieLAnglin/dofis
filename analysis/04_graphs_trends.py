@@ -32,98 +32,12 @@ data = pd.read_csv(
 data[data.year == 2019].doi_year.value_counts().sort_index()
 
 
-# %% Evidence of Parallel Trends
-
-
-def create_group_df(df):
-    new_df = pd.DataFrame(df.groupby(["year"]).agg({"avescores": ["mean", "sem"]}))
-    new_df = new_df.rename(columns={"mean": "score_mean", "sem": "score_se"})
-    new_df["ub"] = new_df["avescores"]["score_mean"] + new_df["avescores"]["score_se"]
-    new_df["lb"] = new_df["avescores"]["score_mean"] - new_df["avescores"]["score_se"]
-    return new_df
-
-
-df_treat2017 = create_group_df(data[data.doi_year == 2017])
-df_treat2018 = create_group_df(data[data.doi_year == 2018])
-df_treat2019 = create_group_df(data[data.doi_year == 2019])
-df_treat2020 = create_group_df(data[data.doi_year == 2020])
-
-
-df_charter = create_group_df(data[data.distischarter == 1])
-df_treat2017
-
-# %%
-# Pre
-plt.plot(
-    list(df_treat2017[df_treat2017.index <= 2017].index),
-    df_treat2017[df_treat2017.index <= 2017]["avescores"]["score_mean"],
-    color="green",
-    label="2016-17 DOI Implementers",
-)
-plt.plot(
-    list(df_treat2018[df_treat2018.index <= 2018].index),
-    df_treat2018[df_treat2018.index <= 2018]["avescores"]["score_mean"],
-    color="blue",
-    label="2017-18 DOI Implementers",
-)
-plt.plot(
-    list(df_treat2019[df_treat2019.index <= 2019].index),
-    df_treat2019[df_treat2019.index <= 2019]["avescores"]["score_mean"],
-    color="orange",
-    label="2018-19 DOI Implementers",
-)
-plt.plot(
-    list(df_treat2020[df_treat2020.index <= 2020].index),
-    df_treat2020[df_treat2020.index <= 2020]["avescores"]["score_mean"],
-    color="yellow",
-    label="2018-19 DOI Implementers",
-)
-
-plt.legend()
-
-plt.fill_between(
-    list(df_treat2017[df_treat2017.index <= 2017].index),
-    df_treat2017[df_treat2017.index <= 2017].lb,
-    df_treat2017[df_treat2017.index <= 2017].ub,
-    color="green",
-    alpha=0.2,
-)
-plt.fill_between(
-    list(df_treat2018[df_treat2018.index <= 2018].index),
-    df_treat2018[df_treat2018.index <= 2018].lb,
-    df_treat2018[df_treat2018.index <= 2018].ub,
-    color="blue",
-    alpha=0.2,
-)
-plt.fill_between(
-    list(df_treat2019[df_treat2019.index <= 2019].index),
-    df_treat2019[df_treat2019.index <= 2019].lb,
-    df_treat2019[df_treat2019.index <= 2019].ub,
-    color="orange",
-    alpha=0.2,
-)
-plt.fill_between(
-    list(df_treat2020[df_treat2020.index <= 2020].index),
-    df_treat2020[df_treat2020.index <= 2020].lb,
-    df_treat2020[df_treat2020.index <= 2020].ub,
-    color="yellow",
-    alpha=0.2,
-)
-
-plt.ylabel("Average STAAR Scores (Std.)")
-plt.title("Student Performance by District Type and DOI Implementation Year")
-plt.xlabel("Test Year (Spring)", size="medium")
-
-plt.savefig(start.table_path + "parallel_trends_by_adoption.png", bbox_inches="tight")
-
-plt.show()
-
-
 # %% Visual Impact by Subject
 
 
 def create_group_df(df, outcome):
     df["outcome"] = df[outcome]
+    df = df[["year", "outcome"]]
     new_df = pd.DataFrame(df.groupby(["year"]).agg({"outcome": ["mean", "sem"]}))
     new_df = new_df.rename(columns={"mean": "score_mean", "sem": "score_se"})
     new_df["ub"] = new_df["outcome"]["score_mean"] + new_df["outcome"]["score_se"]
