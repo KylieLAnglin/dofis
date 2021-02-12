@@ -88,7 +88,7 @@ def gen_vars(data):
 
 
 def destring_vars(data):
-    data["distischarter"] = np.where(data.distischarter == "Y", "1", "0")
+    data["distischarter"] = np.where(data.distischarter == "Y", True, False)
 
     num_cols = [
         "teachers_nodegree_num",
@@ -100,7 +100,6 @@ def destring_vars(data):
         "teachers_tenure_ave",
         "teachers_turnover_ratio_d",
         "stu_teach_ratio",
-        "distischarter",
     ]
     for col in list(data.columns):
         if col.startswith("class_size") or col.startswith("perf"):
@@ -112,26 +111,26 @@ def destring_vars(data):
 
 
 def gen_exempt_categories(data):
-    data["exempt_firstday"] = np.where(data["reg25_0811"] == 1, 1, 0)
-    data["exempt_minutes"] = np.where(data["reg25_081"] == 1, 1, 0)
-    data["exempt_lastday"] = np.where(data["reg25_0812"] == 1, 1, 0)
+    data["exempt_firstday"] = np.where(data["reg25_0811"] == 1, True, False)
+    data["exempt_minutes"] = np.where(data["reg25_081"] == 1, True, False)
+    data["exempt_lastday"] = np.where(data["reg25_0812"] == 1, True, False)
     data["exempt_certification"] = np.where(
         (
-            (data["reg21_003"] == 1)
-            | (data["reg21_057"] == 1)
-            | (data["reg21_053"] == 1)
+            (data["reg21_003"] == True)
+            | (data["reg21_057"] == True)
+            | (data["reg21_053"] == True)
         ),
         1,
         0,
     )
-    data["exempt_probation"] = np.where(data["reg21_102"] == 1, 1, 0)
-    data["exempt_servicedays"] = np.where(data["reg21_401"] == 1, 1, 0)
-    data["exempt_eval"] = np.where(data["reg21_352"] == 1, 1, 0)
+    data["exempt_probation"] = np.where(data["reg21_102"] == 1, True, False)
+    data["exempt_servicedays"] = np.where(data["reg21_401"] == 1, True, False)
+    data["exempt_eval"] = np.where(data["reg21_352"] == 1, True, False)
     data["exempt_classsize"] = np.where(
-        ((data["reg25_112"] == 1) | (data["reg25_113"] == 1)), 1, 0
+        ((data["reg25_112"] == 1) | (data["reg25_113"] == 1)), True, False
     )
-    data["exempt_attendance"] = np.where(data["reg25_092"] == 1, 1, 0)
-    data["exempt_behavior"] = np.where(data["reg37_0012"] == 1, 1, 0)
+    data["exempt_attendance"] = np.where(data["reg25_092"] == 1, True, False)
+    data["exempt_behavior"] = np.where(data["reg37_0012"] == 1, True, False)
 
     return data
 
@@ -178,17 +177,17 @@ def gen_district_vars(data):
         "H": "Rural",
     }
     data["geography"] = data["type"].map(geography)
-    data["type_urban"] = np.where(data["geography"] == "Urban", 1, 0)
-    data["type_suburban"] = np.where(data["geography"] == "Suburban", 1, 0)
-    data["type_town"] = np.where(data["geography"] == "Town", 1, 0)
-    data["type_rural"] = np.where(data["geography"] == "Rural", 1, 0)
+    data["type_urban"] = np.where(data["geography"] == "Urban", True, False)
+    data["type_suburban"] = np.where(data["geography"] == "Suburban", True, False)
+    data["type_town"] = np.where(data["geography"] == "Town", True, False)
+    data["type_rural"] = np.where(data["geography"] == "Rural", True, False)
 
     data["eligible"] = np.where(
         (data.distischarter == "Y")
         | (data.rating_academic == "F")
         | (data.rating_financial == "Fail"),
-        0,
-        1,
+        False,
+        True,
     )
 
     return data
