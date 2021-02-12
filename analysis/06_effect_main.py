@@ -44,21 +44,23 @@ data.sample()
 
 # convert year to datetime
 df = data.reset_index()
-df["year"] = pd.to_datetime(df["year"], format="%Y")
+df["year_index"] = pd.to_datetime(df["year"], format="%Y")
 # add column year to index
-df = data.set_index(["campus", "year"])
-df[["test", "score_std", "doi_year", "treatpost", "yearpost", "post1"]].sample(5)
+df = df.set_index(["campus", "year_index"])
+df[
+    ["test", "score_std", "math_test", "doi_year", "treatpost", "yearpost", "post1"]
+].sample(5)
 
 # %% Get table ready
 
-GDID_MODEL = "score_std ~ + 1 + treatpost + C(test_by_year) + EntityEffects"
+GDID_MODEL = "score_std ~ + 1 + treatpost + C(test) + C(year) + EntityEffects"
 LINEAR_GDID_MODEL = (
     "score_std ~ + 1 + treatpost + yearpost + "
-    "yearpre  + C(test_by_year) + EntityEffects"
+    "yearpre  + C(test) + C(year) + EntityEffects"
 )
 EVENT_STUDY_MODEL = (
     "score_std ~ + 1 + pre5 + pre4 + pre3 + pre2 + "
-    "post1 + post2 + post3  + C(test_by_year) + EntityEffects"
+    "post1 + post2 + post3  + C(test) + C(year)+ EntityEffects"
 )
 
 
@@ -72,9 +74,6 @@ EVENT_STUDY_MODEL = (
 #     "post1 + post2 + post3  + C(test) + EntityEffects + TimeEffects"
 # )
 
-file_name = start.table_path + "table3_gdid_and_event_math.xlsx"
-wb = load_workbook(file_name)
-ws = wb.active
 
 # %%
 
