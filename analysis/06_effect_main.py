@@ -2,8 +2,6 @@
 # coding: utf-8
 
 # %%
-
-
 import os
 import sys
 
@@ -32,13 +30,13 @@ print(data[(data.doi)].district.nunique())
 print(data.doi_year.value_counts())
 
 print("Sample Sizes")
-print(len(data[data.math == 1]))
-print(data[data.math == 1].campus.nunique())
-print(data[data.math == 1].district.nunique())
+print(len(data[data.math_test == 1]))
+print(data[data.math_test == 1].campus.nunique())
+print(data[data.math_test == 1].district.nunique())
 
-print(len(data[data.reading == 1]))
-print(data[data.reading == 1].campus.nunique())
-print(data[data.reading == 1].district.nunique())
+print(len(data[data.reading_test == 1]))
+print(data[data.reading_test == 1].campus.nunique())
+print(data[data.reading_test == 1].district.nunique())
 
 data.sample()
 
@@ -48,22 +46,31 @@ data.sample()
 df = data.reset_index()
 df["year"] = pd.to_datetime(df["year"], format="%Y")
 # add column year to index
-df = data.set_index(["year", "campus"])
-# swap indexes
-df.index = df.index.swaplevel(0, 1)
-df[["district", "doi_year", "treatpost"]].sample(5)
+df = data.set_index(["campus", "year"])
+df[["test", "score_std", "doi_year", "treatpost", "yearpost", "post1"]].sample(5)
 
 # %% Get table ready
 
-gdid_model = "score_std ~ + 1 + treatpost + C(test_by_year) + EntityEffects"
-linear_gdid_model = (
+GDID_MODEL = "score_std ~ + 1 + treatpost + C(test_by_year) + EntityEffects"
+LINEAR_GDID_MODEL = (
     "score_std ~ + 1 + treatpost + yearpost + "
     "yearpre  + C(test_by_year) + EntityEffects"
 )
-event_study_model = (
+EVENT_STUDY_MODEL = (
     "score_std ~ + 1 + pre5 + pre4 + pre3 + pre2 + "
     "post1 + post2 + post3  + C(test_by_year) + EntityEffects"
 )
+
+
+# GDID_MODEL = "score_std ~ + 1 + treatpost + C(test) + EntityEffects + TimeEffects"
+# LINEAR_GDID_MODEL = (
+#     "score_std ~ + 1 + treatpost + yearpost + "
+#     "yearpre  + C(test) + EntityEffects + TimeEffects"
+# )
+# EVENT_STUDY_MODEL = (
+#     "score_std ~ + 1 + pre5 + pre4 + pre3 + pre2 + "
+#     "post1 + post2 + post3  + C(test) + EntityEffects + TimeEffects"
+# )
 
 file_name = start.table_path + "table3_gdid_and_event_math.xlsx"
 wb = load_workbook(file_name)
@@ -78,7 +85,7 @@ def results_table(data, file_name):
     ws = wb.active
 
     # GDID
-    mod = PanelOLS.from_formula(gdid_model, data)
+    mod = PanelOLS.from_formula(GDID_MODEL, data)
     res = mod.fit(cov_type="clustered", clusters=data.district)
     # res = mod.fit(cov_type='clustered', cluster_entity = True,
     # cluster_time = True)
@@ -91,7 +98,7 @@ def results_table(data, file_name):
     )
 
     # Linear GDID
-    mod = PanelOLS.from_formula(linear_gdid_model, data)
+    mod = PanelOLS.from_formula(LINEAR_GDID_MODEL, data)
     res = mod.fit(cov_type="clustered", clusters=data.district)
     print(res)
 
@@ -113,7 +120,7 @@ def results_table(data, file_name):
     ws.cell(row=11, column=2).value = analysis.format_se(res.std_errors["yearpost"])
 
     # Event Study
-    mod = PanelOLS.from_formula(event_study_model, data)
+    mod = PanelOLS.from_formula(EVENT_STUDY_MODEL, data)
     res = mod.fit(cov_type="clustered", clusters=data.district)
     print(res)
     row = 3
@@ -131,14 +138,15 @@ def results_table(data, file_name):
 # %% Math
 
 
-results_table(df[df.math == 1], "table3_gdid_and_event_math.xlsx")
+results_table(df[df.math_test == 1], "table3_gdid_and_event_math.xlsx")
 
-results_table(df[df.reading == 1], "table4_gdid_and_event_reading.xlsx")
+results_table(df[df.reading_test == 1], "table4_gdid_and_event_reading.xlsx")
 
 # %% Event Study Graphs - Math
 
-mod = PanelOLS.from_formula(event_study_model, df[df.math == 1])
-res = mod.fit(cov_type="clustered", clusters=df[df.math == 1].district)
+mod = PanelOLS.from_formula(EVENT_STUDY_MODEL, df[df.math_test == 1])
+res = mod.fit(cov_type="clustered", clusters=df[df.math_test == 1].district)
+
 nonparametric = []
 nonparametric_se = []
 for coef in ["pre5", "pre4", "pre3", "pre2", "pre1", "post1", "post2", "post3"]:
@@ -187,8 +195,8 @@ fig.savefig(start.table_path + "math_event_study" + ".png", bbox_inches="tight")
 
 # %% Event Study Graphs - Reading
 
-mod = PanelOLS.from_formula(event_study_model, df[df.reading == 1])
-res = mod.fit(cov_type="clustered", clusters=df[df.reading == 1].district)
+mod = PanelOLS.from_formula(EVENT_STUDY_MODEL, df[df.reading_test == 1])
+res = mod.fit(cov_type="clustered", clusters=df[df.reading_test == 1].district)
 nonparametric = []
 nonparametric_se = []
 for coef in ["pre5", "pre4", "pre3", "pre2", "pre1", "post1", "post2", "post3"]:

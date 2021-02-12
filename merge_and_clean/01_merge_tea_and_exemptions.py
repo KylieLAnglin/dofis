@@ -62,6 +62,7 @@ data_school.to_csv(
 data_district = clean_for_merge.merge_district_and_exemptions(
     tea_df=tea_district, laws_df=laws, geo_df=geo
 )
+data_district = clean_final.destring_vars(data_district)
 data_district = clean_final.gen_exempt_categories(data_district)
 data_district = clean_final.gen_student_vars(data_district)
 data_district = clean_final.gen_district_vars(data_district)
