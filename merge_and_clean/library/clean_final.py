@@ -204,9 +204,6 @@ def gen_teacher_vars(data):
 
 
 def gen_certification_vars(data):
-    data["teachers_certified"] = data["teacher_certified"] / data["teachers"]
-    data["teachers_uncertified"] = data["teacher_uncertified"] / data["teachers"]
-
     certification_ratios = [
         {
             "new_var": "teachers_certified",
@@ -468,3 +465,46 @@ def gen_hte_chars_vars(data: pd.DataFrame, level_index: str):
     )
 
     return data
+
+
+def standardize_scores_within_year(
+    data: pd.DataFrame,
+    score_column: str,
+    year_column: str,
+    test_column: str = "",
+):
+    """Create list of scores standardized within year and test
+
+    Args:
+        data (pd.DataFrame): Dataframe containing score and year columns
+        score_column (str): name of score column
+        year_column (str): name of year column
+        test_column (str): name of test column
+
+
+    Returns:
+        list: list of standardized scores
+    """
+    data = data.copy()
+
+    if test_column == "":
+        data["test"] = "test"
+        test_column = "test"
+
+    data = data[[year_column, test_column, score_column]]
+    data = data.rename(
+        columns={score_column: "score", year_column: "year", test_column: "test"}
+    )
+
+    # zero degrees of freedom
+    def std(x):
+        return np.std(x)
+
+    statistics_df = data.groupby(["year", "test"]).agg(["mean", std], ddof=1)
+    data = data.merge(statistics_df, how="inner", on=["year", "test"])
+    data["score_std"] = (data["score"] - data[("score", "mean")]) / data[
+        ("score", "std")
+    ]
+    # data["within_year_mean"] = data.groupby(["year", "test"]).mean()
+
+    return data.score_std
