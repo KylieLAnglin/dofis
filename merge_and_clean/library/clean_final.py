@@ -1,3 +1,5 @@
+from typing import Optional
+
 import pandas as pd
 import numpy as np
 import datetime
@@ -259,104 +261,152 @@ def gen_certification_vars(data):
     return data
 
 
+aggregate_variables = {
+    "elem_math": ["m_3rd", "m_4th", "m_5th"],
+    "elem_reading": ["r_3rd", "r_4th", "r_5th"],
+    "elem": [
+        "m_3rd",
+        "m_4th",
+        "m_5th",
+        "r_3rd",
+        "r_4th",
+        "r_5th",
+    ],
+    "middle_math": ["m_6th", "m_7th", "m_8th"],
+    "middle_reading": ["r_6th", "r_7th", "r_8th"],
+    "middle_science": ["s_8th"],
+    "algebra": ["alg"],
+    "biology": ["bio"],
+    "eng1": ["eng1"],
+    "math": [
+        "m_3rd",
+        "m_4th",
+        "m_5th",
+        "m_6th",
+        "m_7th",
+        "m_8th",
+        "alg",
+    ],
+    "reading": [
+        "r_3rd",
+        "r_4th",
+        "r_5th",
+        "r_6th",
+        "r_7th",
+        "r_8th",
+        "eng1",
+    ],
+    "avescores": [
+        "r_3rd",
+        "m_3rd",
+        "r_4th",
+        "m_4th",
+        "r_5th",
+        "m_5th",
+        "r_6th",
+        "m_6th",
+        "r_7th",
+        "m_7th",
+        "r_8th",
+        "m_8th",
+        "s_8th",
+        "alg",
+        "bio",
+        "eng1",
+        "eng2",
+        "us",
+    ],
+}
+
+
 def gen_score_vars(data):
 
-    data = clean_for_merge.standardize_scores_within_year(data=data)
-    # data = clean_for_merge.standardize_scores(data=data, std_year=2012)
+    for col in aggregate_variables["avescores"]:
+        old_var = col + "_avescore"
+        new_var = col + "_std"
+        data[new_var] = standardize_scores_within_year(
+            data=data,
+            year_column="year",
+            score_column=old_var,
+            test_column="",
+            standardization_year=None,
+        )
 
-    elem_math = ["m_3rd_std", "m_4th_std", "m_5th_std"]
-    elem_reading = ["r_3rd_std", "r_4th_std", "r_5th_std"]
-    elem = [
-        "m_3rd_std",
-        "m_4th_std",
-        "m_5th_std",
-        "r_3rd_std",
-        "r_4th_std",
-        "r_5th_std",
-    ]
-    middle_math = ["m_6th_std", "m_7th_std", "m_8th_std"]
-    middle_reading = ["r_6th_std", "r_7th_std", "r_8th_std"]
-    middle_science = ["s_8th_std"]
-    algebra = ["alg_std"]
-    biology = ["bio_std"]
-    eng1 = ["eng1_std"]
-    math = [
-        "m_3rd_std",
-        "m_4th_std",
-        "m_5th_std",
-        "m_6th_std",
-        "m_7th_std",
-        "m_8th_std",
-        "alg_std",
-    ]
-    reading = [
-        "r_3rd_std",
-        "r_4th_std",
-        "r_5th_std",
-        "r_6th_std",
-        "r_7th_std",
-        "r_8th_std",
-        "eng1_std",
-    ]
-    all_scores = [
-        "m_3rd_std",
-        "m_4th_std",
-        "m_5th_std",
-        "m_6th_std",
-        "m_7th_std",
-        "m_8th_std",
-        "r_3rd_std",
-        "r_4th_std",
-        "r_5th_std",
-        "r_6th_std",
-        "r_7th_std",
-        "r_8th_std",
-        "s_8th_std",
-        "alg_std",
-        "bio_std",
-    ]
+    for item in aggregate_variables:
+        data[item] = data[[stub + "_std" for stub in aggregate_variables[item]]].mean(
+            axis=1
+        )
 
-    data["elem_math"] = data[elem_math].mean(axis=1)
-    data["elem_reading"] = data[elem_reading].mean(axis=1)
-    data["elem"] = data[elem].mean(axis=1)
+    for col in aggregate_variables["avescores"]:
+        old_var = col + "_avescore"
+        new_var = col + "_yr15std"
+        data[new_var] = standardize_scores_within_year(
+            data=data,
+            year_column="year",
+            score_column=old_var,
+            test_column="",
+            standardization_year=2015,
+        )
 
-    data["middle_math"] = data[middle_math].mean(axis=1)
-    data["middle_reading"] = data[middle_reading].mean(axis=1)
-    data["middle_science"] = data[middle_science].mean(axis=1)
-
-    data["algebra"] = data[algebra].mean(axis=1)
-    data["biology"] = data[biology].mean(axis=1)
-    data["eng1"] = data[eng1].mean(axis=1)
-
-    data["math"] = data[math].mean(axis=1)
-    data["reading"] = data[reading].mean(axis=1)
-    data["avescores"] = data[all_scores].mean(axis=1)
+    for item in aggregate_variables:
+        data[item + "_yr15std"] = data[
+            [stub + "_yr15std" for stub in aggregate_variables[item]]
+        ].mean(axis=1)
 
     return data
 
 
-def gen_eligiblity(data, year, varname, level):
+def gen_eligiblity(
+    data: pd.DataFrame,
+    eligible_indicator: str,
+    level: str,
+    eligibility_year: int,
+):
+    """Generate eligibility indicator from eligibility year
 
-    datayear = data[data.year == 2019]
-    datayear = datayear[[level, "eligible"]]
-    datayear = datayear.rename({"eligible": varname}, axis=1)
+    Args:
+        data (pd.DataFrame): Dataframe containing years and eligibility indicator
+        eligible_indicator (str): Column containing eligibility indicator
+        level (str): campus or district
+        eligibility_year (int): Year to use for eligibility
+        new_var_name (str): name of new eligiblity variable from eligibility year
 
-    data = data.merge(
+    Returns:
+        [pd.Dataframe]: Data with new eligibility clolumn
+    """
+
+    datayear = data[data.year == eligibility_year]
+    datayear = datayear[[level, eligible_indicator]]
+    datayear = datayear.rename({eligible_indicator: "eligibility"}, axis=1)
+
+    df = data.merge(
         datayear, how="left", left_on=[level], right_on=[level], validate="m:1"
     )
-    return data
+    return df.eligibility
 
 
-def gen_analysis_sample(data, min_doi_year, max_doi_year):
-    data["pre2020_dois"] = np.where((data.doi == True), True, False)
-    data["pre2020_dois"] = np.where(
-        data.doi_year > min_doi_year, data.pre2020_dois, False
+def gen_analysis_sample(data: pd.DataFrame, min_doi_year: int, max_doi_year: int):
+    """Generate indicator for whether district is in analytic sample based on implementation year
+
+    Args:
+        data (pd.DataFrame): Dataset for analyses
+        min_doi_year (int): Exclude all dois that implement before this year
+        max_doi_year (int): Exclude all dois that implement after this year
+
+    Returns:
+        list: list of indicators for whether in sample
+    """
+
+    df = data.copy()
+    df["analytic_sample"] = np.where((df.doi == True), True, False)
+    df["analytic_sample"] = np.where(
+        df.doi_year > min_doi_year, df.analytic_sample, False
     )
-    data["pre2020_dois"] = np.where(
-        data.doi_year < max_doi_year, data.pre2020_dois, False
+    df["analytic_sample"] = np.where(
+        df.doi_year < max_doi_year, df.analytic_sample, False
     )
 
-    return data
+    return df.analytic_sample
 
 
 # Specification variables
@@ -387,9 +437,21 @@ def gen_event_vars(data):
     return data
 
 
-def gen_hte_chars_vars(data: pd.DataFrame, level_index: str):
+def generate_pretreatment_variables(
+    data: pd.DataFrame, level_index: str, pre_treatment_year: int
+):
+    """Merge descriptive statistics from pre-treatment year to all years
 
-    data_pre = data.loc[data.year == 2016]
+    Args:
+        data (pd.DataFrame): data containing pre-treatment variables
+        level_index (str): campus or district
+        pre_treatment_year (int): pre-treatment year
+
+    Returns:
+        data: data with new columns
+    """
+
+    data_pre = data.loc[data.year == pre_treatment_year]
     data_pre = data_pre.rename(
         columns={
             "students_hisp": "pre_hisp",
@@ -469,9 +531,10 @@ def gen_hte_chars_vars(data: pd.DataFrame, level_index: str):
 
 def standardize_scores_within_year(
     data: pd.DataFrame,
-    score_column: str,
     year_column: str,
+    score_column: str,
     test_column: str = "",
+    standardization_year: Optional[int] = None,
 ):
     """Create list of scores standardized within year and test
 
@@ -480,19 +543,20 @@ def standardize_scores_within_year(
         score_column (str): name of score column
         year_column (str): name of year column
         test_column (str): name of test column
+        year ()
 
 
     Returns:
         list: list of standardized scores
     """
-    data = data.copy()
+    df = data.copy()
 
     if test_column == "":
-        data["test"] = "test"
+        df["test"] = "test"
         test_column = "test"
 
-    data = data[[year_column, test_column, score_column]]
-    data = data.rename(
+    df = df[[year_column, test_column, score_column]]
+    df = df.rename(
         columns={score_column: "score", year_column: "year", test_column: "test"}
     )
 
@@ -500,11 +564,83 @@ def standardize_scores_within_year(
     def std(x):
         return np.std(x)
 
-    statistics_df = data.groupby(["year", "test"]).agg(["mean", std], ddof=1)
-    data = data.merge(statistics_df, how="inner", on=["year", "test"])
-    data["score_std"] = (data["score"] - data[("score", "mean")]) / data[
-        ("score", "std")
-    ]
-    # data["within_year_mean"] = data.groupby(["year", "test"]).mean()
+    if standardization_year is None:
+        statistics_df = df.groupby(["year", "test"]).agg(["mean", std], ddof=1)
+        df = df.merge(statistics_df, how="left", on=["year", "test"])
 
-    return data.score_std
+    else:
+        statistics_df = df[df.year == standardization_year]
+        statistics_df = statistics_df.groupby(["year", "test"]).agg(
+            ["mean", std], ddof=1
+        )
+        df = df.merge(statistics_df, how="left", on=["test"])
+
+    df["score_std"] = (df["score"] - df[("score", "mean")]) / df[("score", "std")]
+
+    return list(df.score_std)
+
+
+# TODO: return list
+def standardize_scores(data, std_year):
+    yr_df = data[data.year == std_year]
+    subjects = [
+        "r_3rd",
+        "m_3rd",
+        "r_4th",
+        "m_4th",
+        "r_5th",
+        "m_5th",
+        "r_6th",
+        "m_6th",
+        "r_7th",
+        "m_7th",
+        "r_8th",
+        "m_8th",
+        "s_8th",
+        "alg",
+        "bio",
+        "eng1",
+        "eng2",
+        "us",
+    ]
+    means = []
+    sds = []
+    for var in subjects:
+        sub = var + "_avescore"
+        mean = yr_df[sub].mean()
+        means.append(mean)
+        sd = yr_df[sub].std()
+        sds.append(sd)
+
+    for sub, mean, sd in zip(subjects, means, sds):
+        old_var = sub + "_avescore"
+        new_var = sub + "_std"
+        data[new_var] = (data[old_var] - mean) / sd
+
+    return data
+
+
+def generate_district_spread(
+    district_data: pd.DataFrame, school_data: pd.DataFrame, outcome: str, groupby: list
+):
+    """Generate variable indicating the distance between the highest and lowest performing school in the district
+
+    Args:
+        district_data (pd.DataFrame): Dataframe to merge to
+        school_data (pd.DataFrame): Dataframe containing outcome variable
+        outcome (str): Outcome variable to calculate spread
+        groupby (list): List of variables to groupby (likely district and year)
+
+    Returns:
+        list: List of district spread values
+    """
+    district_statistics_df = school_data[[outcome] + groupby]
+    district_statistics_df = district_statistics_df.groupby(groupby).agg(["min", "max"])
+
+    district_df = district_data.merge(
+        district_statistics_df, how="left", left_on=groupby, right_on=groupby
+    )
+
+    district_df["range"] = district_df[(outcome, "max")] - district_df[(outcome, "min")]
+
+    return district_df.range
