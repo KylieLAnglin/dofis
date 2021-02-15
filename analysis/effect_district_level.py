@@ -21,14 +21,19 @@ from dofis.analysis.library import analysis
 # %%
 
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "gdid_school.csv"),
+    os.path.join(start.data_path, "clean", "master_data_district.csv"),
     sep=",",
     low_memory=False,
 )
-# data = data[data.analytic_sample]
+data = data[data.doi]
 data = data[data.doi_year > 2016]
 data = data[data.doi_year <= 2020]
-print(data.doi_year.value_counts())
+
+
+# data = data[data.analytic_sample]
+print(data[data.year == 2016].doi_year.value_counts())
+
+# data = pd.get_dummies(data=data, prefix="yr", columns=["year"])
 
 data.sample()
 
@@ -37,11 +42,11 @@ data.sample()
 # convert year to datetime
 df = data.reset_index()
 df["year_index"] = pd.to_datetime(df["year"], format="%Y")
-df["campus_index"] = df.campus
-df = df.set_index(["campus_index", "year_index"])
+df["district_index"] = df.district
+# add column year to index
+df = df.set_index(["district_index", "year_index"])
 df[
     [
-        "campus",
         "year",
         "doi_year",
         "treatpost",
@@ -53,7 +58,6 @@ df[
     ]
 ].sample(5)
 
-
 # %% Get table ready
 
 GDID_MODEL = " ~ + 1 + treatpost + C(year) + EntityEffects"
@@ -61,29 +65,9 @@ LINEAR_GDID_MODEL = (
     " ~ + 1 + treatpost + yearpost + " "yearpre + C(year) + EntityEffects"
 )
 EVENT_STUDY_MODEL = (
-    " ~ + 1 + pre4 + pre3 + pre2 + pre1 + "
+    " ~ + 1 + pre5 + pre4 + pre3 + pre2 +"
     "post1 + post2 + post3 + C(year)+ EntityEffects"
 )
-
-# %%
-model_df = df.dropna(
-    subset=[
-        "math",
-        "year",
-        "pre5",
-        "pre4",
-        "pre3",
-        "pre2",
-        "pre1",
-        "post1",
-        "post2",
-        "post3",
-        "campus",
-    ]
-)
-mod = PanelOLS.from_formula("math" + EVENT_STUDY_MODEL, model_df)
-res = mod.fit(cov_type="clustered", clusters=model_df.district)
-print(res)
 
 # %%
 
@@ -151,13 +135,17 @@ def results_table(data: pd.DataFrame, outcome: str, file_name: str):
     wb.save(file)
 
 
-# %% Math
+# %%
+mod = PanelOLS.from_formula("math" + EVENT_STUDY_MODEL, df)
+res = mod.fit(cov_type="clustered", clusters=df.district)
+print(res)
 
-
-results_table(data=df, outcome="math", file_name="gdid_and_event_math_school.xlsx")
+# %%
+results_table(data=df, outcome="math", file_name="gdid_and_event_math_district.xlsx")
+# %%
 
 results_table(
-    data=df, outcome="reading", file_name="gdid_and_event_reading_school.xlsx"
+    data=df, outcome="reading", file_name="gdid_and_event_reading_district.xlsx"
 )
 
 # %% Event Study Graphs - Math
@@ -208,7 +196,7 @@ _ = ax.set_xticklabels(
 # ax.set_title('Impact on Student Achievement - Event Study Coefficients',
 # fontsize = 16)
 
-fig.savefig(start.table_path + "math_event_study" + ".png", bbox_inches="tight")
+# fig.savefig(start.table_path + "math_event_study" + ".png", bbox_inches="tight")
 
 
 # %% Event Study Graphs - Reading
@@ -258,4 +246,4 @@ _ = ax.set_xticklabels(
 # ax.set_title('Impact on Student Achievement - Event Study Coefficients',
 #  fontsize = 16)
 
-fig.savefig(start.table_path + "reading_event_study" + ".png", bbox_inches="tight")
+# fig.savefig(start.table_path + "reading_event_study" + ".png", bbox_inches="tight")
