@@ -32,6 +32,7 @@ df = pd.read_csv(
     low_memory=False,
 )
 df[df.year == 2019].doi_year.value_counts().sort_index()
+# %%
 
 
 def create_group_df(df, outcome):
@@ -46,7 +47,7 @@ def create_group_df(df, outcome):
 
 # %% Visual Impact by Subject
 outcome = "score_std"
-data = df[df.math_test == 1]
+data = df[df.math_test == True]
 
 df_treat2017 = create_group_df(data[data.doi_year == 2017], outcome=outcome)
 df_treat2018 = create_group_df(data[data.doi_year == 2018], outcome=outcome)

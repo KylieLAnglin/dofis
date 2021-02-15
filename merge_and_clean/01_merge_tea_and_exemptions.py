@@ -55,7 +55,7 @@ data_school["eligiblity19"] = clean_final.gen_eligiblity(
 )
 
 data_school["analytic_sample"] = clean_final.gen_analysis_sample(
-    data_school, 2016, 2019
+    data_school, 2017, 2019
 )
 data_school = data_school[[c for c in data_school.columns if c.lower()[:3] != "reg"]]
 
@@ -87,7 +87,7 @@ data_district["eligiblity19"] = clean_final.gen_eligiblity(
     eligibility_year=2019,
 )
 data_district["analytic_sample"] = clean_final.gen_analysis_sample(
-    data_district, 2016, 2019
+    data_district, 2017, 2019
 )
 data_district["score_range"] = clean_final.generate_district_spread(
     district_data=data_district,
@@ -143,23 +143,23 @@ subject_grade = subject_grade.merge(
 
 
 math_tests = [
-    "m_3rd_std",
-    "m_4th_std",
-    "m_5th_std",
-    "m_6th_std",
-    "m_7th_std",
-    "m_8th_std",
-    "alg_std",
+    "m_3rd",
+    "m_4th",
+    "m_5th",
+    "m_6th",
+    "m_7th",
+    "m_8th",
+    "alg",
 ]
 
 reading_tests = [
-    "r_3rd_std",
-    "r_4th_std",
-    "r_5th_std",
-    "r_6th_std",
-    "r_7th_std",
-    "r_8th_std",
-    "eng1_std",
+    "r_3rd",
+    "r_4th",
+    "r_5th",
+    "r_6th",
+    "r_7th",
+    "r_8th",
+    "eng1",
 ]
 
 subject_grade["math_test"] = np.where(subject_grade.test.isin(math_tests), 1, 0)

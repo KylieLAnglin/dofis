@@ -25,6 +25,8 @@ data = pd.read_csv(
     sep=",",
     low_memory=False,
 )
+
+
 data = data[(data.doi)]
 print(data[(data.doi)].district.nunique())
 print(data.doi_year.value_counts())
@@ -62,18 +64,6 @@ EVENT_STUDY_MODEL = (
     "score_std ~ + 1 + pre5 + pre4 + pre3 + pre2 + "
     "post1 + post2 + post3  + C(test) + C(year)+ EntityEffects"
 )
-
-
-# GDID_MODEL = "score_std ~ + 1 + treatpost + C(test) + EntityEffects + TimeEffects"
-# LINEAR_GDID_MODEL = (
-#     "score_std ~ + 1 + treatpost + yearpost + "
-#     "yearpre  + C(test) + EntityEffects + TimeEffects"
-# )
-# EVENT_STUDY_MODEL = (
-#     "score_std ~ + 1 + pre5 + pre4 + pre3 + pre2 + "
-#     "post1 + post2 + post3  + C(test) + EntityEffects + TimeEffects"
-# )
-
 
 # %%
 

@@ -400,10 +400,10 @@ def gen_analysis_sample(data: pd.DataFrame, min_doi_year: int, max_doi_year: int
     df = data.copy()
     df["analytic_sample"] = np.where((df.doi == True), True, False)
     df["analytic_sample"] = np.where(
-        df.doi_year > min_doi_year, df.analytic_sample, False
+        df.doi_year >= min_doi_year, df.analytic_sample, False
     )
     df["analytic_sample"] = np.where(
-        df.doi_year < max_doi_year, df.analytic_sample, False
+        df.doi_year <= max_doi_year, df.analytic_sample, False
     )
 
     return df.analytic_sample
