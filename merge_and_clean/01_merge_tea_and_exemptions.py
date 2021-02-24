@@ -175,3 +175,25 @@ subject_grade.to_csv(
 
 
 # %%
+
+
+r_data = data_district
+r_data["group"] = np.where(
+    r_data.distischarter == True,
+    0,
+    np.where(
+        r_data.doi_year == 2017,
+        1,
+        np.where(
+            r_data.doi_year == 2018, 2, np.where(r_data.doi_year == 2019, 3, np.nan)
+        ),
+    ),
+)
+r_data[~r_data.group.notnull()]
+
+r_data.to_csv(
+    os.path.join(start.data_path, "clean", "r_data_district_charter_comparison.csv"),
+    sep=",",
+)
+
+# %%
