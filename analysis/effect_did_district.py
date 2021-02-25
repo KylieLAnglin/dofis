@@ -21,15 +21,26 @@ from dofis.analysis.library import analysis
 # %%
 
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_district.csv"),
+    os.path.join(start.data_path, "clean", "r_data_district_charter_comparison.csv"),
     sep=",",
     low_memory=False,
 )
 
-print(data[data.year == 2016].doi_year.value_counts())
-
 data.sample()
 
+
 # %%
-    mod = PanelOLS.from_formula(GDID_MODEL, data)
-    res = mod.fit(cov_type="clustered", clusters=data.district)
+did_df = data[
+    ((data.group == 2017) | (data.group == 0))
+    & ((data.year == 2017) | (data.year == 2016))
+]
+
+did_df["treat"] = np.where(did_df.doi == True, 1, 0)
+did_df["post"] = np.where(did_df.year == 2017, 1, 0)
+did_df["treat_post"] = did_df.treat * did_df.post
+
+
+mod = smf.ols("elem_math ~ 1 + treat + post + treat_post", did_df)
+res = mod.fit(cov_type="cluster", cov_kwds={"groups": did_df["district"]})
+print(res.summary())
+# %%
