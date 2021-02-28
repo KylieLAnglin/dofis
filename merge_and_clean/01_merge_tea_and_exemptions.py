@@ -50,7 +50,7 @@ data_school = clean_final.gen_score_vars(data_school)
 data_school = clean_final.gen_gdid_vars(data_school)
 data_school = clean_final.gen_event_vars(data_school)
 data_school = clean_final.generate_pretreatment_variables(data_school, "campus", 2015)
-data_school["eligiblity19"] = clean_final.gen_eligiblity(
+data_school["eligible19"] = clean_final.gen_eligiblity(
     data_school, eligible_indicator="eligible", level="campus", eligibility_year=2019
 )
 
@@ -80,7 +80,7 @@ data_district = clean_final.gen_district_vars(data_district)
 data_district = clean_final.generate_pretreatment_variables(
     data_district, "district", 2015
 )
-data_district["eligiblity19"] = clean_final.gen_eligiblity(
+data_district["eligible19"] = clean_final.gen_eligiblity(
     data_district,
     eligible_indicator="eligible",
     level="district",
@@ -108,7 +108,7 @@ cols = [c for c in data_school.columns if c.lower()[:3] != "reg"]
 gdid_school = data_school[cols]
 
 # Limit Sample
-gdid_school = gdid_school[(gdid_school.doi)]
+gdid_school = gdid_school[(gdid_school.doi == 1)]
 gdid_school.to_csv(os.path.join(start.data_path, "clean", "gdid_school.csv"), sep=",")
 
 # %% Subject-Grade-Level
@@ -173,67 +173,5 @@ subject_grade.to_csv(
     os.path.join(start.data_path, "clean", "gdid_subject.csv"), sep=","
 )
 
-
-# %%
-
-
-r_data = data_district
-r_data["group"] = np.where(
-    r_data.distischarter == True,
-    0,
-    np.where(
-        r_data.doi_year == 2017,
-        2017,
-        np.where(
-            r_data.doi_year == 2018,
-            2018,
-            np.where(r_data.doi_year == 2019, 2019, np.nan),
-        ),
-    ),
-)
-r_data = r_data.dropna(subset=["group", "elem_math", "district", "year"])
-
-r_data.to_csv(
-    os.path.join(start.data_path, "clean", "r_data_district_charter_comparison.csv"),
-    sep=",",
-)
-
-# %%
-r_data = data_district
-r_data["group"] = np.where(
-    r_data.doi_year == 2017,
-    2017,
-    np.where(
-        r_data.doi_year == 2018,
-        2018,
-        np.where(r_data.doi_year == 2019, 2019, np.nan),
-    ),
-)
-r_data = r_data.dropna(subset=["group", "elem_math", "district", "year"])
-
-r_data.to_csv(
-    os.path.join(start.data_path, "clean", "r_data_district_notyet_comparison.csv"),
-    sep=",",
-)
-
-# %%
-r_data = data_district
-r_data["group"] = np.where(
-    r_data.doi_year == 2017,
-    2017,
-    np.where(
-        r_data.doi_year == 2018,
-        2018,
-        np.where(
-            r_data.doi_year == 2019, 2019, np.where(r_data.doi_year == 2020, 0, np.nan)
-        ),
-    ),
-)
-r_data = r_data.dropna(subset=["group", "elem_math", "district", "year"])
-
-r_data.to_csv(
-    os.path.join(start.data_path, "clean", "r_data_district_2020_comparison.csv"),
-    sep=",",
-)
 
 # %%

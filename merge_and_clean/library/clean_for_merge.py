@@ -105,8 +105,8 @@ def merge_district_and_exemptions(tea_df, laws_df, geo_df):
         indicator=True,
         validate="m:1",
     )
-    data.loc[(data["_merge"] == "both"), "doi"] = True
-    data.loc[(data["_merge"] == "left_only"), "doi"] = False
+    data.loc[(data["_merge"] == "both"), "doi"] = 1
+    data.loc[(data["_merge"] == "left_only"), "doi"] = 0
     data = data.merge(
         geo_df,
         left_on="cntyname",
@@ -130,8 +130,8 @@ def merge_school_and_exemptions(tea_df, laws_df, teacher_df, geo_df):
         indicator=True,
         validate="m:1",
     )
-    data.loc[(data["_merge"] == "both"), "doi"] = True
-    data.loc[(data["_merge"] == "left_only"), "doi"] = False
+    data.loc[(data["_merge"] == "both"), "doi"] = 1
+    data.loc[(data["_merge"] == "left_only"), "doi"] = 0
     data = data.merge(
         teacher_df,
         left_on=["campus", "year"],
