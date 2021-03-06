@@ -151,10 +151,12 @@ data = pd.read_csv(
     low_memory=False,
 )
 
-outcome = "math"
+outcome = "math_yr15std"
 df_treat2017 = create_group_df(data[data.doi_year == 2017], outcome=outcome)
 df_treat2018 = create_group_df(data[data.doi_year == 2018], outcome=outcome)
 df_treat2019 = create_group_df(data[data.doi_year == 2019], outcome=outcome)
+df_treat2020 = create_group_df(data[(data.doi_year == 2020)], outcome=outcome)
+
 df_control = create_group_df(data[data.doi == False], outcome=outcome)
 df_charter = create_group_df(data[data.distischarter == False], outcome=outcome)
 
@@ -183,19 +185,30 @@ ax.plot(
     color="black",
 )
 
+
 ax.plot(
-    list(df_control.index),
-    df_control["outcome"]["score_mean"],
-    label="Traditional Public School Districts",
-    linestyle="-.",
+    list(df_treat2020.index),
+    df_treat2020["outcome"]["score_mean"],
+    label="2019-20 Implementers",
+    linestyle="--",
     color="gray",
 )
+
 
 ax.plot(
     list(df_charter.index),
     df_charter["outcome"]["score_mean"],
     label="Charter School Districts",
     linestyle=":",
+    color="gray",
+)
+
+
+ax.plot(
+    list(df_control.index),
+    df_control["outcome"]["score_mean"],
+    label="Control",
+    linestyle="-",
     color="gray",
 )
 
@@ -210,7 +223,6 @@ ax.axvline(x=2016.5, linestyle="-", color="black")
 ax.axvline(x=2017.5, linestyle="--", color="black")
 ax.axvline(x=2018.5, linestyle=":", color="black")
 
-ax.set_title(title_labels[outcome])
 ax.grid(False)
 
 # fig.savefig(
