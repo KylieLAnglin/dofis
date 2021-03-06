@@ -33,6 +33,7 @@ laws["doi_year"] = (
     .apply(lambda x: clean_final.next_month(x, month=3, day=29))
 )
 
+laws = laws[laws.doi_year < 2021]
 
 # %% School-Level
 
@@ -95,9 +96,9 @@ data_district["score_range"] = clean_final.generate_district_spread(
     outcome="avescores",
     groupby=["district", "year"],
 )
-data_district = data_district[
-    [c for c in data_district.columns if c.lower()[:3] != "reg"]
-]
+# data_district = data_district[
+#     [c for c in data_district.columns if c.lower()[:3] != "reg"]
+# ]
 
 data_district.to_csv(
     os.path.join(start.data_path, "clean", "master_data_district.csv"), sep=","

@@ -53,7 +53,7 @@ data_school = pd.read_csv(
     sep=",",
     low_memory=False,
 )
-data_school = data_school[data_school.doi]
+data_school = data_school[data_school.doi == 1]
 data_school = data_school[COLUMNS]
 data_school["const"] = 1
 

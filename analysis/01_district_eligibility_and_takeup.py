@@ -10,8 +10,7 @@ import pandas as pd
 
 from patsy import dmatrices
 
-sys.path.append("../")
-from library import start
+from dofis.analysis.library import start
 
 
 plt.style.use("grayscale")
