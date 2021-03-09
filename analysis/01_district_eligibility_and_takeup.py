@@ -13,7 +13,7 @@ from patsy import dmatrices
 from dofis.analysis.library import start
 
 
-plt.style.use("grayscale")
+plt.style.use("seaborn")
 
 
 # %%
@@ -107,11 +107,11 @@ plt.grid(True, alpha=0.6)
 
 
 plt.ylim(0, 1022)
-txt = "Notes: Statistics are as of June 2019. "
-"There are ten Districts of Innovation (with missing Innovation Plans) \n "
-"that are not included in the figure. "
-"As of 2019, there were 1022 traditional public school districts in Texas."
-plt.figtext(0.5, -0.01, txt, wrap=True, horizontalalignment="center", fontsize=8)
+# txt = "Notes: Statistics are as of June 202-. "
+# "There are ten Districts of Innovation (with missing Innovation Plans) \n "
+# "that are not included in the figure. "
+# "As of 2019, there were 1022 traditional public school districts in Texas."
+# # plt.figtext(0.5, -0.01, txt, wrap=True, horizontalalignment="center", fontsize=8)
 
 plt.savefig(start.table_path + "takeup.png", dpi=600, bbox_inches="tight")
 plt.show()

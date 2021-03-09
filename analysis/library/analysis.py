@@ -246,3 +246,4 @@ def double_covariate_selection(
             variables.append(variable)
 
     return variables
+
