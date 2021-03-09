@@ -120,3 +120,47 @@ did(
     cluster_var="district",
     df=data,
 )
+
+# %%
+
+
+def dids(
+    outcome: str, group_var: str, time_var: str, cluster_var: str, df: pd.DataFrame
+):
+
+    groups = np.sort(df[df.group != 0][group_var].unique())
+    times = np.sort(df[df[time_var] > df[time_var].min()][time_var].unique())
+    group_time_combos = [
+        {"group": group, "time": time} for time in times for group in groups
+    ]
+
+    group_results = {int(group): {} for group in groups}
+
+    for combo in group_time_combos:
+        group = combo["group"]
+        time = combo["time"]
+
+        did_result = did(
+            outcome=outcome,
+            group_var=group_var,
+            group=group,
+            time_var=time_var,
+            time=time,
+            cluster_var=cluster_var,
+            df=df,
+        )
+
+        group_results[group][time] = did_result
+
+    return group_results
+
+
+math_results = dids(
+    outcome="math_yr15std",
+    group_var="group",
+    time_var="year",
+    cluster_var="district",
+    df=data,
+)
+
+# %%
