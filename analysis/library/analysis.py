@@ -269,9 +269,16 @@ def simple_did_df(
         pd.DataFrame: Untreated rows during one pre period, treat and untreated in one post
         new treatm, post, and treat_post columns
     """
-    did_df = df[
-        (df[time_var] == time) | (df[time_var] == group - 1)
-    ]  # limit to two years
+    if time < group:  # if pre-treatment year, limit to year and year - 1
+        did_df = df[(df[time_var] == time) | (df[time_var] == time - 1)]
+
+    elif (
+        time >= group
+    ):  # if post-treatment year, limit to year and year before group first implemented
+        did_df = df[
+            (df[time_var] == time) | (df[time_var] == group - 1)
+        ]  # limit to two years
+
     did_df = did_df[
         (did_df[group_var] == group)
         | (did_df[group_var] > time)
