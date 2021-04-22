@@ -31,7 +31,7 @@ data = pd.read_csv(
     sep=",",
     low_memory=False,
 )
-data = data[data.doi]
+data = data[data.doi == 1]
 print(data.doi_year.value_counts())
 
 data.sample()

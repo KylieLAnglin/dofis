@@ -47,6 +47,8 @@ def create_group_df(df, outcome):
 
 title_labels = {
     "avescores": "Average STAR",
+    "math_yr15std": "Average Std. Math Scores",
+    "reading_yr15std": "Average Std. Reading Scores",
     "math": "Average Std. Math Scores",
     "reading": "Average Std. Reading Scores",
     "elem_math": "Elementary Math",
@@ -64,11 +66,11 @@ title_labels = {
 }
 
 
-# Create cycler object. Use any styling from above you please
 for outcome in title_labels:
     df_treat2017 = create_group_df(data[data.doi_year == 2017], outcome=outcome)
     df_treat2018 = create_group_df(data[data.doi_year == 2018], outcome=outcome)
     df_treat2019 = create_group_df(data[data.doi_year == 2019], outcome=outcome)
+    df_treat2020 = create_group_df(data[data.doi_year == 2020], outcome=outcome)
 
     monochrome = cycler("color", ["k"]) * cycler("linestyle", ["-", "--", ":", "-."])
 
@@ -91,6 +93,12 @@ for outcome in title_labels:
         label="2018-19 DOI Implementers",
     )
 
+    ax.plot(
+        list(df_treat2020.index),
+        df_treat2020["outcome"]["score_mean"],
+        label="2019-20 DOI Implementers",
+    )
+
     ax.legend()
     ax.fill_between(
         list(df_treat2017.index), df_treat2017.lb, df_treat2017.ub, alpha=0.2
@@ -100,6 +108,10 @@ for outcome in title_labels:
     )
     ax.fill_between(
         list(df_treat2019.index), df_treat2019.lb, df_treat2019.ub, alpha=0.2
+    )
+
+    ax.fill_between(
+        list(df_treat2020.index), df_treat2020.lb, df_treat2020.ub, alpha=0.2
     )
 
     ax.axvline(x=2016.5, linestyle="-", color="black")

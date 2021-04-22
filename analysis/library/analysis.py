@@ -300,6 +300,7 @@ def did(
     time: int,
     cluster_var: str,
     df: pd.DataFrame,
+    verbose=True,
 ):
     """Estimate simple two-group two-time Diff-in-Diff
 
@@ -320,12 +321,18 @@ def did(
     )
     mod = smf.ols(outcome + " ~ 1 + treat + post + treat_post", did_df)
     res = mod.fit(cov_type="cluster", cov_kwds={"groups": did_df[cluster_var]})
-    print(res.summary())
+    if verbose:
+        print(res.summary())
     return res
 
 
 def dids(
-    outcome: str, group_var: str, time_var: str, cluster_var: str, df: pd.DataFrame
+    outcome: str,
+    group_var: str,
+    time_var: str,
+    cluster_var: str,
+    df: pd.DataFrame,
+    verbose=True,
 ):
 
     groups = np.sort(df[df.group != 0][group_var].unique())
@@ -348,6 +355,7 @@ def dids(
             time=time,
             cluster_var=cluster_var,
             df=df,
+            verbose=verbose,
         )
 
         group_results[group][time] = did_result
