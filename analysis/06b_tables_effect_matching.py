@@ -1,171 +1,127 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 # %%
-
-
-import os
-import sys
-
-import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
+import pandas as pd
 import numpy as np
 import pandas as pd
-import statsmodels.formula.api as smf
 from openpyxl import load_workbook
-from patsy import dmatrices
-import statsmodels.api as sm
+import scipy
 
 from dofis.analysis.library import start
 from dofis.analysis.library import analysis
 
-from sklearn.linear_model import LogisticRegression
+MATH_AGG = start.table_path + "results_math_ag_raw_matching.xlsx"
+math_agg = pd.read_excel(MATH_AGG)
 
-# %%
-POTENTIAL_COVARIATES = [
-    "cnty_pop",
-    "students_frpl",
-    "students_black",
-    "students_hisp",
-    "students_white",
-    "students_ell",
-    "students_sped",
-    "students_cte",
-    "students_num",
-    "students_num_d",
-    "students_teacher_ratio",
-    "type_urban",
-    "type_suburban",
-    "type_town",
-    "type_rural",
-    "teachers_nodegree",
-    "teachers_badegree",
-    "teachers_msdegree",
-    "teachers_phddegree",
-    "pre_turnover",
-    "teachers_badegree_num",
-    "teachers_exp_ave",
-    "teachers_msdegree_num",
-    "teachers_new_num",
-    "teachers_nodegree_num",
-    "teachers_num",
-    "teachers_phddegree_num",
-    "teachers_tenure_ave",
-    "teachers_turnover_ratio_d",
-    "math",
-    "reading",
-]
+MATH_DISAG = start.table_path + "results_math_disag_raw_matching.xlsx"
+math_disag = pd.read_excel(MATH_DISAG)
+
+READING_AGG = start.table_path + "results_reading_ag_raw_matching.xlsx"
+reading_agg = pd.read_excel(READING_AGG)
+
+READING_DISAG = start.table_path + "results_reading_disag_raw_matching.xlsx"
+reading_disagg = pd.read_excel(READING_DISAG)
+
+data = pd.read_csv(start.data_path + "clean/r_data_school_2020_comparison.csv")
+n = data.district.nunique()
 
 
-# %%
-data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_school.csv"),
-    sep=",",
-    low_memory=False,
-).set_index("campus")
-data = data[data.doi_year != 2016]  # drop 3 early early adopters
-data = data[data.distischarter == False]  # don't include charters
-data["first_implementers"] = np.where(data.doi_year == 2017, 1, 0)
-data["second_implementers"] = np.where(data.doi_year == 2018, 1, 0)
-data["third_implementers"] = np.where(data.doi_year == 2019, 1, 0)
+# %% Tables 4 & 5 Main
 
 
-# %%
-matching_df = data[data.year == 2016]  # match on last pre-treatment year
-matching_df = matching_df[matching_df.second_implementers == 0]
-matching_df = matching_df[matching_df.third_implementers == 0]
-matching_df = matching_df[["first_implementers"] + POTENTIAL_COVARIATES]
-matching_df = matching_df.dropna()
+file_path = start.table_path + "results_main_matching.xlsx"
+wb = load_workbook(file_path)
+ws = wb.active
 
-# %% Potential covariates
-X = matching_df.drop(columns=["first_implementers"])
-X = sm.add_constant(X)
+###
+# Math
+###
 
-
-# %%
-
-mod = sm.OLS(matching_df.first_implementers, X.astype(float))
-res = mod.fit_regularized(alpha=0.01, L1_wt=1, refit=True)
-print(res.summary())
-
-variables = []
-for variable, coefficient in zip(list(X.columns), list(res.params)):
-    if coefficient > 0:
-        variables.append(variable)
-
-# %%
-mod = sm.OLS(matching_df.math, X.drop(columns=["math", "reading"]).astype(float))
-res = mod.fit_regularized(alpha=0.01, L1_wt=1, refit=True)
-print(res.summary())
-
-for variable, coefficient in zip(list(X.columns), list(res.params)):
-    if variable not in variables and coefficient > 0:
-        variables.append(variable)
-# %%
-mod = sm.OLS(matching_df.reading, X.drop(columns=["math", "reading"]).astype(float))
-res = mod.fit_regularized(alpha=0.01, L1_wt=1, refit=True)
-print(res.summary())
-
-for variable, coefficient in zip(list(X.columns), list(res.params)):
-    if variable not in variables and coefficient > 0:
-        variables.append(variable)
-
-# %%
-matching_df["const"] = 1
-X = matching_df[variables]
-
-mod = sm.Logit(matching_df.first_implementers, X.astype(float))
-res = mod.fit()
-print(res.summary())
-
-# %%
-matching_df["pscore"] = res.predict(X.astype(float))
-
-# TOT weights
-matching_df["ps_weight"] = matching_df.first_implementers + (
-    1 - matching_df.first_implementers
-) * matching_df.pscore / (1 - matching_df.pscore)
-
-matching_df["ps_weight2"] = np.where(
-    matching_df.first_implementers == 1, 1, 1 / (1 - matching_df.pscore)
+math_agg = math_agg.rename(
+    columns={
+        "agg.simple.math.overall.att": "overall_te",
+        "agg.simple.math.overall.se": "overall_se",
+        "agg.dynamic.math.egt": "year",
+        "agg.dynamic.math.att.egt": "te",
+        "agg.dynamic.math.se.egt": "se",
+    }
 )
 
-# %%
-data = data.merge(
-    matching_df[["pscore", "ps_weight", "ps_weight2"]],
-    how="left",
-    left_index=True,
-    right_index=True,
+# Overall
+te = math_agg.loc[0, "overall_te"]
+se = math_agg.loc[0, "overall_se"]
+pvalue = (
+    scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
+)  # two-sided pvalue = Prob(abs(t)>tt)
+
+ws.cell(row=3, column=2).value = analysis.coef_with_stars(
+    te, pvalue=pvalue, n_tests=1, digits=2
 )
-data["first_implementers"] = np.where(data.doi_year == 2017, 1, 0)
+ws.cell(row=4, column=2).value = analysis.format_se(se, 2)
 
-# %% Check balance -- Looks great
-mod = smf.ols("pre_avescore ~ 1 + first_implementers + pscore", data[data.year == 2017])
-res = mod.fit()
-print(res.summary())
 
-# %% Check balance with weighting - truly terrible, worse than if we weren't weighting
-mod = smf.wls(
-    "pre_avescore ~ 1 + first_implementers",
-    data[data.year == 2017],
-    weights=data[data.year == 2017].ps_weight2,
+# Dynamic
+row = 4
+col = 3
+for year in [0, 1, 2]:
+    te = float(math_agg.loc[math_agg.year == year, "te"])
+    se = float(math_agg.loc[math_agg.year == year, "se"])
+    pvalue = (
+        scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
+    )  # two-sided pvalue = Prob(abs(t)>tt)
+    ws.cell(row=row, column=col).value = analysis.coef_with_stars(
+        te, pvalue=pvalue, n_tests=1, digits=2
+    )
+    row = row + 1
+    ws.cell(row=row, column=col).value = analysis.format_se(se, 2)
+    row = row + 2
+
+wb.save(file_path)
+
+
+###
+# Reading
+###
+
+reading_agg = reading_agg.rename(
+    columns={
+        "agg.simple.reading.overall.att": "overall_te",
+        "agg.simple.reading.overall.se": "overall_se",
+        "agg.dynamic.reading.egt": "year",
+        "agg.dynamic.reading.att.egt": "te",
+        "agg.dynamic.reading.se.egt": "se",
+    }
 )
-res = mod.fit()
-print(res.summary())
 
-# %% First year results
-mod = smf.ols("math ~ 1 + first_implementers + pscore", data[data.year == 2017])
-res = mod.fit()
-print(res.summary())
 
-# %% Second year results
-mod = smf.ols("math ~ 1 + first_implementers + pscore", data[data.year == 2018])
-res = mod.fit()
-print(res.summary())
+# Overall
+te = reading_agg.loc[0, "overall_te"]
+se = reading_agg.loc[0, "overall_se"]
+pvalue = (
+    scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
+)  # two-sided pvalue = Prob(abs(t)>tt)
 
-# %% Third Year Results
-mod = smf.ols("math ~ 1 + first_implementers + pscore", data[data.year == 2019])
-res = mod.fit()
-print(res.summary())
+ws.cell(row=13, column=2).value = analysis.coef_with_stars(
+    te, pvalue=pvalue, n_tests=1, digits=2
+)
+ws.cell(row=14, column=2).value = analysis.format_se(se, 2)
+
+
+# Dynamic
+row = 14
+col = 3
+for year in [0, 1, 2]:
+    te = float(reading_agg.loc[reading_agg.year == year, "te"])
+    se = float(reading_agg.loc[reading_agg.year == year, "se"])
+    pvalue = (
+        scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
+    )  # two-sided pvalue = Prob(abs(t)>tt)
+    ws.cell(row=row, column=col).value = analysis.coef_with_stars(
+        te, pvalue=pvalue, n_tests=1, digits=2
+    )
+    row = row + 1
+    ws.cell(row=row, column=col).value = analysis.format_se(se, 2)
+    row = row + 2
+
+wb.save(file_path)
+
 
 # %%
