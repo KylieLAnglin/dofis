@@ -116,14 +116,14 @@ for group in [
     "exempt_classsize",
     "exempt_behavior",
 ]:
-    te = results.loc[(group, "math", 1), "te"]
-    se = results.loc[(group, "math", 1), "se"]
+    te = results.loc[(group, "math", 0), "te"]
+    se = results.loc[(group, "math", 0), "se"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
 
     ws.cell(row=row, column=2).value = analysis.coef_with_stars(
-        te, pvalue=pvalue, n_tests=9, digits=2
+        te, pvalue=pvalue, n_tests=18, digits=2
     )
     row = row + 1
     ws.cell(row=row, column=2).value = analysis.format_se(se, 2)
@@ -141,14 +141,14 @@ for group in [
     "exempt_classsize",
     "exempt_behavior",
 ]:
-    te = results.loc[(group, "math", 0), "te"]
-    se = results.loc[(group, "math", 0), "se"]
+    te = results.loc[(group, "math", 1), "te"]
+    se = results.loc[(group, "math", 1), "se"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
 
     ws.cell(row=row, column=3).value = analysis.coef_with_stars(
-        te, pvalue=pvalue, n_tests=9, digits=2
+        te, pvalue=pvalue, n_tests=18, digits=2
     )
     row = row + 1
     ws.cell(row=row, column=3).value = analysis.format_se(se, 2)
@@ -178,14 +178,14 @@ for group in [
     "exempt_classsize",
     "exempt_behavior",
 ]:
-    te = results.loc[(group, "reading", 1), "te"]
-    se = results.loc[(group, "reading", 1), "se"]
+    te = results.loc[(group, "reading", 0), "te"]
+    se = results.loc[(group, "reading", 0), "se"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
 
     ws.cell(row=row, column=2).value = analysis.coef_with_stars(
-        te, pvalue=pvalue, n_tests=9, digits=2
+        te, pvalue=pvalue, n_tests=18, digits=2
     )
     row = row + 1
     ws.cell(row=row, column=2).value = analysis.format_se(se, 2)
@@ -203,14 +203,14 @@ for group in [
     "exempt_classsize",
     "exempt_behavior",
 ]:
-    te = results.loc[(group, "reading", 0), "te"]
-    se = results.loc[(group, "reading", 0), "se"]
+    te = results.loc[(group, "reading", 1), "te"]
+    se = results.loc[(group, "reading", 1), "se"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
 
     ws.cell(row=row, column=3).value = analysis.coef_with_stars(
-        te, pvalue=pvalue, n_tests=9, digits=2
+        te, pvalue=pvalue, n_tests=18, digits=2
     )
     row = row + 1
     ws.cell(row=row, column=3).value = analysis.format_se(se, 2)
