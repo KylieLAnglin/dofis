@@ -27,7 +27,7 @@ outcomes = c("m_3rd_yr15std", "m_4th_yr15std", "m_5th_yr15std", "m_6th_yr15std",
 results <- data.frame(outcome = character(), te = double(), se = double())
 
 for (i in 1:length(outcomes)){
-  diagg <- attgt_object(exempt_certification, outcomes[i])
+  diagg <- attgt_object(df, outcomes[i])
   agg <- aggte(diagg, type = "simple")
   results[nrow(results) + 1,] = c(outcomes[i], agg$overall.att, agg$overall.se)
 }

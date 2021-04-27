@@ -46,7 +46,7 @@ saveWorkbook(wb,file_name,overwrite = T)
 
 disag.reading <- att_gt(yname = "reading_yr15std",
                         gname = "group",
-                        idname = "campus",
+                        idname = "district",
                         tname = "year",
                         xformla = ~1,
                         data = df,

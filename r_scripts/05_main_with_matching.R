@@ -52,7 +52,7 @@ disag.reading <- att_gt(yname = "reading_yr15std",
                      print_details = TRUE,
 )
 
-disag.reading.results <- data.frame(disag.reading$group, disag.reading$t, disag.reading$egt, disag.reading$att, disag.reading$se, disag.reading$n)
+disag.reading.results <- data.frame(disag.reading$group, disag.reading$t, disag.reading$att, disag.reading$se, disag.reading$n)
 file_name = paste(output_path, "results_reading_disag_raw_matching.xlsx", sep = "")
 wb <- loadWorkbook(file_name)
 writeData(wb, sheet = "raw" , disag.reading.results, colNames = TRUE)
