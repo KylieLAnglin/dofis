@@ -2,9 +2,10 @@ import pandas as pd
 import os
 import fnmatch
 import numpy as np
-from library import start
-from library import clean_tea
-from library import clean_teachers
+from dofis.data_from_tea.library import start
+from dofis.data_from_tea.library import clean_tea
+from dofis.data_from_tea.library import build
+from dofis.data_from_tea.library import clean_teachers
 
 year = "yr1718"
 for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]:
@@ -23,6 +24,7 @@ for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819
         "CAMPUS NAME": "campname",
         "CAMPUS GRADE GROUP NAME": "camp_grade_group",
         "ROLE FULL TIME EQUIVALENT": "fte_teacher",
+        "EXPERIENCE": "experience",
     }
     teachers = clean_tea.filter_and_rename_cols(teachers, vars_to_keep)
 
