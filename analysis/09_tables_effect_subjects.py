@@ -20,13 +20,13 @@ ws = wb.active
 col = 2
 row = 5
 for outcome in [
-    "m_3rd_std",
-    "m_4th_std",
-    "m_5th_std",
-    "m_6th_std",
-    "m_7th_std",
-    "m_8th_std",
-    "alg_std",
+    "m_3rd_yr15std",
+    "m_4th_yr15std",
+    "m_5th_yr15std",
+    "m_6th_yr15std",
+    "m_7th_yr15std",
+    "m_8th_yr15std",
+    "alg_yr15std",
 ]:
     te = results.loc[outcome, "te"]
     se = results.loc[outcome, "se"]
@@ -44,13 +44,13 @@ for outcome in [
 col = 4
 row = 5
 for outcome in [
-    "r_3rd_std",
-    "r_4th_std",
-    "r_5th_std",
-    "r_6th_std",
-    "r_7th_std",
-    "r_8th_std",
-    "eng1_std",
+    "r_3rd_yr15std",
+    "r_4th_yr15std",
+    "r_5th_yr15std",
+    "r_6th_yr15std",
+    "r_7th_yr15std",
+    "r_8th_yr15std",
+    "eng1_yr15std",
 ]:
     te = results.loc[outcome, "te"]
     se = results.loc[outcome, "se"]

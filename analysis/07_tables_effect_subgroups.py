@@ -26,8 +26,8 @@ row = 7
 col = 2
 
 for group in ["rural", "scores25", "hisp25", "black25"]:
-    te = results.loc[(group, "math"), "te"]
-    se = results.loc[(group, "math"), "se"]
+    te = results.loc[(group, "math_yr15std"), "te"]
+    se = results.loc[(group, "math_yr15std"), "se"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
@@ -41,8 +41,8 @@ for group in ["rural", "scores25", "hisp25", "black25"]:
 
 row = 16
 for group in ["rural", "scores25", "hisp25", "black25"]:
-    te = results.loc[(group, "reading"), "te"]
-    se = results.loc[(group, "reading"), "se"]
+    te = results.loc[(group, "reading_yr15std"), "te"]
+    se = results.loc[(group, "reading_yr15std"), "se"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
@@ -61,8 +61,8 @@ row = 7
 col = 3
 
 for group in ["urban", "scores100", "hisp100", "black100"]:
-    te = results.loc[(group, "math"), "te"]
-    se = results.loc[(group, "math"), "se"]
+    te = results.loc[(group, "math_yr15std"), "te"]
+    se = results.loc[(group, "math_yr15std"), "se"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
@@ -76,8 +76,8 @@ for group in ["urban", "scores100", "hisp100", "black100"]:
 
 row = 16
 for group in ["urban", "scores100", "hisp100", "black100"]:
-    te = results.loc[(group, "reading"), "te"]
-    se = results.loc[(group, "reading"), "se"]
+    te = results.loc[(group, "reading_yr15std"), "te"]
+    se = results.loc[(group, "reading_yr15std"), "se"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
@@ -116,8 +116,8 @@ for group in [
     "exempt_classsize",
     "exempt_behavior",
 ]:
-    te = results.loc[(group, "math", 0), "te"]
-    se = results.loc[(group, "math", 0), "se"]
+    te = results.loc[(group, "math_yr15std", 0), "te"]
+    se = results.loc[(group, "math_yr15std", 0), "se"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
@@ -141,8 +141,8 @@ for group in [
     "exempt_classsize",
     "exempt_behavior",
 ]:
-    te = results.loc[(group, "math", 1), "te"]
-    se = results.loc[(group, "math", 1), "se"]
+    te = results.loc[(group, "math_yr15std", 1), "te"]
+    se = results.loc[(group, "math_yr15std", 1), "se"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
@@ -178,8 +178,8 @@ for group in [
     "exempt_classsize",
     "exempt_behavior",
 ]:
-    te = results.loc[(group, "reading", 0), "te"]
-    se = results.loc[(group, "reading", 0), "se"]
+    te = results.loc[(group, "reading_yr15std", 0), "te"]
+    se = results.loc[(group, "reading_yr15std", 0), "se"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
@@ -203,8 +203,8 @@ for group in [
     "exempt_classsize",
     "exempt_behavior",
 ]:
-    te = results.loc[(group, "reading", 1), "te"]
-    se = results.loc[(group, "reading", 1), "se"]
+    te = results.loc[(group, "reading_yr15std", 1), "te"]
+    se = results.loc[(group, "reading_yr15std", 1), "se"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
