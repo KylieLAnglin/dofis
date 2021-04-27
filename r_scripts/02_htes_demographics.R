@@ -1,6 +1,6 @@
 library(did)
 library("openxlsx")
-
+output_path = "/Users/kylie/dofis/results/"
 df <- read.csv("~/dofis/data/clean/r_data_school_2020_comparison.csv")
 
 ###
@@ -56,8 +56,7 @@ for (i in 1:length(subgroup_desc)){
   results[nrow(results) + 1,] = c(subgroup_desc[i], "reading_yr15std", agg$overall.att, agg$overall.se)
 }
 
-
-file_name = "/Users/kylie/dofis/results/Who Needs Rules/results_subgroup_raw.xlsx"
+file_name = paste(output_path, "results_subgroup_raw.xlsx", sep = "")
 wb <- loadWorkbook(file_name)
 writeData(wb, sheet = "raw" , results, colNames = TRUE)
 saveWorkbook(wb,file_name,overwrite = T)

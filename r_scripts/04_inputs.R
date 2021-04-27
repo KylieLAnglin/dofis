@@ -1,5 +1,6 @@
 library(did)
 library("openxlsx")
+output_path = "/Users/kylie/dofis/results/"
 
 df <- read.csv("~/dofis/data/clean/r_data_school_2020_comparison.csv")
 
@@ -41,8 +42,7 @@ diagg <- attgt_object(exempt_classsize, "class_size_mean_elem")
 agg <- aggte(diagg, type = "simple")
 results[nrow(results) + 1,] = c("exempt_classsize", "class_size_mean_elem", agg$overall.att, agg$overall.se)
 
-
-file_name = "/Users/kylie/dofis/results/Who Needs Rules/results_inputs_raw.xlsx"
+file_name = paste(output_path, "results_inputs_raw.xlsx", sep = "")
 wb <- loadWorkbook(file_name)
 writeData(wb, sheet = "raw" , results, colNames = TRUE)
 saveWorkbook(wb,file_name,overwrite = T)

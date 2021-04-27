@@ -1,4 +1,7 @@
+library(did)
+library("openxlsx")
 df <- read.csv("~/dofis/data/clean/r_data_school_2020_comparison.csv")
+output_path = "/Users/kylie/dofis/results/"
 
 attgt_object <- function(df, y) {
   att.gt <- att_gt(yname = y,
@@ -28,8 +31,7 @@ for (i in 1:length(outcomes)){
   agg <- aggte(diagg, type = "simple")
   results[nrow(results) + 1,] = c(outcomes[i], agg$overall.att, agg$overall.se)
 }
-
-file_name = "/Users/kylie/dofis/results/Who Needs Rules/results_subjects_raw.xlsx"
+file_name = paste(output_path, "results_subjects_raw.xlsx", sep = "")
 wb <- loadWorkbook(file_name)
 writeData(wb, sheet = "raw" , results, colNames = TRUE)
 saveWorkbook(wb,file_name,overwrite = T)

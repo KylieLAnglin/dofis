@@ -1,5 +1,6 @@
 library(did)
 library("openxlsx")
+output_path = "/Users/kylie/dofis/results/"
 
 
 
@@ -61,7 +62,7 @@ for (i in 1:length(exemptions)){
   results_by_exemptions[nrow(results_by_exemptions) + 1,] = c(exemptions[i], 0, "reading_yr15std", agg$overall.att, agg$overall.se)
 }
 
-file_name = "/Users/kylie/dofis/results/Who Needs Rules/results_exemptions_raw.xlsx"
+file_name = paste(output_path, "results_exemptions_raw.xlsx", sep = "")
 wb <- loadWorkbook(file_name)
 writeData(wb, sheet = "raw" , results_by_exemptions, colNames = TRUE)
 saveWorkbook(wb,file_name,overwrite = T)
@@ -72,7 +73,7 @@ diagg <- attgt_object(exempt_df, "math_yr15std")
 agg <- aggte(diagg, type = "simple")
 
 exempt_servicedays <- data.frame(diagg$group, diagg$t, diagg$att, diagg$se, diagg$n)
-file_name = "/Users/kylie/dofis/results/Who Needs Rules/exempt_servicedays_disag_math.xlsx"
+file_name = paste(output_path, "exempt_servicedays_disag_math.xlsx", sep = "")
 wb <- loadWorkbook(file_name)
 writeData(wb, sheet = "raw" , exempt_servicedays, colNames = TRUE)
 saveWorkbook(wb,file_name,overwrite = T)
@@ -84,7 +85,7 @@ diagg <- attgt_object(exempt_df, "reading_yr15std")
 agg <- aggte(diagg, type = "simple")
 
 exempt_servicedays <- data.frame(diagg$group, diagg$t, diagg$att, diagg$se, diagg$n)
-file_name = "/Users/kylie/dofis/results/Who Needs Rules/exempt_servicedays_disag_reading.xlsx"
+file_name = paste(output_path, "exempt_servicedays_disag_reading.xlsx", sep = "")
 wb <- loadWorkbook(file_name)
 writeData(wb, sheet = "raw" , exempt_servicedays, colNames = TRUE)
 saveWorkbook(wb,file_name,overwrite = T)
