@@ -68,7 +68,7 @@ for year in [0, 1, 2]:
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
     ws.cell(row=row, column=col).value = analysis.coef_with_stars(
-        te, pvalue=pvalue, n_tests=1, digits=2
+        te, pvalue=pvalue, n_tests=3, digits=2
     )
     row = row + 1
     ws.cell(row=row, column=col).value = analysis.format_se(se, 2)
@@ -100,7 +100,7 @@ pvalue = (
 )  # two-sided pvalue = Prob(abs(t)>tt)
 
 ws.cell(row=13, column=2).value = analysis.coef_with_stars(
-    te, pvalue=pvalue, n_tests=1, digits=2
+    te, pvalue=pvalue, n_tests=3, digits=2
 )
 ws.cell(row=14, column=2).value = analysis.format_se(se, 2)
 
