@@ -5,6 +5,7 @@
 *__pycache__
 *.pytest_cache
 *.pyc
+*.python-version
 
 # VS Code Files
 .vscode/
@@ -25,3 +26,4 @@ venv
 *.xml
 *.iml
 
+*.egg-info

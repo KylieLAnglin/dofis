@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # data from TEA
-CAMPUS=0
-DISTRICT=0
+CAMPUS=1
+DISTRICT=1
 TEACHERS=1
 
 
@@ -34,5 +34,5 @@ fi
 # merge and clean
 echo "running merge and clean"
 python merge_and_clean/01_merge_tea_and_exemptions.py
-
+python merge_and_clean/02_r_data.py
 echo "done"

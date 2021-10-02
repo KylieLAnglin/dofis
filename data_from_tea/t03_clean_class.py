@@ -4,13 +4,13 @@ import fnmatch
 import pandas as pd
 import numpy as np
 
-from library import start
-from library import build
-from library import clean_tea
+from dofis import start
+from dofis.data_from_tea.library import build
+from dofis.data_from_tea.library import clean_tea
 
 
 for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]:
-    teacher_datapath = os.path.join(start.data_path, "teachers", year)
+    teacher_datapath = os.path.join(start.DATA_PATH, "teachers", year)
     pattern = "TEACHER_CLASS*.TXT"
     classes = build.concat_files(path=teacher_datapath, pattern=pattern)
 
@@ -47,4 +47,4 @@ for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819
 
     teachers.sort_values(by=["teacher_id"], axis=0)
     filename = "classes_" + year + ".csv"
-    teachers.to_csv(os.path.join(start.data_path, "teachers", filename))
+    teachers.to_csv(os.path.join(start.DATA_PATH, "teachers", filename))

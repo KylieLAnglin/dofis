@@ -4,7 +4,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from library import start
+from dofis import start
 
 IF_TEACHER_NOT_IN_CERT_DF_SET_AS = "missing"
 # SECONDARY_VALUES = ["HIGH SCHOOL", "MIDDLE SCHOOL", "JUNIOR HIGH SCHOOL"]
@@ -17,14 +17,14 @@ campus_df = []
 for year in YEARS:
 
     filename = "teacher_cert_" + year + ".csv"
-    certification = pd.read_csv(os.path.join(start.data_path, "teachers", filename))
+    certification = pd.read_csv(os.path.join(start.DATA_PATH, "teachers", filename))
     certification = certification.rename(columns={"district": "district_cert"})
 
     filename = "teachers_" + year + ".csv"
-    teachers = pd.read_csv(os.path.join(start.data_path, "teachers", filename))
+    teachers = pd.read_csv(os.path.join(start.DATA_PATH, "teachers", filename))
 
     filename = "classes_" + year + ".csv"
-    classes = pd.read_csv(os.path.join(start.data_path, "teachers", filename))
+    classes = pd.read_csv(os.path.join(start.DATA_PATH, "teachers", filename))
 
     teachers = teachers.merge(
         certification, how="left", on="teacher_id", indicator="cert_merge"
@@ -149,7 +149,7 @@ for year in YEARS:
     campus_df.append(campus)
     # Save
     # filename = "campus_cert_" + year + ".csv"
-    # campus.to_csv(os.path.join(start.data_path, "teachers", filename))
+    # campus.to_csv(os.path.join(start.DATA_PATH, "teachers", filename))
 
 
 ###
@@ -158,5 +158,5 @@ for year in YEARS:
 certification_rates_long = pd.concat(campus_df)
 
 certification_rates_long.to_csv(
-    (os.path.join(start.data_path, "tea", "certification_rates_long.csv"))
+    (os.path.join(start.DATA_PATH, "tea", "certification_rates_long.csv"))
 )

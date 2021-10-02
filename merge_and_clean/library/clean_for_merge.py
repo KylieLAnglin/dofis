@@ -1,11 +1,11 @@
 import pandas as pd
 import unicodedata
 import os
-from dofis.merge_and_clean.library import start
+from dofis import start
 
 
 def resolve_unicode_problems(df, col_name):
-    """ Resolve Unicode problems from web scraping (e.g., 'Bronte\xa0ISD')"""
+    """Resolve Unicode problems from web scraping (e.g., 'Bronte\xa0ISD')"""
     df = df.copy()
     df[col_name] = df[col_name].map(lambda x: unicodedata.normalize("NFKD", str(x)))
     return df
@@ -155,7 +155,7 @@ def merge_school_and_exemptions(tea_df, laws_df, teacher_df, geo_df):
 
 def import_tea_district():
     tea = pd.read_csv(
-        os.path.join(start.data_path, "tea", "desc_long.csv"), sep=",", low_memory=False
+        os.path.join(start.DATA_PATH, "tea", "desc_long.csv"), sep=",", low_memory=False
     )
     variables = [
         "year",
@@ -182,7 +182,7 @@ def import_tea_district():
 
 def import_tea_school():
     tea = pd.read_csv(
-        os.path.join(start.data_path, "tea", "desc_c_long.csv"),
+        os.path.join(start.DATA_PATH, "tea", "desc_c_long.csv"),
         sep=",",
         low_memory=False,
     )
@@ -219,7 +219,7 @@ def import_tea_school():
 
 def import_laws():
     # Import DOI data and select columns
-    laws = pd.read_csv(os.path.join(start.data_path, "plans", "doi_final.csv"), sep=",")
+    laws = pd.read_csv(os.path.join(start.DATA_PATH, "plans", "doi_final.csv"), sep=",")
     cols = [c for c in laws.columns if c.lower()[:7] != "Unnamed"]
     laws = laws[cols]
     laws = laws.rename({"district": "distname"}, axis=1)
@@ -229,7 +229,7 @@ def import_laws():
 def import_geo():
     # Geographic data
     geo = pd.read_csv(
-        os.path.join(start.data_path, "geo", "2016_txpopest_county.csv"), sep=","
+        os.path.join(start.DATA_PATH, "geo", "2016_txpopest_county.csv"), sep=","
     )
     geo = geo[["county", "july1_2016_pop_est"]]
     geo = geo.rename({"july1_2016_pop_est": "cnty_pop"}, axis="columns")
@@ -242,7 +242,7 @@ def import_geo():
 
 def import_teachers():
     teachers = pd.read_csv(
-        os.path.join(start.data_path, "tea", "certification_rates_long.csv"),
+        os.path.join(start.DATA_PATH, "tea", "certification_rates_long.csv"),
         sep=",",
         low_memory=False,
     )

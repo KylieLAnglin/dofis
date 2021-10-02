@@ -5,14 +5,13 @@ import os
 import numpy as np
 import pandas as pd
 
-from dofis.merge_and_clean.library import clean_final
-from dofis.merge_and_clean.library import clean_for_merge
-from dofis.merge_and_clean.library import start
+
+from dofis import start
 
 pd.options.display.max_columns = 200
 
 
-data_school = pd.read_csv((start.data_path + "/clean/master_data_school.csv"), sep=",")
+data_school = pd.read_csv((start.DATA_PATH + "/clean/master_data_school.csv"), sep=",")
 
 
 ##
@@ -52,7 +51,7 @@ r_data["class_size_mean_elem"] = col.mean(axis=1)
 
 
 r_data.to_csv(
-    os.path.join(start.data_path, "clean", "r_data_school_2020_comparison.csv"),
+    os.path.join(start.DATA_PATH, "clean", "r_data_school_2020_comparison.csv"),
     sep=",",
 )
 
@@ -60,7 +59,7 @@ r_data.to_csv(
 
 
 data_district = pd.read_csv(
-    (start.data_path + "/clean/master_data_district.csv"), sep=","
+    (start.DATA_PATH + "/clean/master_data_district.csv"), sep=","
 )
 
 ##
@@ -102,7 +101,7 @@ r_data_district["class_size_mean_elem"] = col.mean(axis=1)
 
 
 r_data_district.to_csv(
-    os.path.join(start.data_path, "clean", "r_data_district_2020_comparison.csv"),
+    os.path.join(start.DATA_PATH, "clean", "r_data_district_2020_comparison.csv"),
     sep=",",
 )
 

@@ -3,11 +3,7 @@ import pandas as pd
 import numpy as np
 import shutil
 
-try:
-    from data_from_tea.library.start import data_path
-except:
-    from library.start import data_path
-# from start import data_path TODO: import start
+from dofis.start import DATA_PATH
 
 
 def filter_and_rename_cols(df, mydict):
@@ -31,7 +27,7 @@ def fix_parser_error(input_path):
     :param input_path: Location of data set
     :return: data set where columns are all in one row
     """
-    temp_directory = os.path.join(data_path, "tea", "temp")
+    temp_directory = os.path.join(DATA_PATH, "tea", "temp")
     temp_file = os.path.basename(input_path)
     temp_path = os.path.join(temp_directory, temp_file)
 
@@ -63,7 +59,7 @@ def clean_cref(year):
         filename = "CREF.txt"
     if year >= "yr1314":
         filename = "CREF.dat"
-    cref = pd.read_csv(os.path.join(data_path, "tea", "cref", year, filename), sep=",")
+    cref = pd.read_csv(os.path.join(DATA_PATH, "tea", "cref", year, filename), sep=",")
     # Note: no district number in early files
     cref_tokeep = {
         "DISTNAME": "distname",
@@ -90,7 +86,7 @@ def clean_dtype(year):
         sheetname = "2017-18 Data"
     if year == "yr1819":
         sheetname = "1819_Data"
-    xls = pd.ExcelFile(os.path.join(data_path, "tea", "dtype", filename))
+    xls = pd.ExcelFile(os.path.join(DATA_PATH, "tea", "dtype", filename))
     if year != "yr1718" and year != "yr1819":
         dtype = xls.parse(sheetname, skiprows=2)
         dtype_to_keep = {
@@ -144,11 +140,11 @@ def clean_cscores(year, subject):
         # need two files for early English scores (reading and writing) TODO: combine reading and writing
         try:
             cscores2 = pd.read_csv(
-                os.path.join(data_path, "tea", "cscores", year, file), sep=","
+                os.path.join(DATA_PATH, "tea", "cscores", year, file), sep=","
             )
         except:
             new_path = fix_parser_error(
-                os.path.join(data_path, "tea", "cscores", year, file)
+                os.path.join(DATA_PATH, "tea", "cscores", year, file)
             )
             cscores2 = pd.read_csv(new_path, sep=",")
         subject_dict = {"EnglishI": "er1", "EnglishII": "er2"}
@@ -157,11 +153,11 @@ def clean_cscores(year, subject):
     # Import dataa
     try:
         cscores = pd.read_csv(
-            os.path.join(data_path, "tea", "cscores", year, file), sep=","
+            os.path.join(DATA_PATH, "tea", "cscores", year, file), sep=","
         )
     except:
         new_path = fix_parser_error(
-            os.path.join(data_path, "tea", "cscores", year, file)
+            os.path.join(DATA_PATH, "tea", "cscores", year, file)
         )
         cscores = pd.read_csv(new_path, sep=",")
     if subject not in [
@@ -318,16 +314,16 @@ def clean_cdem(year):
     # import data
     if year == "yr1112":
         cdem1 = pd.read_csv(
-            os.path.join(data_path, "tea", "cdem", year, "cstud.dat"), sep=","
+            os.path.join(DATA_PATH, "tea", "cdem", year, "cstud.dat"), sep=","
         )
         cdem2 = pd.read_csv(
-            os.path.join(data_path, "tea", "cdem", year, "cstaf.dat"), sep=","
+            os.path.join(DATA_PATH, "tea", "cdem", year, "cstaf.dat"), sep=","
         )
         cdem = cdem1.merge(cdem2, on="CAMPUS", how="outer")
         cdem["CAMPUS"] = cdem["CAMPUS"].apply(int)
     else:
         cdem = pd.read_csv(
-            os.path.join(data_path, "tea", "cdem", year, filename), sep=","
+            os.path.join(DATA_PATH, "tea", "cdem", year, filename), sep=","
         )
     # address variable name changes across years
     if year == "yr1112":
@@ -373,7 +369,7 @@ def clean_cgrad(year):
 
     if data_year <= "yr1819":
         cgrad = pd.read_csv(
-            os.path.join(data_path, "tea", "cgrad", data_year, filename), sep=","
+            os.path.join(DATA_PATH, "tea", "cgrad", data_year, filename), sep=","
         )
 
         cgrad_to_keep = {
@@ -412,7 +408,7 @@ def clean_dgrad(year):
 
     if data_year <= "yr1819":
         dgrad = pd.read_csv(
-            os.path.join(data_path, "tea", "dgrad", data_year, filename), sep=","
+            os.path.join(DATA_PATH, "tea", "dgrad", data_year, filename), sep=","
         )
 
         dgrad_to_keep = {
@@ -569,7 +565,7 @@ def clean_cdays(year):
     Note: only available for yr1617 and 1718
     """
     filename = "days_" + year + ".csv"
-    cdays = pd.read_csv(os.path.join(data_path, "tea", "cdays", filename), sep=",")
+    cdays = pd.read_csv(os.path.join(DATA_PATH, "tea", "cdays", filename), sep=",")
     cdays_to_keep = {
         "DISTRICT": "district",
         "CAMPUS": "campus",
@@ -609,7 +605,7 @@ def clean_dref(year):
         filename = "DREF.txt"
     else:
         filename = "DREF.dat"
-    dref = pd.read_csv(os.path.join(data_path, "tea", "dref", year, filename), sep=",")
+    dref = pd.read_csv(os.path.join(DATA_PATH, "tea", "dref", year, filename), sep=",")
     dref_tokeep = {
         "DISTRICT": "district",
         "DISTNAME": "distname",
@@ -744,17 +740,17 @@ def clean_ddem(year):
     }
     if year == "yr1112":
         ddem1 = pd.read_csv(
-            os.path.join(data_path, "tea", "ddem", year, "dstud.csv"), sep=","
+            os.path.join(DATA_PATH, "tea", "ddem", year, "dstud.csv"), sep=","
         )
         ddem2 = pd.read_csv(
-            os.path.join(data_path, "tea", "ddem", year, "dstaf.csv"), sep=","
+            os.path.join(DATA_PATH, "tea", "ddem", year, "dstaf.csv"), sep=","
         )
         ddem = ddem1.merge(ddem2, on="DISTRICT", how="outer")
         ddem["DISTRICT"] = ddem["DISTRICT"].str.strip("'")
         ddem["DISTRICT"] = ddem["DISTRICT"].apply(int)
     else:
         ddem = pd.read_csv(
-            os.path.join(data_path, "tea", "ddem", year, filename), sep=","
+            os.path.join(DATA_PATH, "tea", "ddem", year, filename), sep=","
         )
         ddem_tokeep["DPSTURND"] = "teachers_turnover_denom"
         ddem_tokeep["DPSTURNN"] = "teachers_turnover_num"
@@ -798,22 +794,22 @@ def clean_scores(year, subject):
         # need two files for early English scores (reading and writing)
         try:
             dscores2 = pd.read_csv(
-                os.path.join(data_path, "tea", "dscores", subject, file), sep=","
+                os.path.join(DATA_PATH, "tea", "dscores", subject, file), sep=","
             )
         except:
             new_path = fix_parser_error(
-                os.path.join(data_path, "tea", "dscores", subject, file)
+                os.path.join(DATA_PATH, "tea", "dscores", subject, file)
             )
             dscores2 = pd.read_csv(new_path, sep=",")
         subject_dict = {"EnglishI": "er1", "EnglishII": "er2"}
         file = "dfy" + file_yr + subject_dict[subject] + ".dat"
     try:
         dscores = pd.read_csv(
-            os.path.join(data_path, "tea", "dscores", subject, file), sep=","
+            os.path.join(DATA_PATH, "tea", "dscores", subject, file), sep=","
         )
     except:
         new_path = fix_parser_error(
-            os.path.join(data_path, "tea", "dscores", subject, file)
+            os.path.join(DATA_PATH, "tea", "dscores", subject, file)
         )
         dscores = pd.read_csv(new_path, sep=",")
 
@@ -939,7 +935,7 @@ def clean_ddays(year):
     Note: only available for yr1617 and 1718
     """
     filename = "days_" + year + ".csv"
-    cdays = pd.read_csv(os.path.join(data_path, "tea", "cdays", filename), sep=",")
+    cdays = pd.read_csv(os.path.join(DATA_PATH, "tea", "cdays", filename), sep=",")
     cdays_to_keep = {
         "DISTRICT": "district",
         "CAMPUS": "campus",

@@ -4,9 +4,6 @@ import pandas as pd
 import numpy as np
 import datetime
 
-from dofis.merge_and_clean.library import start
-from dofis.merge_and_clean.library import clean_for_merge
-
 
 def prioritize_term_date(data: pd.DataFrame):
     """returns datetime for doi plan implementation
@@ -19,7 +16,7 @@ def prioritize_term_date(data: pd.DataFrame):
 
     Args:
         data (pd.DataFrame): Dataframe which contains district name (distname)\
-        term_year, term_month, finalize_year, and finalize month. 
+        term_year, term_month, finalize_year, and finalize month.
 
     Returns:
         [pd.DataFrame]: Contains district and doi datetime

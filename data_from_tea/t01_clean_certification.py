@@ -1,11 +1,9 @@
 import os
-import fnmatch
 
 import pandas as pd
-import numpy as np
-import datetime
 
-from dofis.data_from_tea.library import start
+
+from dofis import start
 from dofis.data_from_tea.library import clean_tea
 from dofis.data_from_tea.library import build
 from dofis.data_from_tea.library import clean_teachers
@@ -26,7 +24,7 @@ FILE_PATTERNS = {
 }
 
 YEARS = ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]
-DATA_PATH = start.data_path + "/teachers/"
+DATA_PATH = start.DATA_PATH + "/teachers/"
 
 VARS_TO_KEEP_YR1819 = {
     "PID_SCRAM": "teacher_id",
@@ -153,4 +151,4 @@ for year in YEARS:
 
     # Save to CSV
     filename = "teacher_cert_" + year + ".csv"
-    teacher_yesno.to_csv(os.path.join(start.data_path, "teachers", filename))
+    teacher_yesno.to_csv(os.path.join(start.DATA_PATH, "teachers", filename))

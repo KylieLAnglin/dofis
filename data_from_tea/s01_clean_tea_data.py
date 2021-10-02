@@ -1,57 +1,80 @@
 import pandas as pd
 import os
-from data_from_tea.library.start import data_path
-from data_from_tea.library import clean_tea
+from dofis.start import DATA_PATH
+from dofis.data_from_tea.library import clean_tea
 
-years = ['yr1112', 'yr1213', 'yr1314', 'yr1415', 'yr1516', 'yr1617', 'yr1718', 'yr1819']
-subjects = ['3rd', '4th', '5th', '6th', '7th', '8th',
-        'Algebra', 'Biology', 'EnglishI', 'EnglishII', 'USHistory']
+years = ["yr1112", "yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]
+subjects = [
+    "3rd",
+    "4th",
+    "5th",
+    "6th",
+    "7th",
+    "8th",
+    "Algebra",
+    "Biology",
+    "EnglishI",
+    "EnglishII",
+    "USHistory",
+]
 for year in years:
     for subject in subjects:
         # distname, campus, campname, campischarter, cntyname_c, grade_range, region, academic rating
         cref = clean_tea.clean_cref(year=year)
-        cref = clean_tea.fix_duplicate_distname(cref, distname_col='distname', cntyname_col= 'cntyname_c')
+        cref = clean_tea.fix_duplicate_distname(
+            cref, distname_col="distname", cntyname_col="cntyname_c"
+        )
 
         # add district number and district academic and financial rating
         dref = clean_tea.clean_dref(year=year)
-        dref = clean_tea.fix_duplicate_distname(dref, distname_col='distname', cntyname_col= 'cntyname')
+        dref = clean_tea.fix_duplicate_distname(
+            dref, distname_col="distname", cntyname_col="cntyname"
+        )
 
         # rural, urbam, suburban
         dtype = clean_tea.clean_dtype(year=year)
 
         # student and teacher characteristics
         cdem = clean_tea.clean_cdem(year=year)
-        ddem = clean_tea.clean_ddem(year = year) #number of students in district
-        ddem_tokeep = {'district': 'district', 
-                        'students_num': 'students_num_d',
-                        'teachers_turnover_ratio': 'teachers_turnover_ratio_d'}
+        ddem = clean_tea.clean_ddem(year=year)  # number of students in district
+        ddem_tokeep = {
+            "district": "district",
+            "students_num": "students_num_d",
+            "teachers_turnover_ratio_d": "teachers_turnover_ratio_d",
+        }
         ddem = clean_tea.filter_and_rename_cols(ddem, ddem_tokeep)
 
-
         # test scores
-        cscores = pd.DataFrame(columns=['campus'])
-
+        cscores = pd.DataFrame(columns=["campus"])
 
         cscores = clean_tea.clean_cscores(year, subject)
-        descriptives = cref.merge(dref, on='distname', how='inner')
-        descriptives = descriptives.merge(dtype, on='district', how='inner')
-        descriptives = descriptives.merge(cdem, on='campus', how='left')
-        descriptives = descriptives.merge(ddem, on = 'district', how = 'inner')
-        descriptives = descriptives.merge(cscores, on='campus',
-                                        how='left', indicator=True)
-        descriptives = descriptives.dropna(how='all')
+        descriptives = cref.merge(dref, on="distname", how="inner")
+        descriptives = descriptives.merge(dtype, on="district", how="inner")
+        descriptives = descriptives.merge(cdem, on="campus", how="left")
+        descriptives = descriptives.merge(ddem, on="district", how="inner")
+        descriptives = descriptives.merge(
+            cscores, on="campus", how="left", indicator=True
+        )
+        descriptives = descriptives.dropna(how="all")
 
         # days
-        if year == 'yr1617' or year == 'yr1718':
+        if year == "yr1617" or year == "yr1718":
             cdays = clean_tea.clean_cdays(year)
-            descriptives = descriptives.merge(cdays, on = 'campus', how = 'left')
+            descriptives = descriptives.merge(cdays, on="campus", how="left")
             print(len(descriptives))
 
-        year_map = {'yr1112':2012, 'yr1213':2013, 'yr1314':2014, 'yr1415': 2015,
-                    'yr1516': 2016, 'yr1617': 2017, 'yr1718': 2018, 'yr1819': 2019,
-                    'yr1920': 2020}
-        descriptives['year'] = year_map[year]
-        yr_file = 'desc_c_' + year + subject + '.csv'
+        year_map = {
+            "yr1112": 2012,
+            "yr1213": 2013,
+            "yr1314": 2014,
+            "yr1415": 2015,
+            "yr1516": 2016,
+            "yr1617": 2017,
+            "yr1718": 2018,
+            "yr1819": 2019,
+            "yr1920": 2020,
+        }
+        descriptives["year"] = year_map[year]
+        yr_file = "desc_c_" + year + subject + ".csv"
 
-        descriptives.to_csv((os.path.join(data_path, 'tea', 'bysubject', yr_file)))
-
+        descriptives.to_csv((os.path.join(DATA_PATH, "tea", "bysubject", yr_file)))

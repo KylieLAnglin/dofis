@@ -1,5 +1,4 @@
 # %%
-import datetime
 import os
 
 import numpy as np
@@ -7,7 +6,7 @@ import pandas as pd
 
 from dofis.merge_and_clean.library import clean_final
 from dofis.merge_and_clean.library import clean_for_merge
-from dofis.merge_and_clean.library import start
+from dofis import start
 
 pd.options.display.max_columns = 200
 
@@ -61,7 +60,7 @@ data_school["analytic_sample"] = clean_final.gen_analysis_sample(
 data_school = data_school[[c for c in data_school.columns if c.lower()[:3] != "reg"]]
 
 data_school.to_csv(
-    os.path.join(start.data_path, "clean", "master_data_school.csv"), sep=","
+    os.path.join(start.DATA_PATH, "clean", "master_data_school.csv"), sep=","
 )
 
 # %% District-level
@@ -101,7 +100,7 @@ data_district["score_range"] = clean_final.generate_district_spread(
 # ]
 
 data_district.to_csv(
-    os.path.join(start.data_path, "clean", "master_data_district.csv"), sep=","
+    os.path.join(start.DATA_PATH, "clean", "master_data_district.csv"), sep=","
 )
 
 # %% GDID
@@ -110,7 +109,7 @@ gdid_school = data_school[cols]
 
 # Limit Sample
 gdid_school = gdid_school[(gdid_school.doi == 1)]
-gdid_school.to_csv(os.path.join(start.data_path, "clean", "gdid_school.csv"), sep=",")
+gdid_school.to_csv(os.path.join(start.DATA_PATH, "clean", "gdid_school.csv"), sep=",")
 
 # %% Subject-Grade-Level
 
@@ -171,7 +170,7 @@ subject_grade["test_by_year"] = subject_grade["test"] + subject_grade["year"].as
     str
 )
 subject_grade.to_csv(
-    os.path.join(start.data_path, "clean", "gdid_subject.csv"), sep=","
+    os.path.join(start.DATA_PATH, "clean", "gdid_subject.csv"), sep=","
 )
 
 
