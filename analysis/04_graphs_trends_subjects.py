@@ -2,21 +2,14 @@
 # coding: utf-8
 
 # %%
-
-
 import os
-import sys
 
-import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-import statsmodels.formula.api as smf
 from cycler import cycler
-from matplotlib import lines, markers
-from scipy import stats
 
-from dofis.analysis.library import start
+
+from dofis import start
 
 # get_ipython().run_line_magic('matplotlib', 'inline')
 plt.style.use("seaborn")
@@ -27,7 +20,7 @@ plt.figure(figsize=(480 / my_dpi, 480 / my_dpi), dpi=my_dpi)
 # %%
 
 df = pd.read_csv(
-    os.path.join(start.data_path, "clean", "gdid_subject.csv"),
+    os.path.join(start.DATA_PATH, "clean", "gdid_subject.csv"),
     sep=",",
     low_memory=False,
 )

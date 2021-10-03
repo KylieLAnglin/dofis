@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 from openpyxl import load_workbook
 
-from dofis.analysis.library import start
+from dofis import start
 from dofis.analysis.library import analysis
 
 

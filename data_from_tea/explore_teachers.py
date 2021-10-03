@@ -11,20 +11,20 @@ from dofis.data_from_tea.library import build
 from dofis.data_from_tea.library import clean_teachers
 
 # %%
-pd.set_option('display.max_columns', None)
+pd.set_option("display.max_columns", None)
 
 # %%
 
-year = 'yr1718'
+year = "yr1718"
 
-folder = 'certification_' + year + '/'
-teacher_datapath = os.path.join(start.data_path, 'tea', 'teachers', folder)
+folder = "certification_" + year + "/"
+teacher_datapath = os.path.join(start.data_path, "tea", "teachers", folder)
 pattern = "TEACHER_MASTER*.TXT"
 
 teachers = build.concat_files(path=teacher_datapath, pattern=pattern)
-teachers = teachers[teachers['ROLE NAME'] == 'TEACHER']
+teachers = teachers[teachers["ROLE NAME"] == "TEACHER"]
 
 # %%
 
-teachers['SUBJECT AREA NAME 1'].value_counts()
+teachers["SUBJECT AREA NAME 1"].value_counts()
 # %%

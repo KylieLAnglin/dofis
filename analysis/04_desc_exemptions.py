@@ -11,12 +11,13 @@ import numpy as np
 import pandas as pd
 import statsmodels.formula.api as smf
 
-from dofis.analysis.library import analysis, regulations, start, tables
+from dofis import start
+from dofis.analysis.library import analysis, regulations, tables
 
 # %%
 
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_district.csv"), sep=","
+    os.path.join(start.DATA_PATH, "clean", "master_data_district.csv"), sep=","
 )
 data = data.loc[(data.doi == 1)]
 data = data[data.year == 2016]
@@ -106,7 +107,7 @@ columns = ["Count", "Urban", "Suburban", "Town", "Rural", "F-test p-value"]
 
 schedules_df = create_count_urban_df(data, regulations.schedules, regulations.labels)
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=schedules_df,
     df_columns=columns,
     start_row=5,
@@ -115,7 +116,7 @@ tables.df_to_excel(
 
 class_size_df = create_count_urban_df(data, regulations.class_size, regulations.labels)
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=class_size_df,
     df_columns=columns,
     start_row=10,
@@ -126,7 +127,7 @@ certification_df = create_count_urban_df(
     data, regulations.certification, regulations.labels
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=certification_df,
     df_columns=columns,
     start_row=14,
@@ -135,7 +136,7 @@ tables.df_to_excel(
 
 contracts_df = create_count_urban_df(data, regulations.contracts, regulations.labels)
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=contracts_df,
     df_columns=columns,
     start_row=18,
@@ -144,7 +145,7 @@ tables.df_to_excel(
 
 behavior_df = create_count_urban_df(data, regulations.behavior, regulations.labels)
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=behavior_df,
     df_columns=columns,
     start_row=23,
@@ -162,7 +163,7 @@ schedules_df = create_count_proportion_df(
     data, "pre_turnover", regulations.schedules, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=schedules_df,
     df_columns=columns,
     start_row=5,
@@ -173,7 +174,7 @@ class_size_df = create_count_proportion_df(
     data, "pre_turnover", regulations.class_size, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=class_size_df,
     df_columns=columns,
     start_row=10,
@@ -184,7 +185,7 @@ certification_df = create_count_proportion_df(
     data, "pre_turnover", regulations.certification, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=certification_df,
     df_columns=columns,
     start_row=14,
@@ -195,7 +196,7 @@ contracts_df = create_count_proportion_df(
     data, "pre_turnover", regulations.contracts, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=contracts_df,
     df_columns=columns,
     start_row=18,
@@ -206,7 +207,7 @@ behavior_df = create_count_proportion_df(
     data, "pre_turnover", regulations.behavior, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=behavior_df,
     df_columns=columns,
     start_row=23,
@@ -224,7 +225,7 @@ schedules_df = create_count_proportion_df(
     data, "pre_avescore", regulations.schedules, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=schedules_df,
     df_columns=columns,
     start_row=5,
@@ -235,7 +236,7 @@ class_size_df = create_count_proportion_df(
     data, "pre_avescore", regulations.class_size, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=class_size_df,
     df_columns=columns,
     start_row=10,
@@ -246,7 +247,7 @@ certification_df = create_count_proportion_df(
     data, "pre_avescore", regulations.certification, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=certification_df,
     df_columns=columns,
     start_row=14,
@@ -257,7 +258,7 @@ contracts_df = create_count_proportion_df(
     data, "pre_avescore", regulations.contracts, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=contracts_df,
     df_columns=columns,
     start_row=18,
@@ -268,7 +269,7 @@ behavior_df = create_count_proportion_df(
     data, "pre_avescore", regulations.behavior, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=behavior_df,
     df_columns=columns,
     start_row=23,
@@ -288,7 +289,7 @@ schedules_df = create_count_proportion_df(
     data, "pre_hisp", regulations.schedules, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=schedules_df,
     df_columns=columns,
     start_row=5,
@@ -299,7 +300,7 @@ class_size_df = create_count_proportion_df(
     data, "pre_hisp", regulations.class_size, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=class_size_df,
     df_columns=columns,
     start_row=10,
@@ -310,7 +311,7 @@ certification_df = create_count_proportion_df(
     data, "pre_hisp", regulations.certification, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=certification_df,
     df_columns=columns,
     start_row=14,
@@ -321,7 +322,7 @@ contracts_df = create_count_proportion_df(
     data, "pre_hisp", regulations.contracts, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=contracts_df,
     df_columns=columns,
     start_row=18,
@@ -332,7 +333,7 @@ behavior_df = create_count_proportion_df(
     data, "pre_hisp", regulations.behavior, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=behavior_df,
     df_columns=columns,
     start_row=23,
@@ -352,7 +353,7 @@ schedules_df = create_count_proportion_df(
     data, "pre_hisp", regulations.schedules, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=schedules_df,
     df_columns=columns,
     start_row=5,
@@ -363,7 +364,7 @@ class_size_df = create_count_proportion_df(
     data, "pre_hisp", regulations.class_size, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=class_size_df,
     df_columns=columns,
     start_row=10,
@@ -374,7 +375,7 @@ certification_df = create_count_proportion_df(
     data, "pre_hisp", regulations.certification, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=certification_df,
     df_columns=columns,
     start_row=14,
@@ -385,7 +386,7 @@ contracts_df = create_count_proportion_df(
     data, "pre_hisp", regulations.contracts, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=contracts_df,
     df_columns=columns,
     start_row=18,
@@ -396,7 +397,7 @@ behavior_df = create_count_proportion_df(
     data, "pre_hisp", regulations.behavior, formula
 )
 tables.df_to_excel(
-    file=start.table_path + file_name,
+    file=start.TABLE_PATH + file_name,
     df=behavior_df,
     df_columns=columns,
     start_row=23,

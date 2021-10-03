@@ -16,7 +16,7 @@ from cycler import cycler
 from matplotlib import lines, markers
 from scipy import stats
 
-from dofis.analysis.library import start
+from dofis import start
 
 # get_ipython().run_line_magic('matplotlib', 'inline')
 plt.style.use("seaborn")
@@ -27,7 +27,7 @@ plt.figure(figsize=(480 / my_dpi, 480 / my_dpi), dpi=my_dpi)
 # %%
 
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "gdid_school.csv"), sep=",", low_memory=False
+    os.path.join(start.DATA_PATH, "clean", "gdid_school.csv"), sep=",", low_memory=False
 )
 data[data.year == 2019].doi_year.value_counts().sort_index()
 
@@ -122,12 +122,12 @@ for outcome in title_labels:
     ax.grid(False)
 
     fig.savefig(
-        start.table_path + "trends_by_adoption_" + outcome + ".png", bbox_inches="tight"
+        start.TABLE_PATH + "trends_by_adoption_" + outcome + ".png", bbox_inches="tight"
     )
 
 # %%
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_school.csv"),
+    os.path.join(start.DATA_PATH, "clean", "master_data_school.csv"),
     sep=",",
     low_memory=False,
 )
@@ -195,7 +195,7 @@ ax.set_title(title_labels[outcome])
 ax.grid(False)
 
 # fig.savefig(
-#     start.table_path + "trends_by_adoption_" + outcome + ".png", bbox_inches="tight"
+#     start.TABLE_PATH + "trends_by_adoption_" + outcome + ".png", bbox_inches="tight"
 # )
 # %%
 outcome = "math"

@@ -1,16 +1,8 @@
-import os
-import sys
-
-import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-import statsmodels.formula.api as smf
 from cycler import cycler
-from matplotlib import lines, markers
-from scipy import stats
 
-from dofis.analysis.library import start
+from dofis import start
 
 # get_ipython().run_line_magic('matplotlib', 'inline')
 plt.style.use("seaborn")
@@ -18,7 +10,7 @@ my_dpi = 96
 plt.figure(figsize=(480 / my_dpi, 480 / my_dpi), dpi=my_dpi)
 
 # %%
-data = pd.read_csv(start.data_path + "clean/r_data_district_2020_comparison.csv")
+data = pd.read_csv(start.DATA_PATH + "clean/r_data_district_2020_comparison.csv")
 
 data[data.year == 2019].doi_year.value_counts().sort_index()
 

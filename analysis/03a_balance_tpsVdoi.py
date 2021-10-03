@@ -8,15 +8,16 @@ import sys
 
 import pandas as pd
 import statsmodels.formula.api as sm
-from dofis.analysis.library import analysis, characteristics, regulations, start, tables
+from dofis import start
+from dofis.analysis.library import analysis, characteristics, regulations, tables
 
 
 # %%
 
-data_path = start.data_path
-table_path = start.table_path
+DATA_PATH = start.DATA_PATH
+TABLE_PATH = start.TABLE_PATH
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_district.csv"),
+    os.path.join(start.DATA_PATH, "clean", "master_data_district.csv"),
     sep=",",
     low_memory=False,
 )
@@ -61,14 +62,14 @@ student
 dfs = [district, teacher, student]
 rows = [4, 13, 22]
 tables.n_to_excel(
-    file=table_path + "balance_tpsVdoi.xlsx", col=2, row=3, n=len(data[(data.doi == 0)])
+    file=TABLE_PATH + "balance_tpsVdoi.xlsx", col=2, row=3, n=len(data[(data.doi == 0)])
 )
 tables.n_to_excel(
-    file=table_path + "balance_tpsVdoi.xlsx", col=3, row=3, n=len(data[data.doi == 1])
+    file=TABLE_PATH + "balance_tpsVdoi.xlsx", col=3, row=3, n=len(data[data.doi == 1])
 )
 for df, row in zip(dfs, rows):
     tables.var_diff_to_excel(
-        file=table_path + "balance_tpsVdoi.xlsx",
+        file=TABLE_PATH + "balance_tpsVdoi.xlsx",
         df=df,
         control_col="Control",
         diff_col="Difference",

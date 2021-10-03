@@ -5,7 +5,7 @@ import pandas as pd
 from openpyxl import load_workbook
 import scipy
 
-from dofis.analysis.library import start
+from dofis import start
 from dofis.analysis.library import analysis
 
 MATH_AGG = start.table_path + "results_math_ag_raw_std.xlsx"

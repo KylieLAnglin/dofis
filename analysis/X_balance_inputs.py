@@ -4,9 +4,8 @@ import statsmodels.formula.api as smf
 from openpyxl import load_workbook
 
 
-from dofis.analysis.library import start
+from dofis import start
 from dofis.analysis.library import characteristics
-from dofis.analysis.library import analysis
 
 
 INPUTS = [

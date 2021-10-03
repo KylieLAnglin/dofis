@@ -11,16 +11,16 @@ import numpy as np
 import pandas as pd
 import statsmodels.formula.api as smf
 
-from dofis.analysis.library import analysis, characteristics, regulations, start, tables
-
+from dofis.analysis.library import analysis, characteristics, regulations, tables
+from dofis import start
 
 # %%
 
 
-data_path = start.data_path
-table_path = start.table_path
+DATA_PATH = start.DATA_PATH
+TABLE_PATH = start.TABLE_PATH
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_district.csv"), sep=","
+    os.path.join(start.DATA_PATH, "clean", "master_data_district.csv"), sep=","
 )
 data = data[data.year == 2016]
 data = data[(data.doi == 1)]
@@ -65,7 +65,7 @@ for reg, col in zip(
     rows = [7, 16]
     for df, row in zip(dfs, rows):
         tables.just_diff_to_excel(
-            file=start.table_path + "balance_exemptions.xlsx",
+            file=start.TABLE_PATH + "balance_exemptions.xlsx",
             df=df,
             diff_col="Difference",
             se_col="Std. Error",
@@ -74,7 +74,7 @@ for reg, col in zip(
             start_row=row,
         )
     tables.n_to_excel(
-        file=start.table_path + "balance_exemptions.xlsx",
+        file=start.TABLE_PATH + "balance_exemptions.xlsx",
         col=col,
         row=5,
         n=data[data[reg] == 1].district.nunique(),
