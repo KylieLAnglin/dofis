@@ -7,11 +7,11 @@ import pandas as pd
 import os
 from openpyxl import load_workbook
 
-sys.path.append("../")
-from library import start
+from dofis import start
 
 data = pd.read_csv(
-    (os.path.join(start.data_path, 'clean/', 'master_data_district.csv')))
+    (os.path.join(start.DATA_PATH, "clean/", "master_data_district.csv"))
+)
 data = data[data.year == 2019]
 
 
@@ -32,8 +32,9 @@ def df_to_excel(file, df, df_columns, start_col, start_row, all_ints=True):
 # %%
 
 stubnames = sorted(
-    set([match[0] for match in data.columns.str.findall(
-        r'reg.*').values if match != []])
+    set(
+        [match[0] for match in data.columns.str.findall(r"reg.*").values if match != []]
+    )
 )
 
 proportion = []
@@ -43,16 +44,18 @@ for reg in stubnames:
     number.append(data[reg].sum())
 
 regs = pd.DataFrame(
-    {'law': stubnames,
-     'proportion': proportion,
-     'number': number
-     }).sort_values(by=['proportion'], ascending=False)
+    {"law": stubnames, "proportion": proportion, "number": number}
+).sort_values(by=["proportion"], ascending=False)
 regs.head(10)
 
 
 # %%
 
 
-df_to_excel(file=os.path.join(start.table_path, 'table1_exemptions.xlsx'),
-            df=regs, df_columns=['law', 'proportion'],
-            start_col=4, start_row=3)
+df_to_excel(
+    file=os.path.join(start.TABLE_PATH, "table1_exemptions.xlsx"),
+    df=regs,
+    df_columns=["law", "proportion"],
+    start_col=4,
+    start_row=3,
+)

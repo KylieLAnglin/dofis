@@ -10,7 +10,7 @@ import pandas as pd
 
 from patsy import dmatrices
 
-from dofis.analysis.library import start
+from dofis import start
 
 
 plt.style.use("seaborn")
@@ -19,7 +19,7 @@ plt.style.use("seaborn")
 # %%
 
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_district.csv"),
+    os.path.join(start.DATA_PATH, "clean", "master_data_district.csv"),
     sep=",",
     low_memory=False,
 )
@@ -126,7 +126,7 @@ print(str(data16[data16.doi == 1].type_rural.mean().round(2)), "Rural")
 # %% School Takeup
 
 data_school = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_school.csv"),
+    os.path.join(start.DATA_PATH, "clean", "master_data_school.csv"),
     sep=",",
     low_memory=False,
 )
@@ -156,3 +156,4 @@ plt.figtext(0.5, -0.01, txt, wrap=True, horizontalalignment="center", fontsize=8
 plt.show()
 
 # %%
+district_df.doi_year.value_counts()

@@ -8,14 +8,13 @@ import numpy as np
 import pandas as pd
 import statsmodels.formula.api as sm
 
-from dofis.analysis.library import analysis
-from dofis.analysis.library import start
+from dofis import start
 from dofis.analysis.library import tables
 from dofis.analysis.library import characteristics
 
 
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_district.csv"),
+    os.path.join(start.DATA_PATH, "clean", "master_data_district.csv"),
     sep=",",
     low_memory=False,
 )
@@ -47,7 +46,7 @@ for yr in col_names:
     if yr == "texas":
         df = data[(data.distischarter == 0)]
     elif yr == "tps":
-        df = data[(~data.doi) & (data.distischarter == 0)]
+        df = data[(data.doi == 0) & (data.distischarter == 0)]
     else:
         df = data[data.doi_year == yr]
     means = []
@@ -77,7 +76,7 @@ for yr in col_names:
     if yr == "texas":
         df = data[(data.distischarter == 0)]
     elif yr == "tps":
-        df = data[(~data.doi) & (data.distischarter == 0)]
+        df = data[(data.doi == 0) & (data.distischarter == 0)]
     else:
         df = data[data.doi_year == yr]
     for char in characteristics.teacher:
@@ -102,7 +101,7 @@ for yr in col_names:
     if yr == "texas":
         df = data[(data.distischarter == 0)]
     elif yr == "tps":
-        df = data[(~data.doi) & (data.distischarter == 0)]
+        df = data[(data.doi == 0) & (data.distischarter == 0)]
     else:
         df = data[data.doi_year == yr]
     means = []
@@ -121,7 +120,7 @@ dfs = [geo_table, teacher_table, student_table]
 rows = [4, 13, 20]
 for df, row in zip(dfs, rows):
     tables.df_to_excel(
-        file=start.table_path + table_file,
+        file=start.TABLE_PATH + table_file,
         df=df,
         df_columns=col_names,
         start_col=2,
@@ -132,32 +131,32 @@ for df, row in zip(dfs, rows):
 # %%
 
 tables.n_to_excel(
-    file=start.table_path + table_file,
+    file=start.TABLE_PATH + table_file,
     col=2,
     row=33,
     n=len(data[data.distischarter == 0]),
 )
 tables.n_to_excel(
-    file=start.table_path + table_file,
+    file=start.TABLE_PATH + table_file,
     col=3,
     row=33,
     n=len(data[data.doi_year == col_names[1]]),
 )
 tables.n_to_excel(
-    file=start.table_path + table_file,
+    file=start.TABLE_PATH + table_file,
     col=4,
     row=33,
     n=len(data[data.doi_year == col_names[2]]),
 )
 tables.n_to_excel(
-    file=start.table_path + table_file,
+    file=start.TABLE_PATH + table_file,
     col=5,
     row=33,
     n=len(data[data.doi_year == col_names[3]]),
 )
 tables.n_to_excel(
-    file=start.table_path + table_file,
+    file=start.TABLE_PATH + table_file,
     col=6,
     row=33,
-    n=len(data[(~data.doi) & (data.distischarter == 0)]),
+    n=len(data[(data.doi == 0) & (data.distischarter == 0)]),
 )
