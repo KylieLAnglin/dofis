@@ -11,15 +11,15 @@ from linearmodels import PanelOLS
 
 from dofis.analysis.library import analysis
 from dofis.analysis.library import regulations
-from dofis.analysis.library import start
+from dofis import start
 
 # %% School Data
 data_school = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_school.csv"),
+    os.path.join(start.DATA_PATH, "clean", "master_data_school.csv"),
     sep=",",
     low_memory=False,
 )
-data_school = data_school[data_school.doi]
+data_school = data_school[data_school.doi == 1]
 # %%
 
 school_df = pd.DataFrame(data_school.groupby(["campus"]).agg({"doi_year": "mean"}))
@@ -62,7 +62,7 @@ plt.show()
 
 
 df = pd.read_csv(
-    os.path.join(start.data_path, "clean", "gdid_school.csv"), sep=",", low_memory=False
+    os.path.join(start.DATA_PATH, "clean", "gdid_school.csv"), sep=",", low_memory=False
 )
 df = df[~df.certified.isnull()]
 df = df[df.post3 == 0]
@@ -123,7 +123,7 @@ _ = ax.set_xticklabels(
 #  fontsize = 16)
 
 fig.savefig(
-    start.table_path + "certification_event_study" + ".png", bbox_inches="tight"
+    start.TABLE_PATH + "certification_event_study" + ".png", bbox_inches="tight"
 )
 
 

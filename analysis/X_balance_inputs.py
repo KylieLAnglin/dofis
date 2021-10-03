@@ -48,7 +48,7 @@ COLUMNS = (
 
 # %%
 data_school = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_school.csv"),
+    os.path.join(start.DATA_PATH, "clean", "master_data_school.csv"),
     sep=",",
     low_memory=False,
 )
@@ -61,7 +61,7 @@ data_school = data_school.set_index("campus")
 
 def input(outcome: str, data: pd.DataFrame, table: str, col: int, start_row: int):
 
-    file = start.table_path + table
+    file = start.TABLE_PATH + table
     wb = load_workbook(file)
     ws = wb.active
 

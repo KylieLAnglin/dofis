@@ -1,3 +1,24 @@
+# %%
+import os
+
+import numpy as np
+import pandas as pd
+import statsmodels.formula.api as smf
+from openpyxl import load_workbook
+
+from dofis import start
+
+# %%
+
+data = pd.read_csv(
+    os.path.join(start.DATA_PATH, "clean", "r_data_school_2020_comparison.csv"),
+    sep=",",
+    low_memory=False,
+)
+
+data.sample()
+
+
 def cluster_sample(df: pd.DataFrame, cluster_var: str):
     clusters = np.random.choice(
         df[cluster_var], size=df[cluster_var].nunique(), replace=True
@@ -45,30 +66,6 @@ def did(
 
 #!/usr/bin/env python
 # coding: utf-8
-
-# %%
-import os
-import sys
-import random
-
-import numpy as np
-import pandas as pd
-import statsmodels.formula.api as smf
-from openpyxl import load_workbook
-
-from dofis.analysis.library import start
-from dofis.analysis.library import analysis
-
-
-# %%
-
-data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "r_data_school_2020_comparison.csv"),
-    sep=",",
-    low_memory=False,
-)
-
-data.sample()
 
 # %%
 

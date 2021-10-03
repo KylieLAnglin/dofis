@@ -4,7 +4,7 @@ import statsmodels.formula.api as smf
 from openpyxl import load_workbook
 
 
-from dofis.analysis.library import start
+from dofis import start
 from dofis.analysis.library import characteristics
 from dofis.analysis.library import analysis
 
@@ -49,11 +49,11 @@ COLUMNS = (
 
 # %%
 data_school = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_school.csv"),
+    os.path.join(start.DATA_PATH, "clean", "master_data_school.csv"),
     sep=",",
     low_memory=False,
 )
-data_school = data_school[data_school.doi]
+data_school = data_school[data_school.doi == 1]
 data_school = data_school[COLUMNS]
 data_school["const"] = 1
 
@@ -104,7 +104,7 @@ def effect_input(
     res = mod.fit(cov_type="cluster", cov_kwds={"groups": data["district"]})
     print(res.summary())
 
-    file = start.table_path + table
+    file = start.TABLE_PATH + table
     wb = load_workbook(file)
     ws = wb.active
 

@@ -11,17 +11,17 @@ import pandas as pd
 import statsmodels.formula.api as sm
 from openpyxl import load_workbook
 
-sys.path.append("../")
-from library import analysis, characteristics, regulations, start, tables
+from dofis import start
+from dofis.analysis.library import analysis, characteristics, regulations, tables
 
 pd.set_option("display.max_columns", None)
 
 
 # In[97]:
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_district.csv"), sep=","
+    os.path.join(start.DATA_PATH, "clean", "master_data_district.csv"), sep=","
 )
-data = data[(data.doi)]
+data = data[(data.doi == 1)]
 data = data[(data.year == 2019)]
 data.sample(5)
 
@@ -103,7 +103,7 @@ tables.model_to_excel(
     data,
     y="reg25_0811",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=2,
 )
@@ -111,7 +111,7 @@ tables.model_to_excel(
     data,
     y="reg25_081",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=3,
 )
@@ -119,7 +119,7 @@ tables.model_to_excel(
     data,
     y="reg25_0812",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=4,
 )
@@ -132,7 +132,7 @@ tables.model_to_excel(
     data,
     y="reg21_003",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=5,
 )
@@ -140,7 +140,7 @@ tables.model_to_excel(
     data,
     y="reg25_112",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=6,
 )
@@ -148,7 +148,7 @@ tables.model_to_excel(
     data,
     y="reg25_111",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=7,
 )
@@ -160,7 +160,7 @@ tables.model_to_excel(
     data,
     y="reg21_102",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=8,
 )
@@ -168,7 +168,7 @@ tables.model_to_excel(
     data,
     y="reg21_401",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=9,
 )
@@ -176,7 +176,7 @@ tables.model_to_excel(
     data,
     y="reg21_352",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=10,
 )
@@ -184,7 +184,7 @@ tables.model_to_excel(
     data,
     y="reg21_354",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=11,
 )
@@ -196,7 +196,7 @@ tables.model_to_excel(
     data,
     y="reg25_092",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=12,
 )
@@ -204,7 +204,7 @@ tables.model_to_excel(
     data,
     y="reg37_0012",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=13,
 )
@@ -212,7 +212,7 @@ tables.model_to_excel(
     data,
     y="reg25_036",
     x_list=x_list,
-    file=start.table_path + "logit_exemptions.xlsx",
+    file=start.TABLE_PATH + "logit_exemptions.xlsx",
     start_row=4,
     start_col=14,
 )

@@ -17,7 +17,7 @@ from dofis.analysis.library import analysis
 # %%
 
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "r_data_school_2020_comparison.csv"),
+    os.path.join(start.DATA_PATH, "clean", "r_data_school_2020_comparison.csv"),
     sep=",",
     low_memory=False,
 )
@@ -109,7 +109,7 @@ math_simple = simple_weighted_average(math_results, data)
 
 # %%
 
-file_path = start.table_path + "results_math_all_groups_and_times.xlsx"
+file_path = start.TABLE_PATH + "results_math_all_groups_and_times.xlsx"
 wb = load_workbook(file_path)
 ws = wb.active
 
@@ -129,7 +129,7 @@ reading_results = analysis.dids(
     df=data,
 )
 
-file_path = start.table_path + "results_reading_all_groups_and_times.xlsx"
+file_path = start.TABLE_PATH + "results_reading_all_groups_and_times.xlsx"
 wb = load_workbook(file_path)
 ws = wb.active
 

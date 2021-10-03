@@ -10,9 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import statsmodels.formula.api as smf
-from linearmodels import PanelOLS
 from openpyxl import load_workbook
-from patsy import dmatrices
 
 from dofis import start
 from dofis.analysis.library import analysis
@@ -21,7 +19,7 @@ from dofis.analysis.library import analysis
 # %%
 
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_district.csv"),
+    os.path.join(start.DATA_PATH, "clean", "master_data_district.csv"),
     sep=",",
     low_memory=False,
 )

@@ -8,26 +8,26 @@ import scipy
 from dofis import start
 from dofis.analysis.library import analysis
 
-MATH_AGG = start.table_path + "results_math_ag_raw_std.xlsx"
+MATH_AGG = start.TABLE_PATH + "results_math_ag_raw_std.xlsx"
 math_agg = pd.read_excel(MATH_AGG)
 
-MATH_DISAG = start.table_path + "results_math_disag_raw_std.xlsx"
+MATH_DISAG = start.TABLE_PATH + "results_math_disag_raw_std.xlsx"
 math_disag = pd.read_excel(MATH_DISAG)
 
-READING_AGG = start.table_path + "results_reading_ag_raw_std.xlsx"
+READING_AGG = start.TABLE_PATH + "results_reading_ag_raw_std.xlsx"
 reading_agg = pd.read_excel(READING_AGG)
 
-READING_DISAG = start.table_path + "results_reading_disag_raw_std.xlsx"
+READING_DISAG = start.TABLE_PATH + "results_reading_disag_raw_std.xlsx"
 reading_disagg = pd.read_excel(READING_DISAG)
 
-data = pd.read_csv(start.data_path + "clean/r_data_school_2020_comparison.csv")
+data = pd.read_csv(start.DATA_PATH + "clean/r_data_school_2020_comparison.csv")
 n = data.district.nunique()
 
 
 # %% Tables 4 & 5 Main
 
 
-file_path = start.table_path + "results_main_standardize_within_year.xlsx"
+file_path = start.TABLE_PATH + "results_main_standardize_within_year.xlsx"
 wb = load_workbook(file_path)
 ws = wb.active
 

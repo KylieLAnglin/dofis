@@ -22,7 +22,7 @@ from dofis.analysis.library import analysis
 # %%
 
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "r_data_school_2020_comparison.csv"),
+    os.path.join(start.DATA_PATH, "clean", "r_data_school_2020_comparison.csv"),
     sep=",",
     low_memory=False,
 )

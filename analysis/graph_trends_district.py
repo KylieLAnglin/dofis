@@ -27,7 +27,7 @@ plt.figure(figsize=(480 / my_dpi, 480 / my_dpi), dpi=my_dpi)
 # %%
 
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_district.csv"),
+    os.path.join(start.DATA_PATH, "clean", "master_data_district.csv"),
     sep=",",
     low_memory=False,
 )
@@ -97,7 +97,7 @@ ax.grid(False)
 
 # %%
 data = pd.read_csv(
-    os.path.join(start.data_path, "clean", "master_data_district.csv"),
+    os.path.join(start.DATA_PATH, "clean", "master_data_district.csv"),
     sep=",",
     low_memory=False,
 )
@@ -177,6 +177,6 @@ ax.axvline(x=2018.5, linestyle=":", color="black")
 ax.grid(False)
 
 # fig.savefig(
-#     start.table_path + "trends_by_adoption_" + outcome + ".png", bbox_inches="tight"
+#     start.TABLE_PATH + "trends_by_adoption_" + outcome + ".png", bbox_inches="tight"
 # )
 # %%
