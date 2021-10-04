@@ -42,3 +42,4 @@ echo "running analyses"
 python analysis/01_district_eligibility_and_takeup.py
 python analysis/02_table_doi_characteristics.py
 python analysis/03_table_exemptions_by_urbanicity.py
+python analysis/04_district_characteristics_by_exemption.py
