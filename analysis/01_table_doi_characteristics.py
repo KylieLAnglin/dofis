@@ -62,14 +62,20 @@ student
 dfs = [district, teacher, student]
 rows = [4, 13, 22]
 tables.n_to_excel(
-    file=TABLE_PATH + "balance_tpsVdoi.xlsx", col=2, row=3, n=len(data[(data.doi == 0)])
+    file=TABLE_PATH + "Characteristics of TPSD vs DOIs.xlsx",
+    col=2,
+    row=3,
+    n=len(data[(data.doi == 0)]),
 )
 tables.n_to_excel(
-    file=TABLE_PATH + "balance_tpsVdoi.xlsx", col=3, row=3, n=len(data[data.doi == 1])
+    file=TABLE_PATH + "Characteristics of TPSD vs DOIs.xlsx",
+    col=3,
+    row=3,
+    n=len(data[data.doi == 1]),
 )
 for df, row in zip(dfs, rows):
     tables.var_diff_to_excel(
-        file=TABLE_PATH + "balance_tpsVdoi.xlsx",
+        file=TABLE_PATH + "Characteristics of TPSD vs DOIs.xlsx",
         df=df,
         control_col="Control",
         diff_col="Difference",

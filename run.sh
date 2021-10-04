@@ -36,3 +36,9 @@ echo "running merge and clean"
 python merge_and_clean/01_merge_tea_and_exemptions.py
 python merge_and_clean/02_r_data.py
 echo "done"
+
+# analysis
+echo "running analyses"
+python analysis/01_district_eligibility_and_takeup.py
+python analysis/02_table_doi_characteristics.py
+python analysis/03_table_exemptions_by_urbanicity.py

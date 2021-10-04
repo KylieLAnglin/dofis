@@ -26,7 +26,6 @@ data = data[data.year == 2016]
 data = data[(data.doi == 1)]
 data["teachers_turnover_ratio_d"] = data.teachers_turnover_ratio_d / 100
 
-data[data.doi_year < 2020]
 # %%
 
 for reg, col in zip(
@@ -65,7 +64,7 @@ for reg, col in zip(
     rows = [7, 16]
     for df, row in zip(dfs, rows):
         tables.just_diff_to_excel(
-            file=start.TABLE_PATH + "balance_exemptions.xlsx",
+            file=start.TABLE_PATH + "District Characteristics by Exemption.xlsx",
             df=df,
             diff_col="Difference",
             se_col="Std. Error",
@@ -74,7 +73,7 @@ for reg, col in zip(
             start_row=row,
         )
     tables.n_to_excel(
-        file=start.TABLE_PATH + "balance_exemptions.xlsx",
+        file=start.TABLE_PATH + "District Characteristics by Exemption.xlsx",
         col=col,
         row=5,
         n=data[data[reg] == 1].district.nunique(),

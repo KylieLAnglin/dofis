@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 # %%
 
 import pandas as pd
@@ -13,6 +10,7 @@ data = pd.read_csv(
     (os.path.join(start.DATA_PATH, "clean/", "master_data_district.csv"))
 )
 data = data[data.year == 2019]
+data = data[data.doi == 1]
 
 
 def df_to_excel(file, df, df_columns, start_col, start_row, all_ints=True):
@@ -53,7 +51,7 @@ regs.head(10)
 
 
 df_to_excel(
-    file=os.path.join(start.TABLE_PATH, "table1_exemptions.xlsx"),
+    file=os.path.join(start.TABLE_PATH, "Top Exemptions.xlsx"),
     df=regs,
     df_columns=["law", "proportion"],
     start_col=4,
