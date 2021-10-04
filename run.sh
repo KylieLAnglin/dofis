@@ -46,7 +46,9 @@ python analysis/04_district_characteristics_by_exemption.py
 
 
 # R analyses
+chmod +x r_scripts/test.r
 echo "running R analyses"
+r_scripts/test.r
 
 # Python Formatting
 echo "formatting R results"
