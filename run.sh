@@ -37,9 +37,17 @@ python merge_and_clean/01_merge_tea_and_exemptions.py
 python merge_and_clean/02_r_data.py
 echo "done"
 
-# analysis
-echo "running analyses"
+# Python Analyses
+echo "running python analyses"
 python analysis/01_district_eligibility_and_takeup.py
 python analysis/02_table_doi_characteristics.py
 python analysis/03_table_exemptions_by_urbanicity.py
 python analysis/04_district_characteristics_by_exemption.py
+
+
+# R analyses
+echo "running R analyses"
+
+# Python Formatting
+echo "formatting R results"
+python analysis/05_tables_effect_on_math_and_reading.py
