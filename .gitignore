@@ -27,3 +27,4 @@ venv
 *.iml
 
 *.egg-info
+.Rproj.user

@@ -1,7 +1,4 @@
-library(did)
-library("openxlsx")
-output_path = "/Users/kylie/dofis/results/"
-df <- read.csv("~/dofis/data/clean/r_data_district_2020_comparison.csv")
+district_df <- read.csv(paste(data_path, "clean/r_data_district_2020_comparison.csv", sep=""))
 
 set.seed(42)
 
@@ -11,7 +8,7 @@ disag.math <- att_gt(yname = "math_yr15std",
                      idname = "district",
                      tname = "year",
                      xformla = ~1,
-                     data = df,
+                     data = district_df,
                      control_group = c("notyettreated"), 
                      est_method = "reg",
                      allow_unbalanced_panel = TRUE,
@@ -49,7 +46,7 @@ disag.reading <- att_gt(yname = "reading_yr15std",
                         idname = "district",
                         tname = "year",
                         xformla = ~1,
-                        data = df,
+                        data = district_df,
                         control_group = c("notyettreated"), 
                         est_method = "reg",
                         allow_unbalanced_panel = TRUE,

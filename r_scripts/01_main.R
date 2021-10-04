@@ -1,8 +1,6 @@
 library(did)
 library("openxlsx")
-output_path = "/Users/kylie/dofis/results/"
-df <- read.csv("~/dofis/data/clean/r_data_school_2020_comparison.csv")
-set.seed(42)
+
 
 disag.math <- att_gt(yname = "math_yr15std",
                      gname = "group",

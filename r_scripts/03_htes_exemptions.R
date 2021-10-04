@@ -1,7 +1,3 @@
-library(did)
-library("openxlsx")
-output_path = "/Users/kylie/dofis/results/"
-
 
 
 attgt_object <- function(df, y) {
