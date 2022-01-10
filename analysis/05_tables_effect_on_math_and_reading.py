@@ -5,29 +5,29 @@ import pandas as pd
 from openpyxl import load_workbook
 import scipy
 
-from dofis.analysis.library import start
+from dofis import start
 from dofis.analysis.library import analysis
 
-MATH_AGG = start.table_path + "results_math_ag_raw.xlsx"
+MATH_AGG = start.TABLE_PATH + "results_math_ag_raw.xlsx"
 math_agg = pd.read_excel(MATH_AGG)
 
-MATH_DISAG = start.table_path + "results_math_disag_raw.xlsx"
+MATH_DISAG = start.TABLE_PATH + "results_math_disag_raw.xlsx"
 math_disag = pd.read_excel(MATH_DISAG)
 
-READING_AGG = start.table_path + "results_reading_ag_raw.xlsx"
+READING_AGG = start.TABLE_PATH + "results_reading_ag_raw.xlsx"
 reading_agg = pd.read_excel(READING_AGG)
 
-READING_DISAG = start.table_path + "results_reading_disag_raw.xlsx"
+READING_DISAG = start.TABLE_PATH + "results_reading_disag_raw.xlsx"
 reading_disag = pd.read_excel(READING_DISAG)
 
-data = pd.read_csv(start.data_path + "clean/r_data_school_2020_comparison.csv")
+data = pd.read_csv(start.DATA_PATH + "clean/r_data_school_2020_comparison.csv")
 n = data.district.nunique()
 
 
 # %% Tables 4 & 5 Main
 
 
-file_path = start.table_path + "results_main.xlsx"
+file_path = start.TABLE_PATH + "Aggregated Impact of DOI Status.xlsx"
 wb = load_workbook(file_path)
 ws = wb.active
 
@@ -135,7 +135,7 @@ math_disag = math_disag.rename(
     }
 )
 
-file_path = start.table_path + "results_math.xlsx"
+file_path = start.TABLE_PATH + "Disaggregated Impact of DOI Status on Math.xlsx"
 wb = load_workbook(file_path)
 ws = wb.active
 
@@ -212,7 +212,7 @@ reading_disag = reading_disag.rename(
     }
 )
 
-file_path = start.table_path + "results_reading.xlsx"
+file_path = start.TABLE_PATH + "Disaggregated Impact of DOI Status on Reading.xlsx"
 wb = load_workbook(file_path)
 ws = wb.active
 

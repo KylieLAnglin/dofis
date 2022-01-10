@@ -1,10 +1,3 @@
-library(did)
-library("openxlsx")
-output_path = "/Users/kylie/dofis/results/"
-
-df <- read.csv("~/dofis/data/clean/r_data_school_2020_comparison.csv")
-
-
 inputs = c("teachers_uncertified", "teachers_secondary_math_outoffield", "teachers_secondary_science_outoffield", "teachers_secondary_cte_outoffield")
 
 exempt_certification <- df[df$exempt_certification == 1, ]

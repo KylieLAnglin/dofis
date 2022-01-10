@@ -6,11 +6,11 @@ import pandas as pd
 from openpyxl import load_workbook
 import scipy
 
-from dofis.analysis.library import start
+from dofis import start
 from dofis.analysis.library import analysis
 
 # %%
-results_path = start.table_path + "/results_subgroup_raw.xlsx"
+results_path = start.TABLE_PATH + "/results_subgroup_raw.xlsx"
 results = pd.read_excel(results_path).set_index(["subgroup", "outcome"])
 # %%
 ###
@@ -18,7 +18,9 @@ results = pd.read_excel(results_path).set_index(["subgroup", "outcome"])
 ###
 
 
-file_path = start.table_path + "results_subgroup.xlsx"
+file_path = (
+    start.TABLE_PATH + "Aggregated Impact of DOI Status by Demographic Subgroup.xlsx"
+)
 wb = load_workbook(file_path)
 ws = wb.active
 
@@ -96,11 +98,14 @@ wb.save(file_path)
 # Exemptions
 ###
 
-results_path = start.table_path + "/results_exemptions_raw.xlsx"
+results_path = start.TABLE_PATH + "/results_exemptions_raw.xlsx"
 results = pd.read_excel(results_path).set_index(["subgroup", "outcome", "exempt"])
 
 
-file_path = start.table_path + "results_subgroup_exemptions_math.xlsx"
+file_path = (
+    start.TABLE_PATH
+    + "Aggregated Impact of DOI Status on Math by Exemption Subgroup.xlsx"
+)
 wb = load_workbook(file_path)
 ws = wb.active
 
@@ -158,11 +163,14 @@ wb.save(file_path)
 
 
 # %% Reading
-results_path = start.table_path + "/results_exemptions_raw.xlsx"
+results_path = start.TABLE_PATH + "/results_exemptions_raw.xlsx"
 results = pd.read_excel(results_path).set_index(["subgroup", "outcome", "exempt"])
 
 
-file_path = start.table_path + "results_subgroup_exemptions_reading.xlsx"
+file_path = (
+    start.TABLE_PATH
+    + "Aggregated Impact of DOI Status on Reading by Exemption Subgroup.xlsx"
+)
 wb = load_workbook(file_path)
 ws = wb.active
 

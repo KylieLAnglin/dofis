@@ -4,15 +4,15 @@ import pandas as pd
 from openpyxl import load_workbook
 import scipy
 
-from dofis.analysis.library import start
+from dofis import start
 from dofis.analysis.library import analysis
 
 # %%
-results_path = start.table_path + "/results_inputs_raw.xlsx"
+results_path = start.TABLE_PATH + "/results_inputs_raw.xlsx"
 results = pd.read_excel(results_path).set_index("outcome")
 
 
-file_path = start.table_path + "results_inputs.xlsx"
+file_path = start.TABLE_PATH + "Aggregated Impact of DOI Status on Inputs.xlsx"
 wb = load_workbook(file_path)
 ws = wb.active
 

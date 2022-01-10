@@ -1,7 +1,3 @@
-library(did)
-library("openxlsx")
-df <- read.csv("~/dofis/data/clean/r_data_school_2020_comparison.csv")
-output_path = "/Users/kylie/dofis/results/"
 
 attgt_object <- function(df, y) {
   att.gt <- att_gt(yname = y,

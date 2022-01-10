@@ -5,29 +5,31 @@ import pandas as pd
 from openpyxl import load_workbook
 import scipy
 
-from dofis.analysis.library import start
+from dofis import start
 from dofis.analysis.library import analysis
 
-MATH_AGG = start.table_path + "results_math_ag_raw_district.xlsx"
+MATH_AGG = start.TABLE_PATH + "results_math_ag_raw_std.xlsx"
 math_agg = pd.read_excel(MATH_AGG)
 
-MATH_DISAG = start.table_path + "results_math_disag_raw_district.xlsx"
+MATH_DISAG = start.TABLE_PATH + "results_math_disag_raw_std.xlsx"
 math_disag = pd.read_excel(MATH_DISAG)
 
-READING_AGG = start.table_path + "results_reading_ag_raw_district.xlsx"
+READING_AGG = start.TABLE_PATH + "results_reading_ag_raw_std.xlsx"
 reading_agg = pd.read_excel(READING_AGG)
 
-READING_DISAG = start.table_path + "results_reading_disag_raw_district.xlsx"
-reading_disag = pd.read_excel(READING_DISAG)
+READING_DISAG = start.TABLE_PATH + "results_reading_disag_raw_std.xlsx"
+reading_disagg = pd.read_excel(READING_DISAG)
 
-data = pd.read_csv(start.data_path + "clean/r_data_district_2020_comparison.csv")
+data = pd.read_csv(start.DATA_PATH + "clean/r_data_school_2020_comparison.csv")
 n = data.district.nunique()
 
 
 # %% Tables 4 & 5 Main
 
 
-file_path = start.table_path + "results_district.xlsx"
+file_path = (
+    start.TABLE_PATH + "Aggregated Impact with Outcomes Standardized Within Year.xlsx"
+)
 wb = load_workbook(file_path)
 ws = wb.active
 
@@ -100,7 +102,7 @@ pvalue = (
 )  # two-sided pvalue = Prob(abs(t)>tt)
 
 ws.cell(row=13, column=2).value = analysis.coef_with_stars(
-    te, pvalue=pvalue, n_tests=1, digits=2
+    te, pvalue=pvalue, n_tests=3, digits=2
 )
 ws.cell(row=14, column=2).value = analysis.format_se(se, 2)
 
@@ -115,10 +117,13 @@ for year in [0, 1, 2]:
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)
     ws.cell(row=row, column=col).value = analysis.coef_with_stars(
-        te, pvalue=pvalue, n_tests=3, digits=2
+        te, pvalue=pvalue, n_tests=1, digits=2
     )
     row = row + 1
     ws.cell(row=row, column=col).value = analysis.format_se(se, 2)
     row = row + 2
 
 wb.save(file_path)
+
+
+# %%
