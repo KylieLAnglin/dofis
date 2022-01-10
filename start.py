@@ -1,2 +1,4 @@
-DATA_PATH = "/Users/kylieanglin/Dropbox/Active/dofis/data/"
-TABLE_PATH = "/Users/kylieanglin/Dropbox/Active/dofis/results/"
+DROPBOX = "/Users/kla21002/Dropbox/Active/dofis/"
+
+DATA_PATH = DROPBOX + "data/"
+TABLE_PATH = DROPBOX + "results/"
