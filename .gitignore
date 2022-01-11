@@ -28,3 +28,4 @@ venv
 
 *.egg-info
 .Rproj.user
+r_scripts/.Rhistory
