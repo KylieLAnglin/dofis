@@ -5,5 +5,5 @@ df <- read.csv(paste(data_path, "clean/r_data_school_2020_comparison.csv", sep="
 
 set.seed(42)
 
-library(did)
+library("did")
 library("openxlsx")

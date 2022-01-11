@@ -6,7 +6,7 @@ disag.math <- att_gt(yname = "math_yr15std",
                      gname = "group",
                      idname = "campus",
                      tname = "year",
-                     xformla = ~1,
+                     xformla = ~pre_avescore,
                      data = df,
                      control_group = c("notyettreated"), 
                      est_method = "reg",
@@ -14,18 +14,20 @@ disag.math <- att_gt(yname = "math_yr15std",
                      clustervars = c("district"),
                      print_details = TRUE,
 )
-
 disag.math.results <- data.frame(disag.math$group, disag.math$t, disag.math$att, disag.math$se, disag.math$n)
 file_name = paste(output_path, "results_math_disag_raw.xlsx", sep = "")
 wb <- loadWorkbook(file_name)
 writeData(wb, sheet = "raw" , disag.math.results, colNames = TRUE)
 saveWorkbook(wb,file_name,overwrite = T)
 
+ggdid(disag.math)
+
 agg.simple.math <- aggte(disag.math, type = "simple")
 summary(agg.simple.math)
 
 agg.dynamic.math <- aggte(disag.math, type = "dynamic")
 summary(agg.dynamic.math)
+ggdid(agg.dynamic.math)
 
 
 

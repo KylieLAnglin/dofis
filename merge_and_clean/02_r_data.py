@@ -34,6 +34,7 @@ r_data = r_data.dropna(
         "group",
         "math",
         "reading",
+        "district",
         "campus",
         "year",
         "pre_hisp",
@@ -50,10 +51,28 @@ col = r_data.loc[:, "class_size_3":"class_size_5"]
 r_data["class_size_mean_elem"] = col.mean(axis=1)
 
 
-r_data.to_csv(
+r_data[
+    [
+        "district",
+        "campus",
+        "year",
+        "group",
+        "math",
+        "math_yr15std",
+        "reading",
+        "pre_hisp",
+        "pre_black",
+        "pre_num",
+        "pre_tenure",
+        "pre_frpl",
+        "pre_turnover",
+        "pre_avescore",
+    ]
+].to_csv(
     os.path.join(start.DATA_PATH, "clean", "r_data_school_2020_comparison.csv"),
     sep=",",
 )
+
 
 # %% District Level
 
