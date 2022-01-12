@@ -1,4 +1,5 @@
 import os
+from matplotlib.pyplot import axis
 import pandas as pd
 import numpy as np
 import shutil
@@ -346,6 +347,25 @@ def clean_cdem(year):
     )
 
     cdem["teachers_num"] = cdem["teachers_num"].apply(pd.to_numeric, errors="coerce")
+    to_num_cols = [
+        "class_size_k",
+        "class_size_1",
+        "class_size_2",
+        "class_size_3",
+        "class_size_4",
+        "class_size_5",
+    ]
+    cdem[to_num_cols] = cdem[to_num_cols].apply(pd.to_numeric, errors="coerce")
+    cdem["class_size_elem"] = cdem[
+        [
+            "class_size_k",
+            "class_size_1",
+            "class_size_2",
+            "class_size_3",
+            "class_size_4",
+            "class_size_5",
+        ]
+    ].mean(axis=1)
 
     print("There are ", len(cdem), "schools in cdem", year)
     return cdem
