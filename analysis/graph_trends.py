@@ -65,6 +65,7 @@ title_labels = {
     "teachers_secondary_cte_outoffield": "Proportion Out of Field Secondary CTE Teachers",
     "days_mean": "District Average Days",
     "perf_attendance": "Student Attendance",
+    "perf_stu_days": "Student Days",
 }
 
 
