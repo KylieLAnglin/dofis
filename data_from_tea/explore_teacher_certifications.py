@@ -17,7 +17,7 @@ pd.set_option("display.max_columns", None)
 
 year = "yr1819"
 
-teacher_datapath = start.data_path + "teachers/" + year
+teacher_datapath = start.data_path + "/teachers/" + year
 # %% Teachers
 pattern = "TEACHER_MASTER*.TXT"
 teachers = build.concat_files(path=teacher_datapath, pattern=pattern)
