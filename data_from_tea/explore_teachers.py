@@ -15,16 +15,23 @@ pd.set_option("display.max_columns", None)
 
 # %%
 
-year = "yr1718"
+year = "yr1819"
+teacher_datapath = os.path.join(start.data_path, "teachers", year)
+certs = build.concat_files(path=teacher_datapath, pattern="STAFF_CERTIFICATION*.csv")
 
-folder = "certification_" + year + "/"
-teacher_datapath = os.path.join(start.data_path, "tea", "teachers", folder)
-pattern = "TEACHER_MASTER*.TXT"
+courses = build.concat_files(path=teacher_datapath, pattern="TEACHER_CLASS*.TXT")
 
-teachers = build.concat_files(path=teacher_datapath, pattern=pattern)
-teachers = teachers[teachers["ROLE NAME"] == "TEACHER"]
+
+# %% Follow Tony Dominguez
+
+tony_courses = courses[courses["SCRAMBLED UNIQUE ID"] == "V32650*49"]
+tony_certs = certs[certs["PID_SCRAM"] == "V32650*49"]
+
 
 # %%
+janis_courses = courses[courses["SCRAMBLED UNIQUE ID"] == "032QV0146"]
+janis_certs = certs[certs["PID_SCRAM"] == "032QV0146"]
 
-teachers["SUBJECT AREA NAME 1"].value_counts()
+
 # %%
+jose_certs = certs[certs["PID_SCRAM"] == "*3034L040"]

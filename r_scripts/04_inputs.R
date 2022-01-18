@@ -72,8 +72,6 @@ summary(agg.dynamic)
 ggdid(agg.dynamic)
 
 
-
-
 agg.results <- data.frame(agg.simple$overall.att, agg.simple$overall.se, agg.dynamic$egt, agg.dynamic$att.egt, agg.dynamic$se.egt)
 file_name = paste(output_path, "results_uncertified_ag_raw.xlsx", sep = "")
 wb <- loadWorkbook(file_name)
