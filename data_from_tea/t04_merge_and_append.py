@@ -44,14 +44,15 @@ for year in YEARS:
 
     # Secondary Math
 
-    teachers["teacher_secondary"] = np.where(
-        (teachers.camp_grade_group.isin(SECONDARY_VALUES)), True, False
+    teachers["teacher_secondary"] = np.where(teachers.teaches_high == True, True, False)
+
+    teachers["teacher_secondary_math"] = np.where(
+        ((teachers.teacher_secondary) & (teachers.teaches_math)), True, False
     )
 
     teachers["teacher_secondary_math"] = np.where(
-        (teachers.teacher_secondary & teachers.teaches_math), True, False
+        teachers.teaches_math_high == True, True, False
     )
-
     teachers["teacher_secondary_math_certified"] = np.where(
         (teachers.teacher_secondary_math & teachers.cert_area_math),
         True,
