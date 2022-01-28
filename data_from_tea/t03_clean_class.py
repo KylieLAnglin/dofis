@@ -14,7 +14,10 @@ for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819
     pattern = "TEACHER_CLASS*.TXT"
     classes = build.concat_files(path=teacher_datapath, pattern=pattern)
 
+    classes = classes[classes["CLASS TYPE NAME"] == "ACADEMIC ACHIEVEMENT COURSE"]
     classes = classes[classes["ROLE NAME"] == "TEACHER"]
+    classes = classes[classes["CAMPUS CHARTER TYPE NAME"] == "NOT A CHARTER SCHOOL"]
+    classes = classes[classes["DISTRICT CHARTER TYPE NAME"] == "NOT A CHARTER DISTRICT"]
 
     vars_to_keep = {
         "SCRAMBLED UNIQUE ID": "teacher_id",
@@ -24,13 +27,21 @@ for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819
         "CAMPUS NAME": "campname",
         "SUBJECT AREA CODE": "subject_area_code",
         "SUBJECT AREA NAME": "subject_area",
+        "GRADE LEVEL CODE": "grade_level_code",
+        "GRADE LEVEL NAME": "grade_level",
+        "PARTIAL FULL TIME EQUIVALENT": "fte",
     }
 
     classes = clean_tea.filter_and_rename_cols(classes, vars_to_keep)
 
+    # classes["teaches_math"] = np.where(
+    #     classes.subject_area == "MATHEMATICS", True, False
+    # )
+
     classes["teaches_math"] = np.where(
-        classes.subject_area == "MATHEMATICS", True, False
+        classes["SUBJECT NAME"] == "MATHEMATICS", True, False
     )
+
     classes["teaches_science"] = np.where(
         classes.subject_area == "SCIENCE", True, False
     )
@@ -38,12 +49,22 @@ for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819
         classes.subject_area == "CAREER & TECHNOLOGY EDUCATION", True, False
     )
 
+    classes["teaches_high"] = np.where(
+        classes.grade_level == "GRADES 9-12", True, False
+    )
+
+    classes["teaches_math_high"] = np.where(
+        (classes.teaches_math == True) & (classes.teaches_high == True), True, False
+    )
+
     class_variables = list(classes.filter(like="teaches", axis=1).columns)
-    variables_to_keep = ["teacher_id", "campus"] + class_variables
+    variables_to_keep = ["teacher_id", "campus", "fte"] + class_variables
 
     teachers = classes[variables_to_keep]
 
-    teachers = teachers.groupby(["teacher_id", "campus"]).max()
+    teachers = teachers.groupby(["teacher_id"]).max()
+    teachers.teaches_math_high.sum()
+    teachers[teachers.teaches_math_high == True].teacher_id.nunique()
 
     teachers.sort_values(by=["teacher_id"], axis=0)
     filename = "classes_" + year + ".csv"
