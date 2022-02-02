@@ -28,6 +28,8 @@ for outcome in [
     "m_7th_yr15std",
     "m_8th_yr15std",
     "alg_yr15std",
+    "biology_yr15std",
+    "us_yr15std",
 ]:
     te = results.loc[outcome, "te"]
     se = results.loc[outcome, "se"]
@@ -52,6 +54,8 @@ for outcome in [
     "r_7th_yr15std",
     "r_8th_yr15std",
     "eng1_yr15std",
+    "biology_yr15std",
+    "us_yr15std",
 ]:
     te = results.loc[outcome, "te"]
     se = results.loc[outcome, "se"]

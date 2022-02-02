@@ -1,4 +1,5 @@
 # %% Event Study Graphs - Math
+
 # %%
 # %%
 import pandas as pd
@@ -32,6 +33,14 @@ math_outoffield_agg = pd.read_excel(MATH_OUTOFFIELD)
 ELEM_CLASS_SIZE = start.TABLE_PATH + "results_class_size_elem_ag_raw.xlsx"
 class_size_agg = pd.read_excel(ELEM_CLASS_SIZE)
 
+BIO_AGG = start.TABLE_PATH + "results_bio_ag_raw.xlsx"
+bio_agg = pd.read_excel(BIO_AGG)
+
+BIO_DISAG = start.TABLE_PATH + "results_bio_disag_raw.xlsx"
+bio_disag = pd.read_excel(BIO_DISAG)
+
+us_agg = pd.read_excel(start.TABLE_PATH + "results_us_ag_raw.xlsx")
+us_disag = pd.read_excel(start.TABLE_PATH + "results_us_disag_raw.xlsx")
 
 data = pd.read_csv(start.DATA_PATH + "clean/r_data_school_2020_comparison.csv")
 n = data.district.nunique()
@@ -97,8 +106,12 @@ def plot_study(coef_df: pd.DataFrame, title: str, ylabel: str, ylim: tuple = Non
     fig.savefig(start.TABLE_PATH + title + ".png", bbox_inches="tight")
 
 
-df = coef_df(math_agg)
-plot_study(coef_df=df, title="math_event_study", ylabel="Effect Size Estimate")
+plot_study(
+    coef_df=coef_df(math_agg),
+    title="math_event_study",
+    ylabel="Effect Size Estimate",
+    ylim=(-0.25, 0.25),
+)
 
 
 df = coef_df(uncertified_agg)
@@ -121,5 +134,19 @@ plot_study(
     coef_df=df,
     title="event_study_class_size_elem",
     ylabel="Effect on Average Class Size",
+)
+
+plot_study(
+    coef_df=coef_df(bio_agg),
+    title="event_study_biology",
+    ylabel="Effect of End-Of-Course Biology Exams",
+    ylim=(-0.5, 0.5),
+)
+
+plot_study(
+    coef_df=coef_df(us_agg),
+    title="event_study_us",
+    ylabel="Effect of End-Of-Course US History Exams",
+    ylim=(-0.5, 0.5),
 )
 # %%
