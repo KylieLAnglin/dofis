@@ -18,7 +18,7 @@ attgt_object <- function(df, y) {
 
 
 outcomes = c("m_3rd_yr15std", "m_4th_yr15std", "m_5th_yr15std", "m_6th_yr15std", "m_7th_yr15std", "m_8th_yr15std", "alg_yr15std", 
-                  "r_3rd_yr15std", "r_4th_yr15std", "r_5th_yr15std", "r_6th_yr15std", "r_7th_yr15std", "r_8th_yr15std", "eng1_yr15std", "biology_yr15_std", "us_yr15_std")
+                  "r_3rd_yr15std", "r_4th_yr15std", "r_5th_yr15std", "r_6th_yr15std", "r_7th_yr15std", "r_8th_yr15std", "eng1_yr15std", "biology_yr15std", "us_yr15std")
 
 results <- data.frame(outcome = character(), te = double(), se = double())
 

@@ -1,4 +1,5 @@
 # %%
+
 import pandas as pd
 import numpy as np
 import pandas as pd
@@ -19,7 +20,7 @@ ws = wb.active
 
 n = 8
 col = 2
-row = 5
+row = 4
 for outcome in [
     "m_3rd_yr15std",
     "m_4th_yr15std",
@@ -29,7 +30,6 @@ for outcome in [
     "m_8th_yr15std",
     "alg_yr15std",
     "biology_yr15std",
-    "us_yr15std",
 ]:
     te = results.loc[outcome, "te"]
     se = results.loc[outcome, "se"]
@@ -54,7 +54,6 @@ for outcome in [
     "r_7th_yr15std",
     "r_8th_yr15std",
     "eng1_yr15std",
-    "biology_yr15std",
     "us_yr15std",
 ]:
     te = results.loc[outcome, "te"]
