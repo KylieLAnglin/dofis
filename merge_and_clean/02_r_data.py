@@ -107,4 +107,41 @@ r_data_district.to_csv(
     sep=",",
 )
 
-# %%
+# %% Include never treated public schools
+r_data_never = data_school[data_school.campischarter == "N"]
+r_data_never = r_data_never[r_data_never.eligible == True]
+r_data_never["group"] = np.where(
+    r_data_never.doi_year == 2017,
+    2017,
+    np.where(
+        r_data_never.doi_year == 2018,
+        2018,
+        np.where(r_data_never.doi_year == 2019, 2019, 0),
+    ),
+)
+r_data_never = r_data_never.dropna(
+    subset=[
+        "group",
+        "math_yr15std",
+        "reading_yr15std",
+        "district",
+        "campus",
+        "year",
+        "pre_hisp",
+        "pre_black",
+        "pre_num",
+        "pre_tenure",
+        "pre_frpl",
+        "pre_turnover",
+    ]
+)
+
+
+col = r_data_never.loc[:, "class_size_3":"class_size_5"]
+r_data_never["class_size_mean_elem"] = col.mean(axis=1)
+
+
+r_data_never.to_csv(
+    os.path.join(start.DATA_PATH, "clean", "r_data_never_school_2020_comparison.csv"),
+    sep=",",
+)
