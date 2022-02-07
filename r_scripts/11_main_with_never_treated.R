@@ -52,7 +52,7 @@ disag.reading <- att_gt(yname = "reading_yr15std",
                      data = df_never,
                      control_group = c("notyettreated"), 
                      est_method = "reg",
-                     allow_unbalanced_panel = TRUE,
+                     allow_unbalanced_panel = FALSE,
                      clustervars = c("district"),
                      print_details = TRUE,
 )
