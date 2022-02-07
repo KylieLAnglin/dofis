@@ -30,6 +30,12 @@ uncertified_agg = pd.read_excel(UNCERTIFIED_AGG)
 MATH_OUTOFFIELD = start.TABLE_PATH + "results_outoffield_math_ag_raw.xlsx"
 math_outoffield_agg = pd.read_excel(MATH_OUTOFFIELD)
 
+SCIENCE_OUTOFFIELD = start.TABLE_PATH + "results_outoffield_science_ag_raw.xlsx"
+science_outoffield_agg = pd.read_excel(SCIENCE_OUTOFFIELD)
+
+CTE_OUTOFFIELD = start.TABLE_PATH + "results_outoffield_cte_ag_raw.xlsx"
+cte_outoffield_agg = pd.read_excel(CTE_OUTOFFIELD)
+
 ELEM_CLASS_SIZE = start.TABLE_PATH + "results_class_size_elem_ag_raw.xlsx"
 class_size_agg = pd.read_excel(ELEM_CLASS_SIZE)
 
@@ -69,7 +75,13 @@ def coef_df(df: pd.DataFrame):
     return coef_df
 
 
-def plot_study(coef_df: pd.DataFrame, title: str, ylabel: str, ylim: tuple = None):
+def plot_study(
+    coef_df: pd.DataFrame,
+    title: str,
+    ylabel: str,
+    ylim: tuple = None,
+    graph_title: str = None,
+):
 
     fig, ax = plt.subplots(figsize=(8, 5))
 
@@ -101,32 +113,39 @@ def plot_study(coef_df: pd.DataFrame, title: str, ylabel: str, ylim: tuple = Non
     )
     ax.set_xlabel("Time Point")
     ax.set_ylabel(ylabel)
+    if graph_title:
+        ax.set_title(graph_title)
     if ylim:
         ax.set_ylim(ylim)
     fig.savefig(start.TABLE_PATH + title + ".png", bbox_inches="tight")
 
 
+# %%
 plot_study(
     coef_df=coef_df(math_agg),
     title="math_event_study",
     ylabel="Effect Size Estimate",
     ylim=(-0.25, 0.25),
+    graph_title="Mathematics",
 )
 
+# %%
+plot_study(
+    coef_df=coef_df(reading_agg),
+    title="reading_event_study",
+    ylabel="Effect Size Estimate for Reading",
+    ylim=(-0.25, 0.25),
+    graph_title="Reading",
+)
 
+# %%
 df = coef_df(uncertified_agg)
 plot_study(
     coef_df=df,
     title="event_study_uncertified",
     ylabel="Effect on Proportion Teachers",
     ylim=(-0.05, 0.05),
-)
-
-df = coef_df(math_outoffield_agg)
-plot_study(
-    coef_df=df,
-    title="event_study_outoffield_secondary_math",
-    ylabel="Effect on Proportion Teachers",
+    graph_title="Uncertified Teachers",
 )
 
 df = coef_df(class_size_agg)
@@ -134,8 +153,29 @@ plot_study(
     coef_df=df,
     title="event_study_class_size_elem",
     ylabel="Effect on Average Class Size",
+    graph_title="Effect on Average Elementary Class Size",
+    ylim=(-5, 5),
+)
+# %%
+df = coef_df(math_outoffield_agg)
+plot_study(
+    coef_df=df,
+    title="event_study_outoffield_secondary_math",
+    ylabel="Effect on Proportion Out-of-Field Teachers",
+    ylim=(-0.1, 0.1),
+    graph_title="Out-of-Field Secondary Mathematics Teachers",
 )
 
+df = coef_df(math_outoffield_agg)
+plot_study(
+    coef_df=df,
+    title="event_study_outoffield_secondary_math",
+    ylabel="Effect on Proportion Out-of-Field Teachers",
+    ylim=(-0.1, 0.1),
+    graph_title="Out-of-Field Secondary Mathematics Teachers",
+)
+
+# %%
 plot_study(
     coef_df=coef_df(bio_agg),
     title="event_study_biology",
