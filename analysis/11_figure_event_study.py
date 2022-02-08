@@ -122,7 +122,7 @@ _ = ax3.set_xticklabels(
 )
 ax3.set_ylabel("Effect on Proportion Teachers")
 ax3.set_title("Uncertified Teachers")
-ax3.set_ylim((-0.05, 0.05))
+ax3.set_ylim((-0.1, 0.1))
 
 ax4.scatter(
     x=pd.np.arange(classes_df.shape[0]),

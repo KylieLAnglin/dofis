@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # data from TEA
-CAMPUS=1
-DISTRICT=1
-TEACHERS=1
+CAMPUS=0
+DISTRICT=0
+TEACHERS=0
+MERGE = 0
 
 
 if [[ $DISTRICT = 1 ]]
@@ -32,24 +33,40 @@ fi
 
 
 # merge and clean
-echo "running merge and clean"
-python merge_and_clean/01_merge_tea_and_exemptions.py
-python merge_and_clean/02_r_data.py
-echo "done"
+if [[ $MERGE = 1 ]]
+then
+    echo "running merge and clean"
+    python merge_and_clean/01_merge_tea_and_exemptions.py
+    python merge_and_clean/02_r_data.py
+    echo "done"
+fi
 
 # Python Analyses
 echo "running python analyses"
-python analysis/01_district_eligibility_and_takeup.py
-python analysis/02_table_doi_characteristics.py
+python analysis/00_district_eligibility_and_takeup.py
+python analysis/01_table_doi_characteristics.py
+python analysis/02_table_top_exemptions.py
 python analysis/03_table_exemptions_by_urbanicity.py
-python analysis/04_district_characteristics_by_exemption.py
+python analysis/04_table_district_characteristics_by_exemption.py
 
 
 # R analyses
 chmod +x r_scripts/test.r
 echo "running R analyses"
-r_scripts/test.r
+chmod +x r_scripts/00_start.r
+chmod +x r_scripts/01_main.r
+chmod +x r_scripts/02_htes_demographics.r
+chmod +x r_scripts/03_htes_exemptions.r
+chmod +x r_scripts/04_inputs.r
+chmod +x r_scripts/05_main_with_matching.r
+chmod +x r_scripts/06_htes_subjects.r
+chmod +x r_scripts/07_effect_district.r
+chmod +x r_scripts/08_effect_standardized_within_year.r
+chmod +x r_scripts/09_effect_on_enrollment.r
+chmod +x r_scripts/10_effect_other_subjects.r
+chmod +x r_scripts/X_ever_treated.r
+chmod +x r_scripts/X_ever_treated_inputs.r
 
 # Python Formatting
 echo "formatting R results"
-python analysis/05_tables_effect_on_math_and_reading.py
+# python analysis/05_tables_effect_on_math_and_reading.py

@@ -136,7 +136,7 @@ data = pd.read_csv(
     low_memory=False,
 )
 
-outcome = "math_yr15std"
+outcome = "teachers_uncertified"
 df_treat2017 = create_group_df(data[data.doi_year == 2017], outcome=outcome)
 df_treat2018 = create_group_df(data[data.doi_year == 2018], outcome=outcome)
 df_treat2019 = create_group_df(data[data.doi_year == 2019], outcome=outcome)
@@ -203,7 +203,7 @@ ax.legend()
 ax.axvline(x=2016.5, linestyle="-", color="black")
 ax.axvline(x=2017.5, linestyle="--", color="black")
 ax.axvline(x=2018.5, linestyle=":", color="black")
-# ax.set_ylim(15, 22)
+ax.set_ylim(0, 0.02)
 ax.set_title(title_labels[outcome])
 ax.grid(False)
 
