@@ -8,25 +8,27 @@ from dofis import start
 from dofis.analysis.library import analysis
 
 # %%
-results_path = start.TABLE_PATH + "/results_inputs_raw.xlsx"
+results_path = start.TABLE_PATH + "results_overall_raw.xlsx"
 results = pd.read_excel(results_path).set_index("outcome")
 
 
-file_path = start.TABLE_PATH + "Aggregated Impact of DOI Status on Inputs.xlsx"
+file_path = start.TABLE_PATH + "Aggregated Impact of DOI Status.xlsx"
 wb = load_workbook(file_path)
 ws = wb.active
 
 col = 2
 row = 3
 for outcome in [
+    "math_yr15std",
+    "reading_yr15std",
     "teachers_uncertified",
-    "class_size_mean_elem",
+    "class_size_elem",
     "teachers_secondary_math_outoffield",
     "teachers_secondary_science_outoffield",
-    "teachers_secondary_cte_outoffield",
 ]:
     te = results.loc[outcome, "te"]
     se = results.loc[outcome, "se"]
+    n = results.loc[outcome, "n"]
     pvalue = (
         scipy.stats.t.sf(np.abs(te / se), n - 1) * 2
     )  # two-sided pvalue = Prob(abs(t)>tt)

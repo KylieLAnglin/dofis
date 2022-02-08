@@ -240,12 +240,12 @@ attgt_object <- function(df, y) {
   return(att.gt)
 }
 
-results <- data.frame(outcome = character(), te = double(), se = double())
+results <- data.frame(outcome = character(), te = double(), se = double(), n = double())
 
 for (i in 1:length(outcomes)){
   diagg <- attgt_object(df, outcomes[i])
   agg <- aggte(diagg, type = "simple")
-  results[nrow(results) + 1,] = c(outcomes[i], agg$overall.att, agg$overall.se)
+  results[nrow(results) + 1,] = c(outcomes[i], agg$overall.att, agg$overall.se, agg$DIDparams$n)
 }
 
 file_name = paste(output_path, "results_overall_raw.xlsx", sep = "")
