@@ -12,13 +12,13 @@ import matplotlib.pyplot as plt
 from dofis import start
 from dofis.analysis.library import analysis
 
-math_agg = pd.read_excel(start.TABLE_PATH + "results_never_math_ag_raw.xlsx")
-reading_agg = pd.read_excel(start.TABLE_PATH + "results_never_reading_ag_raw.xlsx")
+math_agg = pd.read_excel(start.TABLE_PATH + "results_ever_math_ag_raw.xlsx")
+reading_agg = pd.read_excel(start.TABLE_PATH + "results_ever_reading_ag_raw.xlsx")
 uncertified_agg = pd.read_excel(
-    start.TABLE_PATH + "results_never_uncertified_ag_raw.xlsx"
+    start.TABLE_PATH + "results_ever_uncertified_ag_raw.xlsx"
 )
 class_size_agg = pd.read_excel(
-    start.TABLE_PATH + "results_never_class_size_elem_ag_raw.xlsx"
+    start.TABLE_PATH + "results_ever_class_size_elem_ag_raw.xlsx"
 )
 
 
@@ -151,7 +151,7 @@ ax4.set_ylim((-5, 5))
 
 
 fig.savefig(
-    start.TABLE_PATH + "main_results_never_event_study" + ".png", bbox_inches="tight"
+    start.TABLE_PATH + "main_results_ever_event_study" + ".png", bbox_inches="tight"
 )
 
 
@@ -223,7 +223,7 @@ ax2.set_ylim((-0.2, 0.2))
 
 
 fig.savefig(
-    start.TABLE_PATH + "outoffield_never_event_study" + ".png", bbox_inches="tight"
+    start.TABLE_PATH + "outoffield_ever_event_study" + ".png", bbox_inches="tight"
 )
 
 # %%
