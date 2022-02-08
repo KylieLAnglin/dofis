@@ -51,22 +51,30 @@ python analysis/04_table_district_characteristics_by_exemption.py
 
 
 # R analyses
-chmod +x r_scripts/test.r
 echo "running R analyses"
 chmod +x r_scripts/00_start.r
 chmod +x r_scripts/01_main.r
 chmod +x r_scripts/02_htes_demographics.r
 chmod +x r_scripts/03_htes_exemptions.r
-chmod +x r_scripts/04_inputs.r
-chmod +x r_scripts/05_main_with_matching.r
-chmod +x r_scripts/06_htes_subjects.r
-chmod +x r_scripts/07_effect_district.r
-chmod +x r_scripts/08_effect_standardized_within_year.r
-chmod +x r_scripts/09_effect_on_enrollment.r
-chmod +x r_scripts/10_effect_other_subjects.r
-chmod +x r_scripts/X_ever_treated.r
-chmod +x r_scripts/X_ever_treated_inputs.r
+chmod +x r_scripts/X_effect_bio_and_us.r
+chmod +x r_scripts/X_effect_district.r
+chmod +x r_scripts/X_effect_ever_treated_inputs.r
+chmod +x r_scripts/X_effect_ever_treated.r
+chmod +x r_scripts/X_effect_enrollment.r
+chmod +x r_scripts/X_standardized_within_year.r
+chmod +x r_scripts/X_effect_with_matching.r
+chmod +x r_scripts/X_htes_subjects.r
+
 
 # Python Formatting
 echo "formatting R results"
-# python analysis/05_tables_effect_on_math_and_reading.py
+python analysis/05_figures_event_study.py
+python analysis/06_tables_main.py
+python analysis/07_tables_effect_subgroups.py
+python analysis/X_figures_demographics.py
+python analysis/X_figures_ever_treated.py
+python analysis/X_tables_effect_main.py
+python analysis/X_tables_effect_standardize_within_year.py
+python analysis/X_tables_effect_subjects.py
+python analysis/X_tables_effect_with_district_as_unit.py
+
