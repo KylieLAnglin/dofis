@@ -25,7 +25,7 @@ attgt_object <- function(df, y) {
                    data = df,
                    control_group = c("notyettreated"), 
                    est_method = "reg",
-                   allow_unbalanced_panel = TRUE,
+                   allow_unbalanced_panel = FALSE,
                    clustervars = c("district"),
                    print_details = TRUE
   )

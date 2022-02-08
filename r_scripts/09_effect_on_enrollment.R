@@ -6,7 +6,7 @@ attgt.black <- att_gt(yname = "students_black",
                      data = df,
                      control_group = c("notyettreated"),
                      est_method = "reg",
-                     allow_unbalanced_panel = TRUE,
+                     allow_unbalanced_panel = FALSE,
                      clustervars = c("district"),
                      print_details = TRUE
 )
@@ -29,7 +29,7 @@ attgt.hisp <- att_gt(yname = "students_hisp",
                       data = df,
                       control_group = c("notyettreated"),
                       est_method = "reg",
-                      allow_unbalanced_panel = TRUE,
+                      allow_unbalanced_panel = FALSE,
                       clustervars = c("district"),
                       print_details = TRUE
 )
@@ -50,7 +50,7 @@ attgt.frpl <- att_gt(yname = "students_frpl",
                      data = df,
                      control_group = c("notyettreated"),
                      est_method = "reg",
-                     allow_unbalanced_panel = TRUE,
+                     allow_unbalanced_panel = FALSE,
                      clustervars = c("district"),
                      print_details = TRUE
 )
@@ -72,7 +72,7 @@ attgt.iep <- att_gt(yname = "students_sped",
                      data = df,
                      control_group = c("notyettreated"),
                      est_method = "reg",
-                     allow_unbalanced_panel = TRUE,
+                     allow_unbalanced_panel = FALSE,
                      clustervars = c("district"),
                      print_details = TRUE
 )
@@ -93,7 +93,7 @@ attgt.enrollment <- att_gt(yname = "students_num",
                     data = df,
                     control_group = c("notyettreated"),
                     est_method = "reg",
-                    allow_unbalanced_panel = TRUE,
+                    allow_unbalanced_panel = FALSE,
                     clustervars = c("district"),
                     print_details = TRUE
 )

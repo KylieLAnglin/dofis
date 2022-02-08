@@ -10,9 +10,10 @@ disag.math <- att_gt(yname = "math_yr15std",
                      data = df,
                      control_group = c("notyettreated"), 
                      est_method = "reg",
-                     allow_unbalanced_panel = TRUE,
+                     allow_unbalanced_panel = FALSE,
                      clustervars = c("district"),
                      print_details = TRUE,
+                     bstrap = TRUE
 )
 disag.math.results <- data.frame(disag.math$group, disag.math$t, disag.math$att, disag.math$se, disag.math$n)
 file_name = paste(output_path, "results_math_disag_raw.xlsx", sep = "")
@@ -50,7 +51,7 @@ disag.reading <- att_gt(yname = "reading_yr15std",
                      data = df,
                      control_group = c("notyettreated"), 
                      est_method = "reg",
-                     allow_unbalanced_panel = TRUE,
+                     allow_unbalanced_panel = FALSE,
                      clustervars = c("district"),
                      print_details = TRUE,
 )

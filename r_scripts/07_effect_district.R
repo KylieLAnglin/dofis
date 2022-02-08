@@ -1,4 +1,4 @@
-district_df <- read.csv(paste(data_path, "clean/r_data_district_2020_comparison.csv", sep=""))
+district_df <- read.csv(paste(data_path, "clean/r_data_district.csv", sep=""))
 
 set.seed(42)
 

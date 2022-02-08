@@ -5,10 +5,10 @@ attgt_object <- function(df, y) {
          idname = "campus",
          tname = "year",
          xformla = ~1,
-         data = df,
+         data = df[df$year > 2013, ],
          control_group = c("notyettreated"), 
          est_method = "reg",
-         allow_unbalanced_panel = TRUE,
+         allow_unbalanced_panel = FALSE,
          clustervars = c("district"),
          print_details = TRUE
   )

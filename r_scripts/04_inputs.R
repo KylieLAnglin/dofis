@@ -15,7 +15,7 @@ attgt_object <- function(df, y) {
                    data = df,
                    control_group = c("notyettreated"), 
                    est_method = "reg",
-                   allow_unbalanced_panel = TRUE,
+                   allow_unbalanced_panel = FALSE,
                    clustervars = c("district"),
                    print_details = TRUE
   )
@@ -52,7 +52,7 @@ disag <- att_gt(yname = "teachers_uncertified",
                      data = df,
                      control_group = c("notyettreated"), 
                      est_method = "reg",
-                     allow_unbalanced_panel = TRUE,
+                     allow_unbalanced_panel = FALSE,
                      clustervars = c("district"),
                      print_details = TRUE,
 )
@@ -87,7 +87,7 @@ disag <- att_gt(yname = "teachers_secondary_math_outoffield",
                 data = df,
                 control_group = c("notyettreated"), 
                 est_method = "reg",
-                allow_unbalanced_panel = TRUE,
+                allow_unbalanced_panel = FALSE,
                 clustervars = c("district"),
                 print_details = TRUE,
 )
@@ -116,7 +116,7 @@ writeData(wb, sheet = "raw" , agg.results, colNames = TRUE)
 saveWorkbook(wb,file_name,overwrite = T)
 
 ## Out of field secondary
-disag <- att_gt(yname = "teachers_secondary_outoffield_science",
+disag <- att_gt(yname = "teachers_secondary_science_outoffield",
                 gname = "group",
                 idname = "campus",
                 tname = "year",
@@ -124,7 +124,7 @@ disag <- att_gt(yname = "teachers_secondary_outoffield_science",
                 data = df,
                 control_group = c("notyettreated"), 
                 est_method = "reg",
-                allow_unbalanced_panel = TRUE,
+                allow_unbalanced_panel = FALSE,
                 clustervars = c("district"),
                 print_details = TRUE,
 )
@@ -161,7 +161,7 @@ disag <- att_gt(yname = "teachers_secondary_cte_outoffield",
                 data = df,
                 control_group = c("notyettreated"), 
                 est_method = "reg",
-                allow_unbalanced_panel = TRUE,
+                allow_unbalanced_panel = FALSE,
                 clustervars = c("district"),
                 print_details = TRUE,
 )
@@ -198,7 +198,7 @@ disag <- att_gt(yname = "class_size_elem",
                 data = df,
                 control_group = c("notyettreated"), 
                 est_method = "reg",
-                allow_unbalanced_panel = TRUE,
+                allow_unbalanced_panel = FALSE,
                 clustervars = c("district"),
                 print_details = TRUE,
 )

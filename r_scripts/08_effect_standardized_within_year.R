@@ -7,7 +7,7 @@ disag.math <- att_gt(yname = "math",
                      data = df,
                      control_group = c("notyettreated"), 
                      est_method = "reg",
-                     allow_unbalanced_panel = TRUE,
+                     allow_unbalanced_panel = FALSE,
                      clustervars = c("district"),
                      print_details = TRUE,
 )
