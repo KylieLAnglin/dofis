@@ -42,6 +42,7 @@ def create_group_df(df, outcome):
     return new_df
 
 
+# %%
 title_labels = {
     "avescores": "Average STAR",
     "math_yr15std": "Average Std. Math Scores",
@@ -135,7 +136,7 @@ data = pd.read_csv(
     low_memory=False,
 )
 
-outcome = "teachers_secondary_science_outoffield"
+outcome = "math_yr15std"
 df_treat2017 = create_group_df(data[data.doi_year == 2017], outcome=outcome)
 df_treat2018 = create_group_df(data[data.doi_year == 2018], outcome=outcome)
 df_treat2019 = create_group_df(data[data.doi_year == 2019], outcome=outcome)
@@ -169,10 +170,18 @@ ax.plot(
 )
 
 ax.plot(
-    list(df_control.index),
+    list(df_treat2020.index),
     df_treat2020["outcome"]["score_mean"],
     label="2020 Implementers",
     linestyle="-.",
+    color="gray",
+)
+
+ax.plot(
+    list(df_control.index),
+    df_control["outcome"]["score_mean"],
+    label="Non-DOIs",
+    linestyle="solid",
     color="gray",
 )
 
