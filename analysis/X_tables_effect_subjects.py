@@ -45,7 +45,7 @@ for outcome in [
     row = row + 1
 
 col = 4
-row = 5
+row = 4
 for outcome in [
     "r_3rd_yr15std",
     "r_4th_yr15std",

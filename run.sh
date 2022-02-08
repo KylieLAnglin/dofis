@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # data from TEA
-CAMPUS=0
-DISTRICT=0
-TEACHERS=0
-MERGE = 0
+CAMPUS=1
+DISTRICT=1
+TEACHERS=1
+MERGE = 1
 
 
 if [[ $DISTRICT = 1 ]]
