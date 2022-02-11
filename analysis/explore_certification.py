@@ -28,3 +28,6 @@ print(df.teacher_secondary_math.sum())
 print("According to TEA, there are 13559 9-12 mathematics teachers.")
 
 # %%
+df[df.year == 2016].teacher_uncertified.sum()
+df[df.year == 2016].teacher_uncertified.sum() / df[df.year == 2016].teachers_num.sum()
+df[df.year == 2017].teacher_uncertified.sum() / df[df.year == 2017].teachers_num.sum()
