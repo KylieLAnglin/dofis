@@ -1,12 +1,10 @@
 import os
 
-domino = True
+domino = False
 if domino:
-    data_path = os.path.join("..", "..", "data", "plans")
+    data_path = "/Users/kla21002/Dropbox/Active/dofis/data"
     # code_path = os.path.join('/Users/kylieleblancKylie/domino/dofis/code_one', 'data_from_plans')
 
 if not domino:
-    data_path = os.path.join("/Users/kylieleblancKylie/domino/dofis/data", "plans")
-    code_path = os.path.join(
-        "/Users/kylieleblancKylie/domino/dofis/code_one", "data_from_plans"
-    )
+    data_path = "/Users/kla21002/Dropbox/Active/dofis/data/plans/"
+    code_path = "/Users/kla21002/dofis/"
