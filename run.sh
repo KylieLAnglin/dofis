@@ -18,7 +18,7 @@ if [[ $CAMPUS = 1 ]]
 then
     echo "building campus data"
     python data_from_tea/c01_clean_tea_data.py
-    pyton data_from_tea/c01_append_years.py
+    python data_from_tea/c01_append_years.py
 fi
 
 if [[ $TEACHERS = 1 ]]
@@ -68,12 +68,12 @@ chmod +x r_scripts/X_htes_subjects.r
 
 # Python Formatting
 echo "formatting R results"
-python analysis/05_figures_event_study.py
-python analysis/06_tables_main.py
-python analysis/07_tables_effect_subgroups.py
+python analysis/figures_event_study.py
+python analysis/tables_main.py
+python analysis/tables_effect_subgroups.py
 python analysis/X_figures_demographics.py
 python analysis/X_figures_ever_treated.py
-python analysis/X_tables_effect_main.py
+python analysis/tables_main.py
 python analysis/X_tables_effect_standardize_within_year.py
 python analysis/X_tables_effect_subjects.py
 python analysis/X_tables_effect_with_district_as_unit.py
