@@ -4,7 +4,8 @@
 CAMPUS=1
 DISTRICT=1
 TEACHERS=1
-MERGE = 1
+MERGE=1
+ANALYSES=1
 
 
 if [[ $DISTRICT = 1 ]]
@@ -41,6 +42,8 @@ then
     echo "done"
 fi
 
+if [[ $ANALYSES = 1 ]]
+then
 # Python Analyses
 echo "running python analyses"
 python analysis/00_district_eligibility_and_takeup.py
@@ -77,4 +80,4 @@ python analysis/tables_main.py
 python analysis/X_tables_effect_standardize_within_year.py
 python analysis/X_tables_effect_subjects.py
 python analysis/X_tables_effect_with_district_as_unit.py
-
+fi
