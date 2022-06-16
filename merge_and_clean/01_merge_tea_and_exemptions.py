@@ -32,7 +32,8 @@ laws["doi_year"] = (
     .apply(lambda x: clean_final.next_month(x, month=3, day=29))
 )
 
-laws = laws[laws.doi_year < 2021]
+
+# laws = laws[laws.doi_year < 2021]
 
 # %% School-Level
 
@@ -54,10 +55,11 @@ data_school["eligible19"] = clean_final.gen_eligiblity(
     data_school, eligible_indicator="eligible", level="campus", eligibility_year=2019
 )
 
-data_school["analytic_sample"] = clean_final.gen_analysis_sample(
-    data_school, 2017, 2019
-)
+# data_school["analytic_sample"] = clean_final.gen_analysis_sample(
+#     data=data_school, min_doi_year=2017, max_doi_year=2019
+# )
 data_school = data_school[[c for c in data_school.columns if c.lower()[:3] != "reg"]]
+data_school["group"] = clean_final.gen_analytic_group(data=data_school)
 
 data_school.to_csv(
     os.path.join(start.DATA_PATH, "clean", "master_data_school.csv"), sep=","
@@ -87,7 +89,7 @@ data_district["eligible19"] = clean_final.gen_eligiblity(
     eligibility_year=2019,
 )
 data_district["analytic_sample"] = clean_final.gen_analysis_sample(
-    data_district, 2017, 2019
+    data=data_district, min_doi_year=2017, max_doi_year=2019
 )
 data_district["score_range"] = clean_final.generate_district_spread(
     district_data=data_district,
@@ -95,6 +97,9 @@ data_district["score_range"] = clean_final.generate_district_spread(
     outcome="avescores",
     groupby=["district", "year"],
 )
+
+data_district["group"] = clean_final.gen_analytic_group(data=data_district)
+
 # data_district = data_district[
 #     [c for c in data_district.columns if c.lower()[:3] != "reg"]
 # ]

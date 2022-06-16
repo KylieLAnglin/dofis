@@ -402,6 +402,41 @@ def gen_analysis_sample(data: pd.DataFrame, min_doi_year: int, max_doi_year: int
     return df.analytic_sample
 
 
+def gen_analytic_group(data=pd.DataFrame):
+    data["group"] = np.where(data.distischarter == 1, "charter", np.nan)
+    data["group"] = np.where(
+        ((data.distischarter == 0) & (data.doi == 0) & (data.eligible19)),
+        "opt-out",
+        data.group,
+    )
+    data["group"] = np.where(
+        ((data.distischarter == 0) & (data.doi == 0) & (data.eligible19 == False)),
+        "ineligible",
+        data.group,
+    )
+    data["group"] = np.where(
+        ((data.doi == 1) & (data.doi_year == 2017)),
+        "2017",
+        data.group,
+    )
+    data["group"] = np.where(
+        ((data.doi == 1) & (data.doi_year == 2018)),
+        "2018",
+        data.group,
+    )
+    data["group"] = np.where(
+        ((data.doi == 1) & (data.doi_year == 2019)),
+        "2019",
+        data.group,
+    )
+    data["group"] = np.where(
+        ((data.doi == 1) & (data.doi_year == 2020)),
+        "2020",
+        data.group,
+    )
+    return data.group
+
+
 # Specification variables
 def gen_gdid_vars(data):
     data["treatpost"] = np.where(((data.year >= data.doi_year) & (data.doi)), 1, 0)
