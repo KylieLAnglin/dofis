@@ -3,7 +3,18 @@ import os
 from dofis.start import DATA_PATH
 from dofis.data_from_tea.library import clean_tea
 
-years = ["yr1112", "yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]
+years = [
+    "yr1112",
+    "yr1213",
+    "yr1314",
+    "yr1415",
+    "yr1516",
+    "yr1617",
+    "yr1718",
+    "yr1819",
+    "yr1920",
+    "yr2021",
+]
 for year in years:
     print(year)
     # distname, campus, campname, campischarter, cntyname_c, grade_range, region, academic rating
@@ -34,32 +45,35 @@ for year in years:
     ddem = clean_tea.filter_and_rename_cols(ddem, ddem_tokeep)
 
     # test scores
-    cscores = pd.DataFrame(columns=["campus"])
+    if year != "yr1920":
+        cscores = pd.DataFrame(columns=["campus"])
 
-    subjects = [
-        "3rd",
-        "4th",
-        "5th",
-        "6th",
-        "7th",
-        "8th",
-        "Algebra",
-        "Biology",
-        "EnglishI",
-        "EnglishII",
-        "USHistory",
-    ]
-    for subject in subjects:
-        cscores_subject = clean_tea.clean_cscores(year, subject)
-        cscores = cscores.merge(cscores_subject, how="outer", on="campus")
+        subjects = [
+            "3rd",
+            "4th",
+            "5th",
+            "6th",
+            "7th",
+            "8th",
+            "Algebra",
+            "Biology",
+            "EnglishI",
+            "EnglishII",
+            "USHistory",
+        ]
+        for subject in subjects:
+            cscores_subject = clean_tea.clean_cscores(year, subject)
+            cscores = cscores.merge(cscores_subject, how="outer", on="campus")
     descriptives = cref.merge(dref, on="distname", how="inner", validate="m:1")
+    descriptives["district"] = descriptives.district.astype("int")
     descriptives = descriptives.merge(dtype, on="district", how="inner", validate="m:1")
     descriptives = descriptives.merge(cgrad, on="campus", how="left", validate="1:1")
     descriptives = descriptives.merge(cdem, on="campus", how="left", validate="1:1")
     descriptives = descriptives.merge(ddem, on="district", how="inner", validate="m:1")
-    descriptives = descriptives.merge(
-        cscores, on="campus", how="left", indicator=True, validate="1:1"
-    )
+    if year != "yr1920":
+        descriptives = descriptives.merge(
+            cscores, on="campus", how="left", indicator=True, validate="1:1"
+        )
     descriptives = descriptives.dropna(how="all")
 
     # days
@@ -80,6 +94,7 @@ for year in years:
         "yr1718": 2018,
         "yr1819": 2019,
         "yr1920": 2020,
+        "yr2021": 2021,
     }
     descriptives["year"] = year_map[year]
     yr_file = "desc_c_" + year + ".csv"
