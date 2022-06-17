@@ -141,7 +141,7 @@ def gen_student_vars(data):
     data["students_white"] = data["students_white_num"] / data["students_num"]
     data["students_ell"] = data["students_ell_num"] / data["students_num"]
     data["students_sped"] = data["students_sped_num"] / data["students_num"]
-    data["students_cte"] = data["students_cte_num"] / data["students_num"]
+    # data["students_cte"] = data["students_cte_num"] / data["students_num"]
 
     data["days"] = data["perf_studays"] / data["students_num"]
 

@@ -5,14 +5,14 @@ from dofis.data_from_tea.library import clean_tea
 from dofis.start import DATA_PATH
 
 years = [
-    # "yr1112",
-    # "yr1213",
-    # "yr1314",
-    # "yr1415",
-    # "yr1516",
-    # "yr1617",
-    # "yr1718",
-    # "yr1819",
+    "yr1112",
+    "yr1213",
+    "yr1314",
+    "yr1415",
+    "yr1516",
+    "yr1617",
+    "yr1718",
+    "yr1819",
     "yr1920",
     "yr2021",
 ]
@@ -43,9 +43,10 @@ for year in years:
     dtype = clean_tea.clean_dtype(year=year)
     dgrad = clean_tea.clean_dgrad(year=year)
     dscores = pd.DataFrame(columns=["district"])
-    for subject in subjects:
-        dscores_subject = clean_tea.clean_scores(year, subject)
-        dscores = dscores.merge(dscores_subject, how="outer", on="district")
+    if year != "yr1920":
+        for subject in subjects:
+            dscores_subject = clean_tea.clean_scores(year, subject)
+            dscores = dscores.merge(dscores_subject, how="outer", on="district")
     descriptives = ddem.merge(dref, on="district", how="inner", validate="1:1")
     descriptives = descriptives.merge(dtype, on="district", how="left", validate="1:1")
     descriptives = descriptives.merge(dgrad, on="district", how="left", validate="1:1")
@@ -66,6 +67,7 @@ for year in years:
         "yr1718": 2018,
         "yr1819": 2019,
         "yr1920": 2020,
+        "yr2021": 2021,
     }
     descriptives["year"] = year_map[year]
     yr_file = "desc_" + year + ".csv"

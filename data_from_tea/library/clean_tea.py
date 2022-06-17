@@ -930,7 +930,7 @@ def clean_scores(year, subject):
             "a1_all_rs": "alg_avescore",
             "a1_all_d": "alg_numtakers",
         }
-        if year == "yr1819":
+        if year == "yr1819" or year == "yr2021":
             dscores_tokeep = {
                 "district": "district",
                 "a1_all_rs": "alg_avescore",
@@ -942,7 +942,7 @@ def clean_scores(year, subject):
             "bi_all_rs": "bio_avescore",
             "bi_all_d": "bio_numtakers",
         }
-        if year == "yr1819":
+        if year == "yr1819" or year == "yr2021":
             dscores_tokeep = {
                 "district": "district",
                 "bi_all_rs": "bio_avescore",
@@ -957,7 +957,7 @@ def clean_scores(year, subject):
             "e1_all_rs": "eng1_avescore",
             "e1_all_d": "eng1_numtakers",
         }
-        if year == "yr1819":
+        if year == "yr1819" or year == "yr2021":
             dscores_tokeep = {
                 "district": "district",
                 "e1_all_rs": "eng1_avescore",
@@ -974,7 +974,7 @@ def clean_scores(year, subject):
             "e2_all_rs": "eng2_avescore",
             "e2_all_d": "eng2_numtakers",
         }
-        if year == "yr1819":
+        if year == "yr1819" or year == "yr2021":
             dscores_tokeep = {
                 "district": "district",
                 "e2_all_rs": "eng2_avescore",
@@ -987,7 +987,7 @@ def clean_scores(year, subject):
             "us_all_rs": "us_avescore",
             "us_all_d": "us_numtakers",
         }
-        if year == "yr1819":
+        if year == "yr1819" or year == "yr2021":
             dscores_tokeep = {
                 "district": "district",
                 "us_all_rs": "us_avescore",
