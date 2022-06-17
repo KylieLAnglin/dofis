@@ -1,3 +1,4 @@
+# %%
 import os
 
 import pandas as pd
@@ -21,10 +22,46 @@ FILE_PATTERNS = {
     "yr1617": "CERTIFICATION_*.csv",
     "yr1718": "CERTIFICATION_*.csv",
     "yr1819": "STAFF_CERTIFICATION_1819*.csv",
+    "yr1920": "STAFF_CERTIFICATION_1920*.csv",
+    "yr2021": "STAFF_CERTIFICATION_2021*.csv",
+    "yr2122": "STAFF2022fregion*.csv",
 }
 
-YEARS = ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]
+YEARS = [
+    "yr1213",
+    "yr1314",
+    "yr1415",
+    "yr1516",
+    "yr1617",
+    "yr1718",
+    "yr1819",
+    "yr1920",
+    "yr2021",
+    "yr2122",
+]
 DATA_PATH = start.DATA_PATH + "/teachers/"
+
+VARS_TO_KEEP_YR2122 = {
+    "PID_SCRAM": "teacher_id",
+    "DISTRICT": "district",
+    "Credentialed_Role": "role",
+    "Certificate_Type": "cert_type",
+    "Cert_Expiration_Date": "expiration",
+    "Credentialed_Population": "cert_level",
+    "Certificate_Area": "cert_area",
+    "Certificate_Field": "subject",
+}
+
+VARS_TO_KEEP_YR1920_2021 = {
+    "SCRAMBLED PERSON ID": "teacher_id",
+    "DISTRICT CODE": "district",
+    "CREDENTIALED ROLE": "role",
+    "CERTIFICATE TYPE": "cert_type",
+    "CERT EXPIRATION DATE": "expiration",
+    "CERTIFICATION LEVEL": "cert_level",
+    "CERTIFICATE AREA": "cert_area",
+    "CERTIFICATE FIELD": "subject",
+}
 
 VARS_TO_KEEP_YR1819 = {
     "PID_SCRAM": "teacher_id",
@@ -71,6 +108,15 @@ for year in YEARS:
     cert = build.concat_files(path=teacher_datapath, pattern=pattern)
 
     # Rename and keep
+    if year == "yr2122":
+        vars_to_keep = VARS_TO_KEEP_YR2122
+
+    if year == "yr2021":
+        vars_to_keep = VARS_TO_KEEP_YR1920_2021
+
+    if year == "yr1920":
+        vars_to_keep = VARS_TO_KEEP_YR1920_2021
+
     if year == "yr1819":
         vars_to_keep = VARS_TO_KEEP_YR1819
 
@@ -84,6 +130,10 @@ for year in YEARS:
 
     # Keep only teachers
     cert = cert[cert.role == "Teacher"]
+
+    if year == "yr2122":
+        cert["cert_level"] == cert.cert_level.str.replace(" (Grades 06-12)", "")
+        cert["cert_level"] == cert.cert_level.str.replace(" (Grades 04-08)", "")
 
     # generate certification variables
     cert = clean_teachers.gen_standard_certification(
