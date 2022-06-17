@@ -9,7 +9,18 @@ from dofis import start
 IF_TEACHER_NOT_IN_CERT_DF_SET_AS = "missing"
 # SECONDARY_VALUES = ["HIGH SCHOOL", "MIDDLE SCHOOL", "JUNIOR HIGH SCHOOL"]
 SECONDARY_VALUES = ["HIGH SCHOOL"]
-YEARS = ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]
+YEARS = [
+    "yr1213",
+    "yr1314",
+    "yr1415",
+    "yr1516",
+    "yr1617",
+    "yr1718",
+    "yr1819",
+    "yr1920",
+    "yr2021",
+    "yr2122",
+]
 
 # %%
 
@@ -144,6 +155,9 @@ for year in YEARS:
         "yr1617": 2017,
         "yr1718": 2018,
         "yr1819": 2019,
+        "yr1920": 2020,
+        "yr2021": 2021,
+        "yr2122": 2022,
     }
     campus["year"] = years[year]
 

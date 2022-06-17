@@ -132,8 +132,8 @@ for year in YEARS:
     cert = cert[cert.role == "Teacher"]
 
     if year == "yr2122":
-        cert["cert_level"] == cert.cert_level.str.replace(" (Grades 06-12)", "")
-        cert["cert_level"] == cert.cert_level.str.replace(" (Grades 04-08)", "")
+        cert["cert_level"] = cert.cert_level.str.replace(" (Grades 06-12)", "")
+        cert["cert_level"] = cert.cert_level.str.replace(" (Grades 04-08)", "")
 
     # generate certification variables
     cert = clean_teachers.gen_standard_certification(

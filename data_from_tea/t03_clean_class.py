@@ -9,15 +9,36 @@ from dofis.data_from_tea.library import build
 from dofis.data_from_tea.library import clean_tea
 
 
-for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]:
+for year in [
+    "yr1213",
+    "yr1314",
+    "yr1415",
+    "yr1516",
+    "yr1617",
+    "yr1718",
+    "yr1819",
+    "yr1920",
+    "yr2021",
+    "yr2122",
+]:
     teacher_datapath = os.path.join(start.DATA_PATH, "teachers", year)
     pattern = "TEACHER_CLASS*.TXT"
+    if year > "yr1819":
+        pattern = "*TCHCLASS_REGION*csv"
     classes = build.concat_files(path=teacher_datapath, pattern=pattern)
 
-    classes = classes[classes["CLASS TYPE NAME"] == "ACADEMIC ACHIEVEMENT COURSE"]
-    classes = classes[classes["ROLE NAME"] == "TEACHER"]
-    classes = classes[classes["CAMPUS CHARTER TYPE NAME"] == "NOT A CHARTER SCHOOL"]
-    classes = classes[classes["DISTRICT CHARTER TYPE NAME"] == "NOT A CHARTER DISTRICT"]
+    # classes = classes[classes["CLASS TYPE NAME"] == "ACADEMIC ACHIEVEMENT COURSE"]
+    if year <= "yr1819":
+        classes = classes[classes["ROLE NAME"] == "TEACHER"]
+        classes = classes[classes["CAMPUS CHARTER TYPE NAME"] == "NOT A CHARTER SCHOOL"]
+        classes = classes[
+            classes["DISTRICT CHARTER TYPE NAME"] == "NOT A CHARTER DISTRICT"
+        ]
+
+    if year > "yr1819":
+        classes = classes[classes["ROLEX"] == "TEACHER"]
+        classes = classes[classes["CAMP_CHARTTYPEX"] == "NOT A CHARTER SCHOOL"]
+        classes = classes[classes["DIST_CHARTTYPEX"] == "NOT A CHARTER DISTRICT"]
 
     vars_to_keep = {
         "SCRAMBLED UNIQUE ID": "teacher_id",
@@ -32,6 +53,19 @@ for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819
         "PARTIAL FULL TIME EQUIVALENT": "fte",
     }
 
+    if year > "yr1819":
+        vars_to_keep = {
+            "PERSONID_SCRAM": "teacher_id",
+            "DISTRICT": "district",
+            "DISTNAME": "distname",
+            "CAMPUS": "campus",
+            "CAMPNAME": "campname",
+            "SUBJAREA": "subject_area_code",
+            "SUBJAREAX": "subject_area",
+            "GRADE_LEVEL": "grade_level_code",
+            "GRADE_LEVELX": "grade_level",
+            "PFTE_SUM": "fte",
+        }
     classes = clean_tea.filter_and_rename_cols(classes, vars_to_keep)
 
     # classes["teaches_math"] = np.where(
@@ -39,7 +73,7 @@ for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819
     # )
 
     classes["teaches_math"] = np.where(
-        classes["SUBJECT NAME"] == "MATHEMATICS", True, False
+        classes.subject_area == "MATHEMATICS", True, False
     )
 
     classes["teaches_science"] = np.where(
@@ -63,8 +97,6 @@ for year in ["yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819
     teachers = classes[variables_to_keep]
 
     teachers = teachers.groupby(["teacher_id"]).max()
-    teachers.teaches_math_high.sum()
-    teachers[teachers.teaches_math_high == True].teacher_id.nunique()
 
     teachers.sort_values(by=["teacher_id"], axis=0)
     filename = "classes_" + year + ".csv"
