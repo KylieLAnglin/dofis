@@ -58,8 +58,10 @@ def clean_cref(year):
         filename = "cref.dat"
     if year == "yr1213":
         filename = "CREF.txt"
-    if year >= "yr1314":
+    if year >= "yr1314" and year != "yr2021":
         filename = "CREF.dat"
+    if year == "yr2021":
+        filename = "CREF.csv"
     cref = pd.read_csv(os.path.join(DATA_PATH, "tea", "cref", year, filename), sep=",")
     # Note: no district number in early files
     cref_tokeep = {
@@ -74,6 +76,9 @@ def clean_cref(year):
     if year > "yr1112":
         cref_tokeep["C_RATING"] = "rating_academic_c"
     cref = filter_and_rename_cols(cref, cref_tokeep)
+    if year == "yr2021":
+        cref["campus"] = cref.campus.str.replace("'", "")
+        cref["campus"] = cref.campus.astype("int")
     return cref
 
 
@@ -87,6 +92,9 @@ def clean_dtype(year):
         sheetname = "2017-18 Data"
     if year == "yr1819":
         sheetname = "1819_Data"
+    if year == "yr1920" or year == "yr2021":
+        filename = "district1920.xlsx"
+        sheetname = "1920_Data"
     xls = pd.ExcelFile(os.path.join(DATA_PATH, "tea", "dtype", filename))
     if year != "yr1718" and year != "yr1819":
         dtype = xls.parse(sheetname, skiprows=2)
@@ -95,7 +103,7 @@ def clean_dtype(year):
             "Type": "type",
             "Description": "type_description",
         }
-    if year == "yr1718" or year == "yr1819":
+    if year == "yr1718" or year == "yr1819" or year == "yr1920" or year == "yr2021":
         dtype = xls.parse(sheetname)
         dtype_to_keep = {
             "District Number": "district",
@@ -192,7 +200,7 @@ def clean_cscores(year, subject):
             "a1_all_rs": "alg_avescore",
             "a1_all_d": "alg_numtakers",
         }
-        if year == "yr1819":
+        if year == "yr1819" or year == "yr2021":
             cscores_tokeep = {
                 "campus": "campus",
                 "a1_all_rs": "alg_avescore",
@@ -204,7 +212,7 @@ def clean_cscores(year, subject):
             "bi_all_rs": "bio_avescore",
             "bi_all_d": "bio_numtakers",
         }
-        if year == "yr1819":
+        if year == "yr1819" or year == "yr2021":
             cscores_tokeep = {
                 "campus": "campus",
                 "bi_all_rs": "bio_avescore",
@@ -220,7 +228,7 @@ def clean_cscores(year, subject):
             "e1_all_rs": "eng1_avescore",
             "e1_all_d": "eng1_numtakers",
         }
-        if year == "yr1819":
+        if year == "yr1819" or year == "yr2021":
             cscores_tokeep = {
                 "campus": "campus",
                 "e1_all_rs": "eng1_avescore",
@@ -237,7 +245,7 @@ def clean_cscores(year, subject):
             "e2_all_rs": "eng2_avescore",
             "e2_all_d": "eng2_numtakers",
         }
-        if year == "yr1819":
+        if year == "yr1819" or year == "yr2021":
             cscores_tokeep = {
                 "campus": "campus",
                 "e2_all_rs": "eng2_avescore",
@@ -249,7 +257,7 @@ def clean_cscores(year, subject):
             "us_all_rs": "us_avescore",
             "us_all_d": "us_numtakers",
         }
-        if year == "yr1819":
+        if year == "yr1819" or year == "yr2021":
             cscores_tokeep = {
                 "campus": "campus",
                 "us_all_rs": "us_avescore",
@@ -275,6 +283,8 @@ def clean_cdem(year):
 
     if year == "yr1213":
         filename = "CAMPPROF.txt"
+    elif year == "yr2021":
+        filename = "CAMPPROF.csv"
     else:
         filename = "CAMPPROF.dat"
     cdem_tokeep = {
@@ -297,7 +307,7 @@ def clean_cdem(year):
         "CPETTWOC": "students_tworaces_num",
         "CPETLEPC": "students_ell_num",
         "CPETSPEC": "students_sped_num",
-        "CPETVOCC": "students_cte_num",
+        # "CPETVOCC": "students_cte_num",
         # Class Sizes
         "CPCTGKGA": "class_size_k",
         "CPCTG01A": "class_size_1",
@@ -339,8 +349,11 @@ def clean_cdem(year):
         cdem_tokeep["CPSTBAFC"] = "teachers_badegree_num"
         cdem_tokeep["CPSTMSFC"] = "teachers_msdegree_num"
         cdem_tokeep["CPSTPHFC"] = "teachers_phddegree_num"
+
     # filter and rename
     cdem = filter_and_rename_cols(cdem, cdem_tokeep)
+    if year == "yr2021":
+        cdem["campus"] = cdem.campus.str.replace("'", "")
     cdem["campus"] = cdem["campus"].apply(pd.to_numeric, errors="coerce")
     cdem["teachers_new_num"] = cdem["teachers_new_num"].apply(
         pd.to_numeric, errors="coerce"
@@ -405,6 +418,9 @@ def clean_cgrad(year):
         cgrad = pd.DataFrame(
             columns=["campus", "perf_hsdrop", "perf_studays", "perf_stuattend"]
         )
+    if year == "yr2021":
+        cgrad["campus"] = cgrad.campus.str.replace("'", "")
+        cgrad["campus"] = cgrad.campus.astype("int")
 
     # cgrad['campus'] = cgrad['campus'].apply(pd.to_numeric, errors='coerce')
     return cgrad
@@ -425,6 +441,8 @@ def clean_dgrad(year):
         filename = "DISTGRAD.dat"
     if data_year == "yr1213":
         filename = "DISTPERF.txt"
+    if data_year == "yr2021":
+        filename = "DISTGRAD.csv"
 
     if data_year <= "yr1819":
         dgrad = pd.read_csv(
@@ -623,6 +641,8 @@ def clean_dref(year):
         filename = "DREF.csv"
     elif year == "yr1213":
         filename = "DREF.txt"
+    elif year == "yr2021":
+        filename = "DREF.csv"
     else:
         filename = "DREF.dat"
     dref = pd.read_csv(os.path.join(DATA_PATH, "tea", "dref", year, filename), sep=",")
@@ -691,6 +711,39 @@ def clean_dref(year):
         dref["rating_financial"] = np.where(
             (dref["district"].isin(failed_districts)), "Fail", "Pass"
         )
+    if year == "yr1920":
+        failed_districts = [
+            18902,
+            55901,
+            128901,
+            133905,
+            177901,
+            246913,
+            247901,
+            31911,
+            124901,
+        ]
+        dref["rating_financial"] = np.where(
+            (dref["district"].isin(failed_districts)), "Fail", "Pass"
+        )
+    if year == "yr2021":
+        dref["district"] = dref.district.str.replace("'", "")
+        dref["district"] = dref.district.astype(int)
+        failed_districts = [
+            13901,
+            55901,
+            133905,
+            246909,
+            67906,
+            31911,
+            91902,
+            91907,
+            158904,
+            222901,
+        ]
+        dref["rating_financial"] = np.where(
+            (dref["district"].isin(failed_districts)), "Fail", "Pass"
+        )
     if year not in ["yr1112", "yr1213", "yr1314"]:
         dref["eligible"] = np.where(
             (
@@ -716,6 +769,8 @@ def clean_ddem(year):
 
     if year == "yr1213":
         filename = "DISTPROF.txt"
+    elif year == "yr2021":
+        filename = "DISTPROF.csv"
     else:
         filename = "DISTPROF.dat"
     ddem_tokeep = {
@@ -743,7 +798,7 @@ def clean_ddem(year):
         "DPETTWOC": "students_tworaces_num",
         "DPETLEPC": "students_ell_num",
         "DPETSPEC": "students_sped_num",
-        "DPETVOCC": "students_cte_num",
+        # "DPETVOCC": "students_cte_num",
         # Class Sizes
         "DPCTGKGA": "class_size_k",
         "DPCTG01A": "class_size_1",
@@ -779,6 +834,9 @@ def clean_ddem(year):
     ddem["teachers_num"] = pd.to_numeric(ddem.teachers_num, errors="coerce")
     ddem["teachers_new_num"] = pd.to_numeric(ddem.teachers_new_num, errors="coerce")
 
+    if year == "yr2021":
+        ddem["district"] = ddem.district.str.replace("'", "")
+        ddem["district"] = ddem.district.astype("int")
     print("There are ", len(ddem), "districts in ddem")
     return ddem
 
