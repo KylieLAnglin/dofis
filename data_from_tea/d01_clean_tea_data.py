@@ -4,7 +4,18 @@ import os
 from dofis.data_from_tea.library import clean_tea
 from dofis.start import DATA_PATH
 
-years = ["yr1112", "yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]
+years = [
+    # "yr1112",
+    # "yr1213",
+    # "yr1314",
+    # "yr1415",
+    # "yr1516",
+    # "yr1617",
+    # "yr1718",
+    # "yr1819",
+    "yr1920",
+    "yr2021",
+]
 subjects = [
     "3rd",
     "4th",
