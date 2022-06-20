@@ -31,9 +31,7 @@ laws["doi_year"] = (
     .apply(pd.to_datetime)
     .apply(lambda x: clean_final.next_month(x, month=3, day=29))
 )
-
-
-# laws = laws[laws.doi_year < 2021]
+laws = laws[laws.doi_year < 2023]  # drop 2023 implementers, not yet 2023
 
 # %% School-Level
 
