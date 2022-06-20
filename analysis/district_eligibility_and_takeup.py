@@ -12,7 +12,6 @@ from patsy import dmatrices
 
 from dofis import start
 
-
 plt.style.use("seaborn")
 
 
@@ -31,6 +30,9 @@ data16 = data[data.year == 2016]
 data17 = data[data.year == 2017]
 data18 = data[data.year == 2018]
 data19 = data[data.year == 2019]
+data20 = data[data.year == 2020]
+data21 = data[data.year == 2021]
+data22 = data[data.year == 2022]
 
 
 # Use 2015-16 data for descriptives bc one district not in 2018-19 dataset.
@@ -61,15 +63,19 @@ print("And in 2017-18?")
 print(data18.eligible.mean())
 print("And in 2018-19?")
 print(data19.eligible.mean())
+print("And in 2019-20?")
+print(data20.eligible.mean())
+print("And in 2020-21?")
+print(data21.eligible.mean())
 
 # %% Districts of Innovation
 
 
-print("Number of DOIs as of June 2019")
+print("Number of DOIs as of June 2022")
 print(data16.loc[data16.doi == 1].district.nunique())
 
 
-print("What percent of districts are DOIs as of June 2019?")
+print("What percent of districts are DOIs as of June 2022?")
 print(
     data16.loc[data16.doi == 1].district.nunique()
     / data16[data16.distischarter == 0].district.nunique()
@@ -77,14 +83,12 @@ print(
 
 print(data16.doi_year.value_counts().sort_index())
 
-print(len(data16[(data16.doi == 1) & (data16.doi_year.isnull())]))
 
 # %%
 
 print("Number of DOIs with missing implementation year:")
 print(len(data16[(data16.doi == 1) & (data16.doi_year.isnull())]))
 # %% Adoption over time figure
-
 
 district_df = pd.DataFrame(data.groupby(["district"]).agg({"doi_year": "mean"}))
 district_counts = pd.DataFrame(district_df.doi_year.value_counts(sort=False))
@@ -100,8 +104,8 @@ plt.figure(figsize=(480 / my_dpi, 480 / my_dpi), dpi=my_dpi)
 plt.plot(district_counts.index, district_counts.doi_year.cumsum(), color="black")
 plt.xticks([int(i) for i in list(district_counts.index)])
 
-plt.ylabel("Number of Districts")
-plt.title("Texas District of Innovation Adoption Over Time")
+plt.ylabel("Number of Districts of Innovation")
+# plt.title("Texas District of Innovation Adoption Over Time")
 plt.xlabel("Test Year (Spring)", size="medium")
 plt.grid(True, alpha=0.6)
 
@@ -113,7 +117,7 @@ plt.ylim(0, 1022)
 # "As of 2019, there were 1022 traditional public school districts in Texas."
 # # plt.figtext(0.5, -0.01, txt, wrap=True, horizontalalignment="center", fontsize=8)
 
-plt.savefig(start.table_path + "takeup.png", dpi=600, bbox_inches="tight")
+plt.savefig(start.TABLE_PATH + "takeup.pdf", dpi=600, bbox_inches="tight")
 plt.show()
 
 
