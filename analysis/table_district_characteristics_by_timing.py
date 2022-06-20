@@ -48,7 +48,7 @@ ws.cell(row=3, column=2).value = "N = " + str(len(data[data.group == "opt-out"])
 ws.cell(row=3, column=3).value = "N = " + str(len(data[data.group == "2017"]))
 ws.cell(row=3, column=4).value = "N = " + str(len(data[data.group == "2018"]))
 ws.cell(row=3, column=5).value = "N = " + str(len(data[data.group == "2019"]))
-ws.cell(row=3, column=6).value = "N = " + str(len(data[data.group == "2020"]))
+ws.cell(row=3, column=6).value = "N = " + str(len(data[data.group == "2020+"]))
 
 # %%
 df = data[data.group == "opt-out"]
@@ -75,7 +75,7 @@ for group, col in zip(
         "2017",
         "2018",
         "2019",
-        "2020",
+        "2020+",
         "opt-out",
     ],
     [2, 3, 4, 5, 6],

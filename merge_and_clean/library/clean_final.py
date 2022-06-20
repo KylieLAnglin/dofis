@@ -430,10 +430,11 @@ def gen_analytic_group(data=pd.DataFrame):
         data.group,
     )
     data["group"] = np.where(
-        ((data.doi == 1) & (data.doi_year == 2020)),
-        "2020",
+        ((data.doi_year == 2020) | (data.doi_year == 2021) | (data.doi_year == 2022)),
+        "2020+",
         data.group,
     )
+
     return data.group
 
 
