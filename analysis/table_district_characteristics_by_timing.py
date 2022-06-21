@@ -51,7 +51,6 @@ ws.cell(row=3, column=5).value = "N = " + str(len(data[data.group == "2019"]))
 ws.cell(row=3, column=6).value = "N = " + str(len(data[data.group == "2020+"]))
 
 # %%
-df = data[data.group == "opt-out"]
 
 
 def mean_and_sd_to_table(
