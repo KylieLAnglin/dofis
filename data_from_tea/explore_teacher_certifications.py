@@ -15,7 +15,7 @@ pd.set_option("display.max_columns", None)
 
 # %%
 
-year = "yr1819"
+year = "yr1920"
 
 teacher_datapath = start.data_path + "/teachers/" + year
 # %% Teachers
