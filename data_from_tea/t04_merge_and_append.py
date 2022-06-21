@@ -138,7 +138,7 @@ for year in YEARS:
     teachers["teachers"] = 1
     teachers["teacher_certified"] = teachers.standard
     teachers["teacher_uncertified"] = np.where(teachers.standard == False, True, False)
-
+    teachers["teacher_salary"] = teachers.salary
     relevant_variables = list(teachers.filter(like="teacher", axis=1).columns)
     relevant_variables = ["campus"] + relevant_variables
 

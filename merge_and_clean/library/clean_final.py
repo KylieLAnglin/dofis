@@ -254,6 +254,7 @@ def gen_certification_vars(data):
         data[new_var_dict["new_var"]] = (
             data[new_var_dict["numerator"]] / data[new_var_dict["denominator"]]
         )
+    data["teacher_salary_ave"] = data["teacher_salary"] / data["teachers"]
 
     return data
 

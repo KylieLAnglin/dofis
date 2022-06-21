@@ -6,7 +6,7 @@ from dofis import start
 from dofis.data_from_tea.library import clean_tea
 from dofis.data_from_tea.library import build
 
-year = "yr1718"
+year = "yr1920"
 for year in [
     "yr1213",
     "yr1314",
@@ -41,6 +41,7 @@ for year in [
         "CAMPUS GRADE GROUP NAME": "camp_grade_group",
         "ROLE FULL TIME EQUIVALENT": "fte_teacher",
         "EXPERIENCE": "experience",
+        "TOTAL PAY": "salary",
     }
     if year > "yr1819":
         vars_to_keep = {
@@ -52,7 +53,7 @@ for year in [
             "GRADEGRP1X": "camp_grade_group",
             "PFTE": "fte_teacher",
             # "EXPERIENCE": "experience",
-            #  "TOTALPAY": "pay",
+            "TOTALPAY": "salary",
         }
     teachers = clean_tea.filter_and_rename_cols(teachers, vars_to_keep)
 

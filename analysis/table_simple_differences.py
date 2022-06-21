@@ -69,6 +69,9 @@ simple_pre_post_table(
 simple_pre_post_table(start_row=91, start_col=2, outcome="stu_teach_ratio", digits=2)
 simple_pre_post_table(start_row=99, start_col=2, outcome="teachers_nodegree", digits=2)
 simple_pre_post_table(start_row=107, start_col=2, outcome="teachers_msdegree", digits=2)
+simple_pre_post_table(
+    start_row=115, start_col=2, outcome="teacher_salary_ave", digits=0
+)
 
 # %%
 FILE = start.TABLE_PATH + "Simple Pre-post Differences.xlsx"
