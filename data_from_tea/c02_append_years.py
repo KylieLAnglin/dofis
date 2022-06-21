@@ -2,7 +2,6 @@ import pandas as pd
 import os
 from dofis.start import DATA_PATH
 
-years = ["yr1112", "yr1213", "yr1314", "yr1415", "yr1516", "yr1617", "yr1718", "yr1819"]
 
 desc_c_yr1112 = pd.read_csv((os.path.join(DATA_PATH, "tea", "desc_c_yr1112.csv")))
 desc_c_yr1213 = pd.read_csv((os.path.join(DATA_PATH, "tea", "desc_c_yr1213.csv")))
@@ -25,6 +24,8 @@ desc_long = pd.concat(
         desc_c_yr1617,
         desc_c_yr1718,
         desc_c_yr1819,
+        desc_c_yr1920,
+        desc_c_yr2021,
     ],
     sort=True,
 )
