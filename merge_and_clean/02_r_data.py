@@ -16,6 +16,11 @@ data_school = pd.read_csv((start.DATA_PATH + "/clean/master_data_school.csv"), s
 
 r_data = data_school[data_school.campischarter == "N"]
 r_data = r_data[r_data.eligible == True]
+# r_data = r_data[r_data.group.isin(["opt-out", "2017", "2018", "2019"])]
+r_data = r_data.rename(columns={"group": "doi_group"})
+r_data = r_data[r_data.year < 2021]
+# r_data["teachers_uncertified"] = r_data.teachers_uncertified * 100
+# %%
 r_data["group"] = np.where(
     r_data.doi_year == 2017,
     2017,
@@ -47,10 +52,25 @@ col = r_data.loc[:, "class_size_3":"class_size_5"]
 r_data["class_size_mean_elem"] = col.mean(axis=1)
 
 
-r_data.to_csv(
+r_data[r_data.year < 2021].to_csv(
     os.path.join(start.DATA_PATH, "clean", "r_data.csv"),
     sep=",",
 )
+
+r_data[
+    ((r_data.exempt_certification == 1) | (r_data.group == 0)) & (r_data.year < 2021)
+].to_csv(
+    os.path.join(start.DATA_PATH, "clean", "r_data_cert.csv"),
+    sep=",",
+)
+
+r_data[
+    ((r_data.exempt_classsize == 1) | (r_data.group == 0)) & (r_data.year < 2021)
+].to_csv(
+    os.path.join(start.DATA_PATH, "clean", "r_data_classize.csv"),
+    sep=",",
+)
+
 
 # %% Ever treated
 r_data_ever = data_school
