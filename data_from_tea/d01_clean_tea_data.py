@@ -42,6 +42,7 @@ for year in years:
     ddem = clean_tea.clean_ddem(year=year)
     dtype = clean_tea.clean_dtype(year=year)
     dgrad = clean_tea.clean_dgrad(year=year)
+    dspending = clean_tea.clean_dspending(year=year)
     dscores = pd.DataFrame(columns=["district"])
     if year != "yr1920":
         for subject in subjects:
@@ -52,6 +53,9 @@ for year in years:
     descriptives = descriptives.merge(dgrad, on="district", how="left", validate="1:1")
     descriptives = descriptives.merge(
         dscores, on="district", how="left", indicator=True, validate="1:1"
+    )
+    descriptives = descriptives.merge(
+        dspending, on="district", how="left", validate="1:1"
     )
     descriptives = descriptives.dropna(how="all")
 

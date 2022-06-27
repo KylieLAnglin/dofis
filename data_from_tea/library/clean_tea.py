@@ -426,6 +426,37 @@ def clean_cgrad(year):
     return cgrad
 
 
+def clean_dspending(year):
+    springyr = year[4:6]
+    springyr = "20" + springyr
+    df_long = pd.read_csv(
+        DATA_PATH + "tea/dspending/dspending/" + year + "/ACTget" + springyr + ".csv"
+    )
+    df_grouped = df_long.groupby(by=["DISTRICT", "FUNCTION"]).sum().reset_index()
+    df_wide = df_grouped.pivot(index="DISTRICT", columns="FUNCTION", values="ACTAMT")
+
+    spending = df_wide.reset_index()
+    spending = spending.rename(
+        columns={
+            "DISTRICT": "district",
+            11: "spending_instruction",
+            23: "spending_admin",
+        }
+    )
+    spending = spending[["district", "spending_instruction", "spending_admin"]]
+
+    total = (
+        df_long[["DISTRICT", "ACTAMT"]]
+        .groupby(by=["DISTRICT"])
+        .sum()
+        .reset_index()
+        .rename(columns={"DISTRICT": "district", "ACTAMT": "spending_total"})
+    )
+
+    spending = spending.merge(total, left_on="district", right_on="district")
+    return spending
+
+
 def clean_dgrad(year):
     # current year's values are stored in next year's dataset
     # https://rptsvr1.tea.texas.gov/perfreport/tapr/2013/download/dothr.html
