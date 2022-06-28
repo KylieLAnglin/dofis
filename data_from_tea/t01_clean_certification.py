@@ -2,7 +2,7 @@
 import os
 
 import pandas as pd
-
+import numpy as np
 
 from dofis import start
 from dofis.data_from_tea.library import clean_tea
@@ -140,18 +140,24 @@ for year in YEARS:
         df=cert, col="cert_type", new_var="standard"
     )
 
+    # %% Elementary
+    cert = clean_teachers.gen_subject(
+        df=cert,
+        new_col="cert_area_elem",
+        area_tuple=("cert_area", "General Elementary (Self-Contained)"),
+        standard_tuple=("standard", True),
+    )
+
+    cert["cert_area_elem"] = np.where(
+        cert.cert_area == "Bilingual Education", True, cert.cert_area_elem
+    )
+
+    # %% Core courses
+
     cert = clean_teachers.gen_subject(
         df=cert,
         new_col="cert_area_math",
         area_tuple=("cert_area", "Mathematics"),
-        standard_tuple=("standard", True),
-    )
-
-    cert = clean_teachers.gen_subject(
-        df=cert,
-        new_col="cert_area_math_high",
-        area_tuple=("cert_area", "Mathematics"),
-        level_tuple=("cert_level", "Secondary"),
         standard_tuple=("standard", True),
     )
 
@@ -164,18 +170,75 @@ for year in YEARS:
 
     cert = clean_teachers.gen_subject(
         df=cert,
-        new_col="cert_area_science_high",
-        area_tuple=("cert_area", "Science"),
-        level_tuple=("cert_level", "Secondary"),
+        new_col="cert_area_ss",
+        area_tuple=("cert_area", "Social Studies"),
         standard_tuple=("standard", True),
     )
 
+    cert = clean_teachers.gen_subject(
+        df=cert,
+        new_col="cert_area_ela",
+        area_tuple=("cert_area", "English Language Arts"),
+        standard_tuple=("standard", True),
+    )
+
+    # %% Other course
     cert = clean_teachers.gen_subject(
         df=cert,
         new_col="cert_area_cte",
         area_tuple=("cert_area", "Vocational Education"),
         standard_tuple=("standard", True),
     )
+    cert = clean_teachers.gen_subject(
+        df=cert,
+        new_col="cert_area_pe",
+        area_tuple=("cert_area", "Health and Physical Education"),
+        standard_tuple=("standard", True),
+    )
+
+    cert = clean_teachers.gen_subject(
+        df=cert,
+        new_col="cert_area_art",
+        area_tuple=("cert_area", "Fine Arts"),
+        standard_tuple=("standard", True),
+    )
+
+    cert = clean_teachers.gen_subject(
+        df=cert,
+        new_col="cert_area_language",
+        area_tuple=("cert_area", "Foreign Language"),
+        standard_tuple=("standard", True),
+    )
+
+    # %% Combination grade and subject
+    cert = clean_teachers.gen_subject(
+        df=cert,
+        new_col="cert_area_math_high",
+        area_tuple=("cert_area", "Mathematics"),
+        level_tuple=("cert_level", "Secondary"),
+        standard_tuple=("standard", True),
+    )
+
+    cert = clean_teachers.gen_subject(
+        df=cert,
+        new_col="cert_area_science_high",
+        area_tuple=("cert_area", "Science"),
+        level_tuple=("cert_level", "Secondary"),
+        standard_tuple=("standard", True),
+    )
+
+    cert["cert_level_elem"] = np.where(
+        cert.cert_level.isin(["Elementary", "All Level", "Special Education"]),
+        True,
+        False,
+    )
+
+    cert["cert_level_secondary"] = np.where(
+        cert.cert_level.isin(["Secondary", "All Level", "Middle School"]),
+        True,
+        False,
+    )
+
     # three teachers don't link to district number
     cert = cert[cert.district != "San Antonio"]
 
@@ -189,11 +252,19 @@ for year in YEARS:
             "teacher_id",
             "district",
             "standard",
+            "cert_area_elem",
+            "cert_area_ela",
             "cert_area_math",
-            "cert_area_math_high",
             "cert_area_science",
-            "cert_area_science_high",
+            "cert_area_ss",
             "cert_area_cte",
+            "cert_area_art",
+            "cert_area_language",
+            "cert_area_pe",
+            "cert_level_elem",
+            "cert_level_secondary",
+            "cert_area_math_high",
+            "cert_area_science_high",
         ]
     ]
 
