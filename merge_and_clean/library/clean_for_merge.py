@@ -167,6 +167,9 @@ def import_tea_district():
         "type",
         "type_description",
         "cntyname",
+        "spending_instruction",
+        "spending_admin",
+        "spending_total",
     ]
     variables = variables + (list(tea.filter(regex=("students"))))
     variables = variables + (list(tea.filter(regex=("teachers"))))

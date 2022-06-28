@@ -122,7 +122,7 @@ data_district = pd.read_csv(
     (start.DATA_PATH + "/clean/master_data_district.csv"), sep=","
 )
 
-r_data_district = data_school[data_school.distischarter == "N"]
+r_data_district = data_district[data_district.distischarter == 0]
 r_data_district = r_data_district[r_data_district.eligible == True]
 r_data_district["group"] = np.where(
     r_data_district.doi_year == 2017,
@@ -139,7 +139,6 @@ r_data_district = r_data_district.dropna(
         "math_yr15std",
         "reading_yr15std",
         "district",
-        "campus",
         "year",
         "pre_hisp",
         "pre_black",
@@ -155,7 +154,7 @@ col = r_data_district.loc[:, "class_size_3":"class_size_5"]
 r_data_district["class_size_mean_elem"] = col.mean(axis=1)
 
 
-r_data_district.to_csv(
+r_data_district[r_data_district.year < 2021].to_csv(
     os.path.join(start.DATA_PATH, "clean", "r_data_district.csv"),
     sep=",",
 )

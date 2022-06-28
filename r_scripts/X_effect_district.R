@@ -2,6 +2,10 @@ district_df <- read.csv(paste(data_path, "clean/r_data_district.csv", sep=""))
 
 set.seed(42)
 
+run_and_export_district(df = district_df, outcome = "spending_instruction", disag_file = "results_spending_instructional_disag_raw.xlsx", ag_file = "results_spending_insturctional_ag_raw.xlsx")
+
+
+
 
 disag.math <- att_gt(yname = "math_yr15std",
                      gname = "group",

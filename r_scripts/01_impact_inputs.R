@@ -17,6 +17,7 @@ run_and_export_main(df = df, outcome = "stu_teach_ratio", disag_file = "results_
 # Teacher salary
 run_and_export_main(df = df, outcome = "teacher_salary_ave", disag_file = "results_stu_teach_ratio_disag_raw.xlsx", ag_file = "results_stu_teach_ratio_ag_raw.xlsx")
 
+run_and_export_main(df = df, outcome = "teacher_experience", disag_file = "results_temp_disag_raw.xlsx", ag_file = "results_temp_ag_raw.xlsx")
 
 ###
 # Main inputs - subgroups
