@@ -37,7 +37,7 @@ YEARS = [
     "yr1819",
     "yr1920",
     "yr2021",
-    "yr2122",
+    # "yr2122",
 ]
 DATA_PATH = start.DATA_PATH + "/teachers/"
 
@@ -189,11 +189,18 @@ for year in YEARS:
         area_tuple=("cert_area", "Vocational Education"),
         standard_tuple=("standard", True),
     )
-    cert = clean_teachers.gen_subject(
-        df=cert,
-        new_col="cert_area_pe",
-        area_tuple=("cert_area", "Health and Physical Education"),
-        standard_tuple=("standard", True),
+
+    cert["cert_area_pe"] = (
+        np.where(
+            (
+                cert.cert_area.isin(
+                    ["Health and Physical Education", "Health & Physical Education"]
+                )
+            )
+            & (cert.standard)
+        ),
+        True,
+        False,
     )
 
     cert = clean_teachers.gen_subject(
@@ -228,13 +235,34 @@ for year in YEARS:
     )
 
     cert["cert_level_elem"] = np.where(
-        cert.cert_level.isin(["Elementary", "All Level", "Special Education"]),
+        cert.cert_level.isin(
+            [
+                "Elementary",
+                "All Level",
+                "Special Education",
+                "ELM",
+                "ALL",
+                "SPE",
+                "END",
+                "Endoresement",
+            ]
+        ),
         True,
         False,
     )
 
     cert["cert_level_secondary"] = np.where(
-        cert.cert_level.isin(["Secondary", "All Level", "Middle School"]),
+        cert.cert_level.isin(
+            [
+                "Secondary",
+                "All Level",
+                "Middle School",
+                "SEC",
+                "END",
+                "ALL",
+                "Endorsement",
+            ]
+        ),
         True,
         False,
     )
