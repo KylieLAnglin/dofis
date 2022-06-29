@@ -19,7 +19,7 @@ YEARS = [
     "yr1819",
     "yr1920",
     "yr2021",
-    "yr2122",
+    # "yr2122",
 ]
 
 # %%
@@ -53,6 +53,33 @@ for year in YEARS:
                 teachers.cert_merge == "left_only", 0, teachers[var]
             )
 
+    # Elementary
+    ## Math
+    teachers["teaches_elem_math"] = np.where(
+        (teachers.teaches_elem == True) & (teachers.teaches_math == True), True, False
+    )
+    teachers["teacher_elem_math_outoffield"] = np.where(
+        ((teachers.cert_area_math == False) & (teachers.cert_level_elem == False)),
+        True,
+        False,
+    )
+    teachers["teacher_elem_math_outoffield"] = np.where(
+        (teachers.teaches_elem_math == True) & (teachers.standard == True),
+        teachers.teacher_elem_math_outoffield,
+        np.nan,
+    )
+
+    ## ELA
+    teachers["teaches_elem_ela"] = np.where(
+        (teachers.teaches_elem == True) & (teachers.teaches_ela == True), True, False
+    )
+    teachers["teacher_elem_ela_outoffield"] = np.where(
+        (teachers.teaches_elem_math == True)
+        & ((teachers.cert_area_math == False) & (teachers.cert_level_elem == False)),
+        True,
+        False,
+    )
+
     # Secondary Math
 
     teachers["teacher_secondary"] = np.where(teachers.teaches_high == True, True, False)
@@ -78,8 +105,7 @@ for year in YEARS:
 
     teachers["teacher_secondary_math_outoffield"] = np.where(
         (teachers.teacher_secondary_math)
-        & (teachers.standard)
-        & (teachers.cert_area_math == False),
+        & ((teachers.cert_area_math == False) | (teachers.cert_level_high == False)),
         True,
         False,
     )
