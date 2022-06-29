@@ -19,7 +19,7 @@ for year in [
     "yr1819",
     "yr1920",
     "yr2021",
-    "yr2122",
+    # "yr2122",
 ]:
     teacher_datapath = os.path.join(start.DATA_PATH, "teachers", year)
     pattern = "TEACHER_CLASS*.TXT"
@@ -68,9 +68,81 @@ for year in [
         }
     classes = clean_tea.filter_and_rename_cols(classes, vars_to_keep)
 
-    # classes["teaches_math"] = np.where(
-    #     classes.subject_area == "MATHEMATICS", True, False
-    # )
+    # Levels
+    classes["teaches_general_elem"] = np.where(
+        (classes.subject_area == "SELF-CONTAINED")
+        & (
+            classes.grade_level.isin(
+                [
+                    "KINDERGARTEN",
+                    "PRE-KINDERGARTEN",
+                    "GRADE 1",
+                    "ELEMENTARY (GRADES 1-6)",
+                    "GRADE 2",
+                    "GRADE 3",
+                    "GRADE 4",
+                    "GRADE 5",
+                ]
+            )
+        ),
+        True,
+        False,
+    )
+
+    classes["teaches_elem"] = np.where(
+        classes.grade_level.isin(
+            [
+                "KINDERGARTEN",
+                "PRE-KINDERGARTEN",
+                "GRADE 1",
+                "ELEMENTARY (GRADES 1-6)",
+                "GRADE 2",
+                "GRADE 3",
+                "GRADE 4",
+                "GRADE 5",
+                "KINDERGARTEN/ELEMENTARY (K-6)",
+            ]
+        ),
+        True,
+        False,
+    )
+
+    classes["teaches_middle"] = np.where(
+        classes.grade_level.isin(
+            ["GRADE 6", "GRADE 7", "GRADE 8", "MIDDLE SCHOOL (GRADES 6 - 8)"]
+        ),
+        True,
+        False,
+    )
+
+    classes["teaches_high"] = np.where(
+        classes.grade_level.isin(["GRADES 9-12", "SECONDARY (GRADES 7-12)"]),
+        True,
+        False,
+    )
+
+    classes["teaches_secondary"] = np.where(
+        classes.grade_level.isin(
+            [
+                "SECONDARY (GRADES 7-12)",
+                "GRADE 6",
+                "GRADE 7",
+                "GRADE 8",
+                "MIDDLE SCHOOL (GRADES 6 - 8)",
+                "GRADES 9-12",
+                "SECONDARY (GRADES 7-12)",
+            ]
+        ),
+        True,
+        False,
+    )
+
+    # Core Courses
+    classes["teaches_ela"] = np.where(
+        classes.subject_area == "ENGLISH LANGUAGE ARTS",
+        True,
+        False,
+    )
 
     classes["teaches_math"] = np.where(
         classes.subject_area == "MATHEMATICS", True, False
@@ -79,14 +151,29 @@ for year in [
     classes["teaches_science"] = np.where(
         classes.subject_area == "SCIENCE", True, False
     )
+
+    classes["teaches_ss"] = np.where(
+        classes.subject_area == "SOCIAL STUDIES", True, False
+    )
+
+    # Electives
     classes["teaches_cte"] = np.where(
         classes.subject_area == "CAREER & TECHNOLOGY EDUCATION", True, False
     )
 
-    classes["teaches_high"] = np.where(
-        classes.grade_level == "GRADES 9-12", True, False
+    classes["teaches_art"] = np.where(classes.subject_area == "FINE ARTS", True, False)
+
+    classes["teaches_pe"] = np.where(
+        classes.subject_area.isin(["PHYSICAL ED. & HEALTH"]),
+        True,
+        False,
     )
 
+    classes["teaches_lang"] = np.where(
+        classes.subject_area == "FOREIGN LANGUAGE", True, False
+    )
+
+    # Interactions
     classes["teaches_math_high"] = np.where(
         (classes.teaches_math == True) & (classes.teaches_high == True), True, False
     )

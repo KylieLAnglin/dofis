@@ -17,7 +17,7 @@ for year in [
     "yr1819",
     "yr1920",
     "yr2021",
-    "yr2122",
+    # "yr2122",
 ]:
     # Read files
     teacher_datapath = os.path.join(start.DATA_PATH, "teachers", year)
