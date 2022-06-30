@@ -386,14 +386,11 @@ def clean_cdem(year):
 
 def clean_cgrad(year):
     # https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/cothr.html
-    if year == "yr2021":  # not available yet (22 year required for calculation)
-        year = "yr1920"
 
+    fallyr = year[2:4]  # next years data
     springyr = year[4:6]
-    nextyr = int(springyr) + 1
-    # fallyr = year[2:6]
-    # Current uy
-    # data_year = "yr" + springyr + str(nextyr)
+
+    year = "yr" + str(int(fallyr) + 1) + str(int(springyr) + 1)
 
     year_files = {
         "yr1112": "CAMPPERF.dat",
@@ -402,8 +399,9 @@ def clean_cgrad(year):
         "yr1415": "CAMPPERF.dat",
         "yr1516": "CAMPPERF.dat",
         "yr1617": "CAMPPERF.dat",
+        "yr1718": "CAMPGRAD.dat",
         "yr1819": "CAMPGRAD.dat",
-        "yr1920": "CAMPGRAD.csv",
+        "yr1920": "CAMPGRAD.dat",
         "yr2021": "CAMPGRAD.csv",
     }
 
@@ -934,30 +932,22 @@ def clean_scores(year, subject):
         )
         dscores = pd.read_csv(new_path, sep=",")
 
-    if subject not in [
-        "3rd",
-        "4th",
-        "5th",
-        "6th",
-        "7th",
-        "8th",
-        "Algebra",
-        "Biology",
-        "EnglishI",
-        "EnglishII",
-        "USHistory",
-    ]:
-        return "invalid subject"
-    if subject in ["3rd", "4th", "6th", "7th"]:
-        dscores_tokeep = {
+    variable_sets = {
+        "3rd": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
             "r_all_d": "r_" + subject + "_numtakers",
             "m_all_rs": "m_" + subject + "_avescore",
             "m_all_d": "m_" + subject + "_numtakers",
-        }
-    if subject in ["5th", "8th"]:
-        dscores_tokeep = {
+        },
+        "4th": {
+            "DISTRICT": "district",
+            "r_all_rs": "r_" + subject + "_avescore",
+            "r_all_d": "r_" + subject + "_numtakers",
+            "m_all_rs": "m_" + subject + "_avescore",
+            "m_all_d": "m_" + subject + "_numtakers",
+        },
+        "5th": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
             "r_all_d": "r_" + subject + "_numtakers",
@@ -965,79 +955,68 @@ def clean_scores(year, subject):
             "m_all_d": "m_" + subject + "_numtakers",
             "s_all_rs": "s_" + subject + "_avescore",
             "s_all_d": "s_" + subject + "_numtakers",
-        }
-
-    if subject == "Algebra":
-        dscores_tokeep = {
+        },
+        "6th": {
+            "DISTRICT": "district",
+            "r_all_rs": "r_" + subject + "_avescore",
+            "r_all_d": "r_" + subject + "_numtakers",
+            "m_all_rs": "m_" + subject + "_avescore",
+            "m_all_d": "m_" + subject + "_numtakers",
+        },
+        "7th": {
+            "DISTRICT": "district",
+            "r_all_rs": "r_" + subject + "_avescore",
+            "r_all_d": "r_" + subject + "_numtakers",
+            "m_all_rs": "m_" + subject + "_avescore",
+            "m_all_d": "m_" + subject + "_numtakers",
+        },
+        "8th": {
+            "DISTRICT": "district",
+            "r_all_rs": "r_" + subject + "_avescore",
+            "r_all_d": "r_" + subject + "_numtakers",
+            "m_all_rs": "m_" + subject + "_avescore",
+            "m_all_d": "m_" + subject + "_numtakers",
+            "s_all_rs": "s_" + subject + "_avescore",
+            "s_all_d": "s_" + subject + "_numtakers",
+        },
+        "Algebra": {
             "DISTRICT": "district",
             "a1_all_rs": "alg_avescore",
             "a1_all_d": "alg_numtakers",
-        }
-        if year == "yr1819" or year == "yr2021":
-            dscores_tokeep = {
-                "district": "district",
-                "a1_all_rs": "alg_avescore",
-                "a1_all_d": "alg_numtakers",
-            }
-    if subject == "Biology":
-        dscores_tokeep = {
+        },
+        "Biology": {
             "DISTRICT": "district",
             "bi_all_rs": "bio_avescore",
             "bi_all_d": "bio_numtakers",
-        }
-        if year == "yr1819" or year == "yr2021":
-            dscores_tokeep = {
-                "district": "district",
-                "bi_all_rs": "bio_avescore",
-                "bi_all_d": "bio_numtakers",
-            }
+        },
+        "EnglishI": {
+            "DISTRICT": "district",
+            "e1_all_rs": "eng1_avescore",
+            "e1_all_d": "eng1_numtakers",
+        },
+        "EnglishII": {
+            "DISTRICT": "district",
+            "e2_all_rs": "eng2_avescore",
+            "e2_all_d": "eng2_numtakers",
+        },
+        "USHistory": {
+            "DISTRICT": "district",
+            "us_all_rs": "us_avescore",
+            "us_all_d": "us_numtakers",
+        },
+    }
+
     if subject == "EnglishI":
         if year == "yr1112" or year == "yr1213":
             dscores["e1_all_rs"] = dscores["r1_all_rs"] + dscores2["w1_all_rs"]
             dscores["e1_all_d"] = dscores["r1_all_d"]
-        dscores_tokeep = {
-            "DISTRICT": "district",
-            "e1_all_rs": "eng1_avescore",
-            "e1_all_d": "eng1_numtakers",
-        }
-        if year == "yr1819" or year == "yr2021":
-            dscores_tokeep = {
-                "district": "district",
-                "e1_all_rs": "eng1_avescore",
-                "e1_all_d": "eng1_numtakers",
-            }
 
     if subject == "EnglishII":
         if year == "yr1112" or year == "yr1213":
             dscores["e2_all_rs"] = dscores["r2_all_rs"] + dscores2["w2_all_rs"]
             dscores["e2_all_d"] = dscores["r2_all_d"]
 
-        dscores_tokeep = {
-            "DISTRICT": "district",
-            "e2_all_rs": "eng2_avescore",
-            "e2_all_d": "eng2_numtakers",
-        }
-        if year == "yr1819" or year == "yr2021":
-            dscores_tokeep = {
-                "district": "district",
-                "e2_all_rs": "eng2_avescore",
-                "e2_all_d": "eng2_numtakers",
-            }
-
-    if subject == "USHistory":
-        dscores_tokeep = {
-            "DISTRICT": "district",
-            "us_all_rs": "us_avescore",
-            "us_all_d": "us_numtakers",
-        }
-        if year == "yr1819" or year == "yr2021":
-            dscores_tokeep = {
-                "district": "district",
-                "us_all_rs": "us_avescore",
-                "us_all_d": "us_numtakers",
-            }
-
-    dscores = filter_and_rename_cols(dscores, dscores_tokeep)
+    dscores = filter_and_rename_cols(dscores, variable_sets[subject])
     if year == "yr1112":
         dscores["district"] = dscores["district"].apply(int)
     dscores = dscores.set_index("district")
