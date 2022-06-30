@@ -386,43 +386,55 @@ def clean_cdem(year):
 
 def clean_cgrad(year):
     # https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/cothr.html
-    # current year's values are store in next year's dataset
-    fallyr = year[2:4]
+    if year == "yr2021":  # not available yet (22 year required for calculation)
+        year = "yr1920"
+
     springyr = year[4:6]
     nextyr = int(springyr) + 1
+    # fallyr = year[2:6]
+    # Current uy
+    # data_year = "yr" + springyr + str(nextyr)
 
-    data_year = "yr" + springyr + str(nextyr)
+    year_files = {
+        "yr1112": "CAMPPERF.dat",
+        "yr1213": "CAMPPERF.txt",
+        "yr1314": "CAMPPERF.dat",
+        "yr1415": "CAMPPERF.dat",
+        "yr1516": "CAMPPERF.dat",
+        "yr1617": "CAMPPERF.dat",
+        "yr1819": "CAMPGRAD.dat",
+        "yr1920": "CAMPGRAD.csv",
+        "yr2021": "CAMPGRAD.csv",
+    }
 
-    if data_year < "yr1718":
-        filename = "CAMPPERF.dat"
-    if data_year >= "yr1718":
-        filename = "CAMPGRAD.dat"
-    if data_year == "yr1213":
-        filename = "CAMPPERF.txt"
+    cgrad = pd.read_csv(
+        os.path.join(DATA_PATH, "tea", "cgrad", year, year_files[year]), sep=","
+    )
 
-    if data_year <= "yr1819":
-        cgrad = pd.read_csv(
-            os.path.join(DATA_PATH, "tea", "cgrad", data_year, filename), sep=","
-        )
+    cgrad_to_keep = {
+        "CAMPUS": "campus",
+        "CA0AT" + springyr + "D": "perf_studays",
+        "CA0AT" + springyr + "N": "perf_stuattend",
+        "CA0AT" + springyr + "R": "perf_attendance",
+        "CB0AT" + springyr + "R": "perf_attendance_black",
+        "CE0AT" + springyr + "R": "perf_attendance_frpl",
+        "CH0AT" + springyr + "R": "perf_attendance_hispanic",
+        "CS0AT" + springyr + "R": "perf_attendance_sped",
+        "CW0AT" + springyr + "R": "perf_attendance_white",
+    }
 
-        cgrad_to_keep = {
-            "CAMPUS": "campus",
-            "CA0912DR" + springyr + "R": "perf_hsdrop",
-            "CA0AT" + springyr + "D": "perf_studays",
-            "CA0AT" + springyr + "N": "perf_stuattend",
-            "CA0AT" + springyr + "R": "perf_attendance",
-        }
+    cgrad = filter_and_rename_cols(cgrad, cgrad_to_keep)
 
-        cgrad = filter_and_rename_cols(cgrad, cgrad_to_keep)
-    if data_year >= "yr1920":
-        cgrad = pd.DataFrame(
-            columns=["campus", "perf_hsdrop", "perf_studays", "perf_stuattend"]
-        )
-    if year == "yr2021":
+    if year == "yr1920":
         cgrad["campus"] = cgrad.campus.str.replace("'", "")
         cgrad["campus"] = cgrad.campus.astype("int")
 
+    for var in list(cgrad.columns):
+        cgrad[var] = cgrad[var].apply(pd.to_numeric, errors="coerce")
     # cgrad['campus'] = cgrad['campus'].apply(pd.to_numeric, errors='coerce')
+    if year == "yr2021":
+        cgrad = cgrad["campus"]
+
     return cgrad
 
 
