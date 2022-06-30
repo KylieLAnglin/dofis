@@ -386,7 +386,8 @@ def clean_cdem(year):
 
 def clean_cgrad(year):
     # https://rptsvr1.tea.texas.gov/perfreport/tapr/2017/download/cothr.html
-
+    if year == "yr2021":
+        year = "yr1920"  # not available yet
     fallyr = year[2:4]  # next years data
     springyr = year[4:6]
 
@@ -423,7 +424,7 @@ def clean_cgrad(year):
 
     cgrad = filter_and_rename_cols(cgrad, cgrad_to_keep)
 
-    if year == "yr1920":
+    if year == "yr2021":
         cgrad["campus"] = cgrad.campus.str.replace("'", "")
         cgrad["campus"] = cgrad.campus.astype("int")
 
@@ -936,73 +937,122 @@ def clean_scores(year, subject):
         "3rd": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
-            "r_all_d": "r_" + subject + "_numtakers",
             "m_all_rs": "m_" + subject + "_avescore",
-            "m_all_d": "m_" + subject + "_numtakers",
+            "r_ethh_rs": "r_" + subject + "avescore_hisp",
+            "r_ethb_rs": "r_" + subject + "avescore_black",
+            "r_ecoy_rs": "r_" + subject + "avescore_frpl",
+            "r_spey_rs": "r_" + subject + "avscore_sped",
+            "m_ethh_rs": "m_" + subject + "avescore_hisp",
+            "m_ethb_rs": "m_" + subject + "avescore_black",
+            "m_ecoy_rs": "m_" + subject + "avescore_frpl",
+            "m_spey_rs": "m_" + subject + "avscore_sped",
         },
         "4th": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
-            "r_all_d": "r_" + subject + "_numtakers",
             "m_all_rs": "m_" + subject + "_avescore",
-            "m_all_d": "m_" + subject + "_numtakers",
+            "r_ethh_rs": "r_" + subject + "avescore_hisp",
+            "r_ethb_rs": "r_" + subject + "avescore_black",
+            "r_ecoy_rs": "r_" + subject + "avescore_frpl",
+            "r_spey_rs": "r_" + subject + "avscore_sped",
+            "m_ethh_rs": "m_" + subject + "avescore_hisp",
+            "m_ethb_rs": "m_" + subject + "avescore_black",
+            "m_ecoy_rs": "m_" + subject + "avescore_frpl",
+            "m_spey_rs": "m_" + subject + "avscore_sped",
         },
         "5th": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
-            "r_all_d": "r_" + subject + "_numtakers",
             "m_all_rs": "m_" + subject + "_avescore",
-            "m_all_d": "m_" + subject + "_numtakers",
             "s_all_rs": "s_" + subject + "_avescore",
-            "s_all_d": "s_" + subject + "_numtakers",
+            "r_ethh_rs": "r_" + subject + "avescore_hisp",
+            "r_ethb_rs": "r_" + subject + "avescore_black",
+            "r_ecoy_rs": "r_" + subject + "avescore_frpl",
+            "r_spey_rs": "r_" + subject + "avscore_sped",
+            "m_ethh_rs": "m_" + subject + "avescore_hisp",
+            "m_ethb_rs": "m_" + subject + "avescore_black",
+            "m_ecoy_rs": "m_" + subject + "avescore_frpl",
+            "m_spey_rs": "m_" + subject + "avscore_sped",
         },
         "6th": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
-            "r_all_d": "r_" + subject + "_numtakers",
             "m_all_rs": "m_" + subject + "_avescore",
-            "m_all_d": "m_" + subject + "_numtakers",
+            "r_ethh_rs": "r_" + subject + "avescore_hisp",
+            "r_ethb_rs": "r_" + subject + "avescore_black",
+            "r_ecoy_rs": "r_" + subject + "avescore_frpl",
+            "r_spey_rs": "r_" + subject + "avscore_sped",
+            "m_ethh_rs": "m_" + subject + "avescore_hisp",
+            "m_ethb_rs": "m_" + subject + "avescore_black",
+            "m_ecoy_rs": "m_" + subject + "avescore_frpl",
+            "m_spey_rs": "m_" + subject + "avscore_sped",
         },
         "7th": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
-            "r_all_d": "r_" + subject + "_numtakers",
             "m_all_rs": "m_" + subject + "_avescore",
-            "m_all_d": "m_" + subject + "_numtakers",
+            "r_ethh_rs": "r_" + subject + "avescore_hisp",
+            "r_ethb_rs": "r_" + subject + "avescore_black",
+            "r_ecoy_rs": "r_" + subject + "avescore_frpl",
+            "r_spey_rs": "r_" + subject + "avscore_sped",
+            "m_ethh_rs": "m_" + subject + "avescore_hisp",
+            "m_ethb_rs": "m_" + subject + "avescore_black",
+            "m_ecoy_rs": "m_" + subject + "avescore_frpl",
+            "m_spey_rs": "m_" + subject + "avscore_sped",
         },
         "8th": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
-            "r_all_d": "r_" + subject + "_numtakers",
             "m_all_rs": "m_" + subject + "_avescore",
-            "m_all_d": "m_" + subject + "_numtakers",
             "s_all_rs": "s_" + subject + "_avescore",
-            "s_all_d": "s_" + subject + "_numtakers",
+            "r_ethh_rs": "r_" + subject + "avescore_hisp",
+            "r_ethb_rs": "r_" + subject + "avescore_black",
+            "r_ecoy_rs": "r_" + subject + "avescore_frpl",
+            "r_spey_rs": "r_" + subject + "avscore_sped",
+            "m_ethh_rs": "m_" + subject + "avescore_hisp",
+            "m_ethb_rs": "m_" + subject + "avescore_black",
+            "m_ecoy_rs": "m_" + subject + "avescore_frpl",
+            "m_spey_rs": "m_" + subject + "avscore_sped",
         },
         "Algebra": {
             "DISTRICT": "district",
             "a1_all_rs": "alg_avescore",
-            "a1_all_d": "alg_numtakers",
+            "a1_ethh_rs": "alg_avescore_hisp",
+            "a1_ethb_rs": "alg_avescore_black",
+            "a1_ecoy_rs": "alg_avescore_frpl",
+            "a1_spey_rs": "alg_avescore_sped",
         },
         "Biology": {
             "DISTRICT": "district",
             "bi_all_rs": "bio_avescore",
-            "bi_all_d": "bio_numtakers",
+            "bi_ethh_rs": "bio_avescore_hisp",
+            "bi_ethb_rs": "bio_avescore_black",
+            "bi_ecoy_rs": "bio_avescore_frpl",
+            "bi_spey_rs": "bio_avescore_sped",
         },
         "EnglishI": {
             "DISTRICT": "district",
             "e1_all_rs": "eng1_avescore",
-            "e1_all_d": "eng1_numtakers",
+            "e1_ethh_rs": "eng1_avescore_hisp",
+            "e1_ethb_rs": "eng1_avescore_black",
+            "e1_ecoy_rs": "eng1_avescore_frpl",
+            "e1_spey_rs": "eng1_avescore_sped",
         },
         "EnglishII": {
             "DISTRICT": "district",
             "e2_all_rs": "eng2_avescore",
-            "e2_all_d": "eng2_numtakers",
+            "e2_ethh_rs": "eng2_avescore_hisp",
+            "e2_ethb_rs": "eng2_avescore_black",
+            "e2_ecoy_rs": "eng2_avescore_frpl",
+            "e2_spey_rs": "eng2_avescore_sped",
         },
         "USHistory": {
             "DISTRICT": "district",
             "us_all_rs": "us_avescore",
-            "us_all_d": "us_numtakers",
+            "us_ethh_rs": "us_avescore_hisp",
+            "us_ethb_rs": "us_avescore_black",
+            "us_ecoy_rs": "us_avescore_frpl",
+            "us_spey_rs": "us_avescore_sped",
         },
     }
 
