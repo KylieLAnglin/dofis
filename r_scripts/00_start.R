@@ -13,7 +13,7 @@ run_and_export_main <- function(df, outcome, disag_file, ag_file){
                        gname = "group",
                        idname = "campus",
                        tname = "year",
-                       xformla = ~1 + pre_num + pre_hisp + + pre_frpl + pre_sped + pre_ell + pre_white + pre_black + pre_tenure + pre_turnover,
+                       xformla = ~1 + pre_num + pre_hisp + pre_white + pre_frpl + pre_avescore,
                        data = df,
                        control_group = c("notyettreated"), 
                        est_method = "reg",

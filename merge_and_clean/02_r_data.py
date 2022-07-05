@@ -44,6 +44,7 @@ r_data = r_data.dropna(
         "pre_tenure",
         "pre_frpl",
         "pre_turnover",
+        "pre_avescore",
     ]
 )
 

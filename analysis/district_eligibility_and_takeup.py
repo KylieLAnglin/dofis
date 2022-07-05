@@ -35,6 +35,28 @@ data21 = data[data.year == 2021]
 data22 = data[data.year == 2022]
 
 
+# %% Number of Districts of Innovation
+district_df = pd.DataFrame(data.groupby(["district"]).agg({"doi_year": "mean"}))
+district_counts = pd.DataFrame(district_df.doi_year.value_counts(sort=False))
+print(district_counts)
+district_counts = district_counts.sort_index()
+print("Cumulative count of DOIs in each year:")
+print(district_counts.doi_year.cumsum())
+# %% Number of Districts Opting Out
+data16[
+    (data16.eligible == 1) & ((data.doi_year > 2016) | (data.doi == 0))
+].district.nunique()
+data17[
+    (data17.eligible == 1) & ((data.doi_year > 2017) | (data.doi == 0))
+].district.nunique()
+data18[
+    (data18.eligible == 1) & ((data18.doi_year > 2018) | (data18.doi == 0))
+].district.nunique()
+
+# %% Number of Ineligible Districts
+data16[data16.eligible == 0].district.nunique()
+data17[data17.eligible == 0].district.nunique()
+
 # Use 2015-16 data for descriptives bc one district not in 2018-19 dataset.
 
 # %% Number of districts
