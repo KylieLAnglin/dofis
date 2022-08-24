@@ -35,6 +35,12 @@ data21 = data[data.year == 2021]
 data22 = data[data.year == 2022]
 
 
+# %% Number of Ineligible Districts
+data17.eligible.value_counts()
+data18.eligible.value_counts()
+data19.eligible.value_counts()
+data20.eligible.value_counts()
+
 # %% Number of Districts of Innovation
 district_df = pd.DataFrame(data.groupby(["district"]).agg({"doi_year": "mean"}))
 district_counts = pd.DataFrame(district_df.doi_year.value_counts(sort=False))
