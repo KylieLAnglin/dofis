@@ -27,14 +27,6 @@ data = pd.read_csv(
 )
 data = data[data.year == 2016]
 data["teachers_turnover_ratio_d"] = data.teachers_turnover_ratio_d / 100
-data.group.value_counts()
-
-print("Number ineligble districts:", len(data[data.group == "ineligible"]))
-data[data.group != "ineligible"]
-print(
-    "Number DOIs with missing implementation year:",
-    len(data[(data.doi == 1) & (data.doi_year.isnull())]),
-)
 
 # %%
 # %%
