@@ -637,36 +637,6 @@ def fix_duplicate_distname(df, distname_col="DISTNAME", cntyname_col="CNTYNAME")
     return df
 
 
-def clean_cdays(year):
-    """
-    Reads number of schools days from dataset from PIR
-    :param year:
-    :return: renamed and filtered variables, with min, mean, and max by district
-    Note: only available for yr1617 and 1718
-    """
-    filename = "days_" + year + ".csv"
-    cdays = pd.read_csv(os.path.join(DATA_PATH, "tea", "cdays", filename), sep=",")
-    cdays_to_keep = {
-        "DISTRICT": "district",
-        "CAMPUS": "campus",
-        "TRACK": "track",
-        "TOTAL_DAYS": "days",
-    }
-    cdays = filter_and_rename_cols(cdays, cdays_to_keep)
-    cdays = cdays[["campus", "days"]]
-    cdays = (
-        cdays.groupby(by=["campus"]).agg({"days": ["min", "mean", "max"]}).reset_index()
-    )
-    cdays.columns = [" ".join(col).strip() for col in cdays.columns.values]
-    cdays = cdays.rename(
-        {"days min": "days_min", "days mean": "days_mean", "days max": "days_max"},
-        axis="columns",
-    )
-    return cdays
-
-    ####
-
-
 def clean_dref(year):
     """
     Reads district reference data from:

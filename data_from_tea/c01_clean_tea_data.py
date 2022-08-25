@@ -2,6 +2,7 @@ import pandas as pd
 import os
 from dofis.start import DATA_PATH
 from dofis.data_from_tea.library import clean_tea
+from dofis.data_from_tea.library import clean_days
 
 years = [
     "yr1112",
@@ -78,7 +79,7 @@ for year in years:
 
     # days
     if year == "yr1617" or year == "yr1718":
-        cdays = clean_tea.clean_cdays(year)
+        cdays = clean_days.clean_cdays(year)
         descriptives = descriptives.merge(
             cdays, on="campus", how="left", validate="1:1"
         )
