@@ -5,7 +5,7 @@ import numpy as np
 from dofis import start
 from dofis.data_from_tea.library import build
 
-year = "yr1213"
+year = "yr2122"
 
 teacher_datapath = start.DATA_PATH + "teachers/" + year + "/"
 
@@ -20,6 +20,7 @@ classes = build.concat_files(
     path=teacher_datapath, pattern=classes_crosswalk["filepattern"]
 )
 classes = classes.rename(columns=classes_crosswalk_invert)
+
 classes = classes.loc[:, classes.columns.isin(list(classes_crosswalk.keys()))]
 
 # %%
@@ -30,6 +31,15 @@ certification_crosswalk = certification_crosswalk.loc[year]
 certification_crosswalk = certification_crosswalk.to_dict()
 certification_crosswalk_invert = {v: k for k, v in certification_crosswalk.items()}
 
+
+cert = build.concat_files(
+    path=teacher_datapath, pattern=certification_crosswalk["filepattern"]
+)
+cert = cert.rename(columns=certification_crosswalk_invert)
+cert = cert.loc[:, cert.columns.isin(list(certification_crosswalk.keys()))]
+
+# %%
+# Certification types
 certification_types_crosswalk_path = (
     start.DATA_PATH + "teachers/crosswalk_certification_types.xlsx"
 )
@@ -39,12 +49,9 @@ certification_types_crosswalk = dict(
         certification_types_crosswalk.cert_type, certification_types_crosswalk.certified
     )
 )
-cert = build.concat_files(
-    path=teacher_datapath, pattern=certification_crosswalk["filepattern"]
-)
-cert = cert.rename(columns=certification_crosswalk_invert)
-cert = cert.loc[:, cert.columns.isin(list(certification_crosswalk.keys()))]
 
+certification_types_crosswalk
+cert.cert_type.value_counts()
 cert["certified"] = cert["cert_type"].map(certification_types_crosswalk)
 cert_teachers = cert[(cert.cert_role == "Teacher") | (cert.cert_role == "Teacher")]
 cert_teachers = cert_teachers[cert_teachers.certified == 1]
@@ -58,10 +65,35 @@ subject_areas_crosswalk = dict(
         subject_areas_crosswalk.new_subject_area,
     )
 )
+subject_areas_crosswalk
+classes.class_subject_area_name.value_counts()
+classes["subject"] = classes["class_subject_area_name"].map(subject_areas_crosswalk)
+
+subject_areas_crosswalk
+cert_teachers.cert_subject_area.value_counts()
+cert_teachers["subject"] = cert_teachers["cert_subject_area"].map(
+    subject_areas_crosswalk
+)
+
+cert_teachers["subject"] = np.where(
+    cert_teachers.cert_subject_area.isnull(), np.nan, cert_teachers.subject
+)
+
+cert_teachers["subject"] = np.where(
+    cert_teachers.cert_subject == "Core Subjects", "elem", cert_teachers.subject
+)
+
+
+# %%
 
 grades_crosswalk_path = start.DATA_PATH + "teachers/crosswalk_grades.xlsx"
 grades_crosswalk = pd.read_excel(grades_crosswalk_path, index_col="cert_grade")
 
+list(grades_crosswalk.columns)
+classes.class_grade_name.value_counts()
+
+list(grades_crosswalk.index)
+cert_teachers.cert_grade.value_counts()
 ###
 # Create certified indicator
 ###
@@ -86,13 +118,7 @@ classes_certified["teacher_certified"] = np.where(
 ###
 
 # %% Create in field indicator
-classes_certified["subject"] = classes_certified["class_subject_area_name"].map(
-    subject_areas_crosswalk
-)
 
-cert_teachers["subject"] = cert_teachers["cert_subject_area"].map(
-    subject_areas_crosswalk
-)
 cert_subject = cert_teachers.drop_duplicates(
     subset=["teacher_id", "subject"], keep="first"
 )
@@ -107,7 +133,7 @@ classes_certified_field = classes_certified.merge(
 classes_certified_field["certified_in_field"] = np.where(
     classes_certified_field._in_field == "both", 1, 0
 )
-
+# %%
 ###
 # Create elementary certification indicator
 ###
@@ -163,7 +189,7 @@ classes_certified_field = classes_certified_field.merge(
     right_on=["teacher_id", "class_id"],
 )
 # %%
-# If cert_subject_area is elem, then change certified_in_field to 1 if certified_in_grade
+# If cert_subject_area is elem or bilingual education, then change certified_in_field to 1 if certified_in_grade
 classes_certified_field["certified_in_field"] = np.where(
     (classes_certified_field.cert_elem == 1)
     & (classes_certified_field.certified_in_grade == 1),
@@ -174,13 +200,28 @@ classes_certified_field["certified_in_field"] = np.where(
 
 # Exclude other, cte, and tech classes
 classes_certified_field["certified_in_field"] = np.where(
-    classes_certified_field.subject.isin(["other", "cte", "tech"]),
+    classes_certified_field.subject.isin(["other", "cte", "tech", "pe"]),
     np.nan,
     classes_certified_field.certified_in_field,
 )
 
 
 # %%
+classes_certified_field = classes_certified_field[
+    [
+        "teacher_id",
+        "class_name",
+        "class_fte",
+        "class_subject_name",
+        "class_grade_name",
+        "subject",
+        "cert_subject",
+        "teacher_certified",
+        "cert_elem",
+        "certified_in_grade",
+        "certified_in_field",
+    ]
+]
 classes_certified_field.to_csv(
     start.DATA_PATH + "teachers/" + "classes_certs_" + year + ".csv"
 )
@@ -194,21 +235,25 @@ classes_certified_field.to_csv(
 # cert[cert.teacher_id == teacher]
 # Then check 10 in-field teachers (maybe more) and ten out of field teachers (maybe more)
 
+# random_state=12
 # random sample
 test = classes_certified_field.sample(10, random_state=12)
 
-# random sample missing in field (includes other and cte)
+
+# random sample missing in field (includes other pe and cte)
 test = classes_certified_field[
     classes_certified_field.certified_in_field.isnull()
 ].sample(10, random_state=12)
 
 # random sample not in field (includes uncertified)
 test = classes_certified_field[classes_certified_field.certified_in_field == 0].sample(
-    10, random_state=12
+    10,
 )
 
-# random sample only out of field
+# random sample only out of field - random_state = 13
 test = classes_certified_field[
-    (classes_certified_field.certified_out_field == 0)
-    & (classes_certified_field.certified == 1)
-].sample(10, random_state=13)
+    (classes_certified_field.certified_in_field == 0)
+    & (classes_certified_field.teacher_certified == 1)
+].sample(10)
+
+# %%
