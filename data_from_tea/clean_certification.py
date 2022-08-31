@@ -32,11 +32,23 @@ grades_crosswalk = pd.read_excel(grades_crosswalk_path, index_col="cert_grade")
 
 # %%
 
-year = "yr1516"
-teacher_datapath = start.DATA_PATH + "teachers/" + year + "/"
+year = "yr1819"
 
 
-for year in ["yr1415", "yr1516", "yr1617", "yr1718", "yr1819", "yr2021", "yr2122"]:
+for year in [
+    "yr1213",
+    "yr1314",
+    "yr1415",
+    "yr1516",
+    "yr1617",
+    "yr1718",
+    "yr1819",
+    "yr1920",
+    "yr2021",
+    "yr2122",
+]:
+    teacher_datapath = start.DATA_PATH + "teachers/" + year + "/"
+
     ###
     certification_crosswalk = certification_crosswalk_df.loc[year]
     certification_crosswalk = certification_crosswalk.to_dict()
