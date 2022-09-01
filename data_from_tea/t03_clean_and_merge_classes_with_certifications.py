@@ -334,7 +334,7 @@ for year in years:
     )
 
     schools.to_csv(
-        start.DATA_PATH + "campus_certification_" + year + ".csv", index=False
+        start.DATA_PATH + "teachers/campus_certification_" + year + ".csv", index=False
     )
 
 
@@ -342,11 +342,14 @@ for year in years:
 # TODO: Import and append
 appended_data = []
 for year in years:
-    data = pd.read_csv(start.DATA_PATH + "campus_certification_" + year + ".csv")
+    data = pd.read_csv(
+        start.DATA_PATH + "teachers/campus_certification_" + year + ".csv"
+    )
     data["year"] = year
     appended_data.append(data)
 
 appended_data = pd.concat(appended_data)
+appended_data.to_csv(start.DATA_PATH + "teachers/campus_certification.csv")
 
 # # # If cert_subject_area is elem or bilingual education, then change certified_in_field to 1 if certified_in_grade
 # # classes_certified_field["certified_in_field"] = np.where(
