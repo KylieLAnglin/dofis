@@ -32,21 +32,8 @@ grades_crosswalk = pd.read_excel(grades_crosswalk_path, index_col="cert_grade")
 
 # %%
 
-year = "yr1819"
 
-
-for year in [
-    "yr1213",
-    "yr1314",
-    "yr1415",
-    "yr1516",
-    "yr1617",
-    "yr1718",
-    "yr1819",
-    "yr1920",
-    "yr2021",
-    "yr2122",
-]:
+def clean_certification(year):
     teacher_datapath = start.DATA_PATH + "teachers/" + year + "/"
 
     ###
@@ -79,6 +66,113 @@ for year in [
         cert.cert_subject == "Core Subjects", "elem", cert.subject
     )
 
-    cert.to_csv(start.DATA_PATH + "teachers/cert_" + year + ".csv")
+    cert["cert_elem"] = np.where((cert.subject == "elem") & (cert.certified == 1), 1, 0)
+
+    cert["cert_effective"] = cert["cert_effective"].astype(str)
+    cert["cert_effective_year"] = [
+        date[5:9] if date else "" for date in cert.cert_effective
+    ]
+    cert["cert_effective_yr"] = pd.to_numeric(cert["cert_effective_year"])
+
+    cert["cert_expires"] = cert["cert_expires"].astype(str)
+    cert["cert_expires_year"] = [
+        date[5:9] if date else "" for date in cert.cert_expires
+    ]
+    cert["cert_expires_yr"] = np.where(
+        cert.cert_expires_year == "", "3000", cert.cert_expires_year
+    )
+    cert["cert_expires_yr"] = pd.to_numeric(cert["cert_expires_yr"])
+
+    cert["year"] = year
+    # cert.to_csv(start.DATA_PATH + "teachers/cert_" + year + ".csv")
+
+    cert["cert_active_2012"] = np.where(
+        (cert.cert_effective_yr <= 2012) & (cert.cert_expires_yr > 2011), 1, 0
+    )
+    cert["cert_active_2013"] = np.where(
+        (cert.cert_effective_yr <= 2013) & (cert.cert_expires_yr > 2012), 1, 0
+    )
+    cert["cert_active_2014"] = np.where(
+        (cert.cert_effective_yr <= 2014) & (cert.cert_expires_yr > 2013), 1, 0
+    )
+    cert["cert_active_2015"] = np.where(
+        (cert.cert_effective_yr <= 2015) & (cert.cert_expires_yr > 2014), 1, 0
+    )
+    cert["cert_active_2016"] = np.where(
+        (cert.cert_effective_yr <= 2016) & (cert.cert_expires_yr > 2015), 1, 0
+    )
+    cert["cert_active_2017"] = np.where(
+        (cert.cert_effective_yr <= 2017) & (cert.cert_expires_yr > 2016), 1, 0
+    )
+    cert["cert_active_2018"] = np.where(
+        (cert.cert_effective_yr <= 2018) & (cert.cert_expires_yr > 2017), 1, 0
+    )
+    cert["cert_active_2019"] = np.where(
+        (cert.cert_effective_yr <= 2019) & (cert.cert_expires_yr > 2018), 1, 0
+    )
+    cert["cert_active_2020"] = np.where(
+        (cert.cert_effective_yr <= 2020) & (cert.cert_expires_yr > 2019), 1, 0
+    )
+    cert["cert_active_2021"] = np.where(
+        (cert.cert_effective_yr <= 2021) & (cert.cert_expires_yr > 2020), 1, 0
+    )
+
+    return cert
+
+
+data = clean_certification("yr1718")
+
+# data["cert_effective"] = [date[0:9] for date in data.cert_effective]
+# data["cert_effective_date"] = pd.to_datetime(data.cert_effective)
+
 ###
+# %%
+appended_data = []
+for year in [
+    "yr1213",
+    "yr1314",
+    "yr1415",
+    "yr1516",
+    "yr1617",
+    "yr1718",
+    "yr1819",
+    "yr1920",
+    "yr2021",
+    "yr2122",
+]:
+    data = clean_certification(year)
+    appended_data.append(data)
+
+certification_database = pd.concat(appended_data)
+certification_database.to_csv(start.DATA_PATH + "teachers/certifications_all.csv")
+# %%
+certifications = certification_database[
+    [
+        "teacher_id",
+        "certified",
+        "cert_grade",
+        "cert_elem",
+        "subject",
+        "cert_active_2012",
+        "cert_active_2013",
+        "cert_active_2014",
+        "cert_active_2015",
+        "cert_active_2016",
+        "cert_active_2017",
+        "cert_active_2018",
+        "cert_active_2019",
+        "cert_active_2020",
+        "cert_active_2021",
+    ]
+]
+certifications_collapsed = (
+    certifications.groupby(
+        by=["teacher_id", "certified", "cert_grade", "subject", "cert_elem"],
+        dropna=False,
+    )
+    .max()
+    .reset_index()
+)
+
+certifications_collapsed.to_csv(start.DATA_PATH + "teachers/certifications_long.csv")
 # %%
