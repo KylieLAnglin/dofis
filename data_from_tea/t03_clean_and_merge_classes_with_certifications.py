@@ -31,9 +31,6 @@ def check_in_grade(df):
     return in_grade
 
 
-# %%
-year = "yr1415"
-
 years = [
     "yr1213",
     "yr1314",
@@ -46,6 +43,10 @@ years = [
     "yr2021",
     "yr2122",
 ]
+
+# %%
+
+
 for year in years:
 
     active_column = {
@@ -288,14 +289,13 @@ for year in years:
     schools = (
         teachers[
             [
-                "district",
                 "campus",
                 "teacher_certified",
                 "teacher_uncertified",
                 "teacher_out_of_field_fte",
             ]
         ]
-        .groupby(by=["district", "campus"])
+        .groupby(by=["campus"])
         .mean()
     ).reset_index()
 
@@ -340,15 +340,30 @@ for year in years:
 
 # %%
 # TODO: Import and append
+
+years_yr = {
+    "yr1213": 2012,
+    "yr1314": 2013,
+    "yr1415": 2014,
+    "yr1516": 2015,
+    "yr1617": 2016,
+    "yr1718": 2017,
+    "yr1819": 2018,
+    "yr1920": 2019,
+    "yr2021": 2020,
+    "yr2122": 2021,
+}
+
 appended_data = []
 for year in years:
     data = pd.read_csv(
         start.DATA_PATH + "teachers/campus_certification_" + year + ".csv"
     )
-    data["year"] = year
+    data["year"] = years_yr[year]
     appended_data.append(data)
 
 appended_data = pd.concat(appended_data)
+appended_data = appended_data.drop_duplicates(keep="first")
 appended_data.to_csv(start.DATA_PATH + "teachers/campus_certification.csv")
 
 # # # If cert_subject_area is elem or bilingual education, then change certified_in_field to 1 if certified_in_grade

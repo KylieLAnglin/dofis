@@ -245,7 +245,7 @@ def import_geo():
 
 def import_teachers():
     teachers = pd.read_csv(
-        os.path.join(start.DATA_PATH, "tea", "certification_rates_long.csv"),
+        os.path.join(start.DATA_PATH, "teachers", "campus_certification.csv"),
         sep=",",
         low_memory=False,
     )

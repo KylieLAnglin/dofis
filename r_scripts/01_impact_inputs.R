@@ -4,7 +4,8 @@
 
 # Uncertified teachers
 df <- read.csv(paste(data_path, "clean/r_data_cert.csv", sep=""))
-run_and_export_main(df = df, outcome = "teachers_uncertified", disag_file = "results_uncertified_disag_raw.xlsx", ag_file = "results_uncertified_ag_raw.xlsx")
+run_and_export_main(df = df, outcome = "teacher_uncertified", disag_file = "results_uncertified_disag_raw.xlsx", ag_file = "results_uncertified_ag_raw.xlsx")
+run_and_export_main(df = df, outcome = "teacher_out_of_field_fte", disag_file = "results_out_of_field_disag_raw.xlsx", ag_file = "results_uncertified_ag_raw.xlsx")
 
 # Elementary class sizes
 df <- read.csv(paste(data_path, "clean/r_data_classsize.csv", sep=""))
