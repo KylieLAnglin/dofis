@@ -26,9 +26,8 @@ if [[ $TEACHERS = 1 ]]
 then
     echo "building teacher data"
     python data_from_tea/t01_clean_certification.py
-    python data_from_tea/t02_clean_teachers.py
-    python data_from_tea/t03_clean_class.py
-    python data_from_tea/t03_merge_and_append.py
+    python data_from_tea/t02_clean_classes.py
+    python data_from_tea/t03_clean_and_merge_classes_with_certifications.py
 
 fi
 
