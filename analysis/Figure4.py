@@ -16,11 +16,11 @@ from dofis.analysis.library import analysis
 # graph_parameters = {"teacher_uncertified": {"import_file": "results_uncertified_ag_raw.xlsx"}}
 graph_parameters = {
     "teacher_uncertified": {
-        "average": {},
-        "rural": {},
-        "urban": {},
-        "black": {},
-        "hispanic": {},
+        "average": {"x_ticks_location": 0.20, "color": "black"},
+        "rural": {"x_ticks_location": 0.10, "color": "red"},
+        "urban": {"x_ticks_location": 0.0, "color": "orange"},
+        "black": {"x_ticks_location": -0.1, "color": "green"},
+        "hispanic": {"x_ticks_location": -0.20, "color": "blue"},
     },
     "teacher_out_of_field": {
         "average": {},
@@ -60,7 +60,7 @@ def coef_df(df: pd.DataFrame):
         {
             "coef": coefs,
             "err": ses,
-            "year": [-5, -4, -3, -2, -1, 1, 2, 3],
+            "year": [-4, -3, -2, -1, 1, 2, 3, 4],
         }
     )
     coef_df["lb"] = coef_df.coef - (1.96 * coef_df.err)
@@ -81,39 +81,45 @@ for subgroup in ["average", "rural", "urban", "black", "hispanic"]:
     )
 # %%
 
-# TODO: Confirm number of post years in uncertified. Right now four.
-# TODO: Add more buffer on each side of pre4 and post3
+# TODO: ADD FRPL and low student achievement
+# TODO: Add legend
 # TODO: Decide on color scheme
-# TODO: Add subgroups to graph
+# TODO: Add remaining outcomes
 
 fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
-colors = ["gray", "gray", "gray", "gray", "gray", "black", "black", "black"]
+# colors = ["gray", "gray", "gray", "gray", "black", "black", "black", "black"]
 
 outcome = "teacher_uncertified"
 subgroup = "average"
-df = graph_parameters[outcome][subgroup]["coef_df"]
-# Uncertified
-ax1.scatter(
-    x=pd.np.arange(graph_parameters[outcome][subgroup]["coef_df"].shape[0]),
-    marker="s",
-    s=30,
-    y=df["coef"],
-    color=colors,
-)
-for pos, y, err, color in zip(
-    pd.np.arange(df.shape[0]), df["coef"], df["errsig"], colors
-):
 
-    ax1.errorbar(pos, y, err, lw=2, capsize=4, capthick=4, color=color)
+# Uncertified
+for subgroup in ["average", "rural", "urban", "black", "hispanic"]:
+    df = graph_parameters[outcome][subgroup]["coef_df"]
+
+    xs = [
+        x + graph_parameters[outcome][subgroup]["x_ticks_location"]
+        for x in pd.np.arange(df.shape[0])
+    ]
+    color = graph_parameters[outcome][subgroup]["color"]
+    ax1.scatter(
+        x=xs,
+        marker="s",
+        s=30,
+        y=df["coef"],
+        color=graph_parameters[outcome][subgroup]["color"],
+    )
+    for pos, y, err in zip(xs, df["coef"], df["errsig"]):
+        ax1.errorbar(pos, y, err, lw=2, capsize=2, capthick=2, color=color)
 
 ax1.axhline(y=0, linestyle="--", color="black", linewidth=1)
-ax1.xaxis.set_ticks_position("none")
-_ = ax1.set_xticklabels(
-    ["Pre5", "Pre4", "Pre3", "Pre2", "Pre1", "Post1", "Post2", "Post3"],
-    rotation=0,
+# ax1.xaxis.set_ticks_position("none")
+ax1.set_xticks(xs)
+ax1.set_xticklabels(
+    ["Pre4", "Pre3", "Pre2", "Pre1", "Post1", "Post2", "Post3", "Post4"],
 )
 ax1.set_ylabel("Proportion")
 ax1.set_title("Proportion Uncertified Teachers")
+ax1.set_xlim((-0.5, 7.5))
 ax1.set_ylim((-0.05, 0.05))
 
 # %%
