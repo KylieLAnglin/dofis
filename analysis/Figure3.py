@@ -13,10 +13,18 @@ from dofis import start
 from dofis.analysis.library import analysis
 
 
-uncertified_agg = pd.read_excel(start.TABLE_PATH + "results_uncertified_ag_raw.xlsx")
-out_of_field_agg = pd.read_excel(start.TABLE_PATH + "results_out_of_field_ag_raw.xlsx")
-class_size_agg = pd.read_excel(start.TABLE_PATH + "results_class_size_elem_ag_raw.xlsx")
-ratio_agg = pd.read_excel(start.TABLE_PATH + "results_stu_teach_ratio_ag_raw.xlsx")
+uncertified_agg = pd.read_excel(
+    start.TABLE_PATH + "results_uncertified_ag_raw_average.xlsx"
+)
+out_of_field_agg = pd.read_excel(
+    start.TABLE_PATH + "results_out_of_field_ag_raw_average.xlsx"
+)
+class_size_agg = pd.read_excel(
+    start.TABLE_PATH + "results_class_size_elem_ag_raw_average.xlsx"
+)
+ratio_agg = pd.read_excel(
+    start.TABLE_PATH + "results_stu_teach_ratio_ag_raw_average.xlsx"
+)
 data = pd.read_csv(start.DATA_PATH + "clean/r_data.csv")
 n = data.district.nunique()
 

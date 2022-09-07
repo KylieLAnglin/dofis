@@ -1,7 +1,6 @@
-# %% Event Study Graphs - Math
-
+# TODO: Huge standard errors on student teacher ratio for urban schools
 # %%
-# %%
+from re import sub
 import pandas as pd
 import numpy as np
 import pandas as pd
@@ -13,35 +12,66 @@ from dofis import start
 from dofis.analysis.library import analysis
 
 # %%
+subgroups = ["average", "rural", "hispanic", "black", "frpl"]
+# subgroups = ["average", "rural", "urban", "black", "hispanic", "frpl", "avescore"]
+outcomes = [
+    "teacher_uncertified",
+    "teacher_out_of_field",
+    "class_size_elem",
+    "stu_teach_ratio",
+]
+
+results = {}
+for outcome in outcomes:
+    results[outcome] = {}
+    for subgroup in subgroups:
+        results[outcome][subgroup] = {}
+
+# %%
 # graph_parameters = {"teacher_uncertified": {"import_file": "results_uncertified_ag_raw.xlsx"}}
 graph_parameters = {
+    "average": {"x_ticks_location": -0.3, "color": "black", "label": "Average Impact"},
+    "rural": {"x_ticks_location": -0.2, "color": "blue", "label": "Rural Schools"},
+    # "urban": {"x_ticks_location": 0.0, "color": "purple", "label": "Urban Schools"},
+    "black": {
+        "x_ticks_location": -0.1,
+        "color": "lightblue",
+        "label": "Q4 % Black Students",
+    },
+    "hispanic": {
+        "x_ticks_location": 0.10,
+        "color": "green",
+        "label": "Q4 % Hispanic Students",
+    },
+    "frpl": {
+        "x_ticks_location": 0.2,
+        "color": "teal",
+        "label": "Q4 % FRPL Students",
+    },
+    # "avescore": {
+    #     "x_ticks_location": -0.4,
+    #     "color": "blue",
+    #     "label": "Q1 Average STAAR Scores",
+    # },
     "teacher_uncertified": {
-        "average": {"x_ticks_location": 0.20, "color": "black"},
-        "rural": {"x_ticks_location": 0.10, "color": "red"},
-        "urban": {"x_ticks_location": 0.0, "color": "orange"},
-        "black": {"x_ticks_location": -0.1, "color": "green"},
-        "hispanic": {"x_ticks_location": -0.20, "color": "blue"},
+        "title": "Proportion Uncertified Teachers",
+        "ylabel": "Proportion",
+        "ylim": (-0.06, 0.06),
     },
     "teacher_out_of_field": {
-        "average": {},
-        "rural": {},
-        "urban": {},
-        "black": {},
-        "hispanic": {},
+        "title": "Proportion Out of Field Teachers",
+        "ylabel": "Proportion",
+        "ylim": (-0.06, 0.06),
     },
     "class_size_elem": {
-        "average": {},
-        "rural": {},
-        "urban": {},
-        "black": {},
-        "hispanic": {},
+        "title": "Average Elementary Class Size",
+        "ylabel": "Students",
+        "ylim": (-3, 3),
     },
     "stu_teach_ratio": {
-        "average": {},
-        "rural": {},
-        "urban": {},
-        "black": {},
-        "hispanic": {},
+        "title": "Student to Teacher Ratio",
+        "ylabel": "Students",
+        "ylim": (-3, 3),
     },
 }
 
@@ -50,9 +80,9 @@ graph_parameters = {
 def coef_df(df: pd.DataFrame):
     coefs = []
     ses = []
-    for row in [0, 1, 2, 3, 4, 5, 6, 7]:
-        coef = df.loc[row]["disag.att"]
-        se = df.loc[row]["disag.se"]
+    for year in df["agg.dynamic.egt"]:
+        coef = df.loc[df["agg.dynamic.egt"] == year, "agg.dynamic.att.egt"]
+        se = df.loc[df["agg.dynamic.egt"] == year, "agg.dynamic.se.egt"]
         coefs.append(coef)
         ses.append(se)
 
@@ -60,7 +90,7 @@ def coef_df(df: pd.DataFrame):
         {
             "coef": coefs,
             "err": ses,
-            "year": [-4, -3, -2, -1, 1, 2, 3, 4],
+            "year": list(df["agg.dynamic.egt"]),
         }
     )
     coef_df["lb"] = coef_df.coef - (1.96 * coef_df.err)
@@ -70,56 +100,88 @@ def coef_df(df: pd.DataFrame):
 
 
 # %%
-for subgroup in ["average", "rural", "urban", "black", "hispanic"]:
-
-    graph_parameters["teacher_uncertified"][subgroup]["df"] = pd.read_excel(
-        start.TABLE_PATH + "results_uncertified_disag_raw_" + subgroup + ".xlsx"
+for subgroup in subgroups:
+    results["teacher_uncertified"][subgroup]["df"] = pd.read_excel(
+        start.TABLE_PATH + "results_uncertified_ag_raw_" + subgroup + ".xlsx"
     )
 
-    graph_parameters["teacher_uncertified"][subgroup]["coef_df"] = coef_df(
-        graph_parameters["teacher_uncertified"][subgroup]["df"]
+    results["teacher_uncertified"][subgroup]["coef_df"] = coef_df(
+        results["teacher_uncertified"][subgroup]["df"]
     )
+
+    results["teacher_out_of_field"][subgroup]["df"] = pd.read_excel(
+        start.TABLE_PATH + "results_out_of_field_ag_raw_" + subgroup + ".xlsx"
+    )
+
+    results["teacher_out_of_field"][subgroup]["coef_df"] = coef_df(
+        results["teacher_out_of_field"][subgroup]["df"]
+    )
+
+    results["class_size_elem"][subgroup]["df"] = pd.read_excel(
+        start.TABLE_PATH + "results_class_size_elem_ag_raw_" + subgroup + ".xlsx"
+    )
+
+    results["class_size_elem"][subgroup]["coef_df"] = coef_df(
+        results["class_size_elem"][subgroup]["df"]
+    )
+
+    results["stu_teach_ratio"][subgroup]["df"] = pd.read_excel(
+        start.TABLE_PATH + "results_stu_teach_ratio_ag_raw_" + subgroup + ".xlsx"
+    )
+
+    results["stu_teach_ratio"][subgroup]["coef_df"] = coef_df(
+        results["stu_teach_ratio"][subgroup]["df"]
+    )
+
+
 # %%
 
-# TODO: ADD FRPL and low student achievement
-# TODO: Add legend
-# TODO: Decide on color scheme
-# TODO: Add remaining outcomes
 
-fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
+fig = plt.figure(figsize=(15, 10))
+ax1 = fig.add_subplot(221)
+ax2 = fig.add_subplot(222)
+ax3 = fig.add_subplot(223)
+ax4 = fig.add_subplot(224)
+
+# fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
+
+
 # colors = ["gray", "gray", "gray", "gray", "black", "black", "black", "black"]
 
 outcome = "teacher_uncertified"
 subgroup = "average"
 
 # Uncertified
-for subgroup in ["average", "rural", "urban", "black", "hispanic"]:
-    df = graph_parameters[outcome][subgroup]["coef_df"]
+for outcome, ax in zip(outcomes, [ax1, ax2, ax3, ax4]):
+    for subgroup in subgroups:
+        df = results[outcome][subgroup]["coef_df"]
+        df = df[df.year >= -5]
 
-    xs = [
-        x + graph_parameters[outcome][subgroup]["x_ticks_location"]
-        for x in pd.np.arange(df.shape[0])
-    ]
-    color = graph_parameters[outcome][subgroup]["color"]
-    ax1.scatter(
-        x=xs,
-        marker="s",
-        s=30,
-        y=df["coef"],
-        color=graph_parameters[outcome][subgroup]["color"],
+        xs = [x + graph_parameters[subgroup]["x_ticks_location"] for x in df["year"]]
+
+        color = graph_parameters[subgroup]["color"]
+        ax.scatter(
+            x=xs,
+            marker="s",
+            s=30,
+            y=df["coef"],
+            color=graph_parameters[subgroup]["color"],
+            label=graph_parameters[subgroup]["label"],
+        )
+        for pos, y, err in zip(xs, df["coef"], df["errsig"]):
+            ax.errorbar(pos, y, err, lw=2, capsize=2, capthick=2, color=color)
+
+    ax.axhline(y=0, linestyle="--", color="black", linewidth=1)
+    # ax.xaxis.set_ticks_position("none")
+    ax.set_xticks(xs)
+    ax.set_xticklabels(
+        df["year"],
     )
-    for pos, y, err in zip(xs, df["coef"], df["errsig"]):
-        ax1.errorbar(pos, y, err, lw=2, capsize=2, capthick=2, color=color)
+    ax.set_ylabel(graph_parameters[outcome]["ylabel"])
+    ax.set_title(graph_parameters[outcome]["title"])
+    # ax.set_xlim((-0.5, 7.5))
+    ax.set_ylim(graph_parameters[outcome]["ylim"])
+ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5))
 
-ax1.axhline(y=0, linestyle="--", color="black", linewidth=1)
-# ax1.xaxis.set_ticks_position("none")
-ax1.set_xticks(xs)
-ax1.set_xticklabels(
-    ["Pre4", "Pre3", "Pre2", "Pre1", "Post1", "Post2", "Post3", "Post4"],
-)
-ax1.set_ylabel("Proportion")
-ax1.set_title("Proportion Uncertified Teachers")
-ax1.set_xlim((-0.5, 7.5))
-ax1.set_ylim((-0.05, 0.05))
 
 # %%

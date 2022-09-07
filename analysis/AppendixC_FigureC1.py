@@ -50,7 +50,7 @@ def create_group_df(df, outcome):
 title_labels = {
     "math_yr15std": "Average Std. Math Scores",
     "reading_yr15std": "Average Std. Reading Scores",
-    "teachers_uncertified": "Percent Uncertified Teachers",
+    "teacher_uncertified": "Percent Uncertified Teachers",
     "class_size_elem": "Average Elementary Class Size",
 }
 
