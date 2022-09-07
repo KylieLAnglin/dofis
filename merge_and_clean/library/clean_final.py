@@ -505,6 +505,7 @@ def generate_pretreatment_variables(
         "pre_num",
         "pre_turnover",
         "pre_avescore",
+        "pre_frpl",
     ]:
         for p in [0.25, 0.5, 0.75, 1]:
             num = str(int(p * 100))

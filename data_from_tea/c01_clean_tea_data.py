@@ -75,7 +75,7 @@ for year in years:
         descriptives = descriptives.merge(
             cscores, on="campus", how="left", indicator=True, validate="1:1"
         )
-    descriptives = descriptives.dropna(how="all")
+    # descriptives = descriptives.dropna(how="all")
 
     # days
     if year == "yr1617" or year == "yr1718":

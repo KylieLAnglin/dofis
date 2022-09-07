@@ -18,7 +18,7 @@ r_data = data_school[data_school.campischarter == "N"]
 r_data = r_data[r_data.eligible == True]
 # r_data = r_data[r_data.group.isin(["opt-out", "2017", "2018", "2019"])]
 r_data = r_data.rename(columns={"group": "doi_group"})
-r_data = r_data[r_data.year < 2021]
+# r_data = r_data[r_data.year < 2021]
 # r_data["teachers_uncertified"] = r_data.teachers_uncertified * 100
 # %%
 r_data["group"] = np.where(
@@ -33,8 +33,8 @@ r_data["group"] = np.where(
 r_data = r_data.dropna(
     subset=[
         "group",
-        "math_yr15std",
-        "reading_yr15std",
+        # "math_yr15std",
+        # "reading_yr15std",
         "district",
         "campus",
         "year",
@@ -53,7 +53,7 @@ col = r_data.loc[:, "class_size_3":"class_size_5"]
 r_data["class_size_mean_elem"] = col.mean(axis=1)
 
 
-r_data[r_data.year < 2021].to_csv(
+r_data.to_csv(
     os.path.join(start.DATA_PATH, "clean", "r_data.csv"),
     sep=",",
 )
@@ -91,8 +91,8 @@ r_data_ever["group"] = np.where(
 r_data_ever = r_data_ever.dropna(
     subset=[
         "group",
-        "math",
-        "reading",
+        # "math",
+        # "reading",
         "district",
         "campus",
         "year",
@@ -137,8 +137,8 @@ r_data_district["group"] = np.where(
 r_data_district = r_data_district.dropna(
     subset=[
         "group",
-        "math_yr15std",
-        "reading_yr15std",
+        # "math_yr15std",
+        # "reading_yr15std",
         "district",
         "year",
         "pre_hisp",
@@ -155,7 +155,7 @@ col = r_data_district.loc[:, "class_size_3":"class_size_5"]
 r_data_district["class_size_mean_elem"] = col.mean(axis=1)
 
 
-r_data_district[r_data_district.year < 2021].to_csv(
+r_data_district.to_csv(
     os.path.join(start.DATA_PATH, "clean", "r_data_district.csv"),
     sep=",",
 )
