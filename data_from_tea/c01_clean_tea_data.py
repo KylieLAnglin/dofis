@@ -78,12 +78,12 @@ for year in years:
     # descriptives = descriptives.dropna(how="all")
 
     # days
-    if year == "yr1617" or year == "yr1718":
-        cdays = clean_days.clean_cdays(year)
+    cdays = clean_days.clean_cdays(year)
+    if len(cdays) > 0:
         descriptives = descriptives.merge(
             cdays, on="campus", how="left", validate="1:1"
         )
-        print(len(descriptives))
+    print(len(descriptives))
 
     year_map = {
         "yr1112": 2012,

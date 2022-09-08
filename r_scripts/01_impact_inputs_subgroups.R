@@ -56,4 +56,6 @@ run_and_export_main(df = avescore, outcome = "stu_teach_ratio", disag_file = "re
 df <- read.csv(paste(data_path, "clean/r_data_days.csv", sep=""))
 df <- df[df$year < 2021, ]
 
-run_and_export_main(df = df, outcome = "days", disag_file = "results_days_disag_raw_average.xlsx", ag_file = "results_days_ag_raw_average.xlsx")
+run_and_export_main(df = df, outcome = "days_drop_outliers", disag_file = "results_days_disag_raw_average.xlsx", ag_file = "results_days_ag_raw_average.xlsx")
+run_and_export_main(df = df, outcome = "days_before_third_week", disag_file = "results_days_before_first_week_disag_raw_average.xlsx", ag_file = "results_days_before_first_week_ag_raw_average.xlsx")
+run_and_export_main(df = df, outcome = "minutes_drop_outliers", disag_file = "results_minutes_disag_raw_average.xlsx", ag_file = "results_minutes_ag_raw_average.xlsx")

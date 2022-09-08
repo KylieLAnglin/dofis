@@ -208,10 +208,17 @@ def import_tea_school():
     variables = variables + (list(tea.filter(regex=("teachers"))))
     variables = variables + (list(tea.filter(regex=("avescore"))))
     variables = variables + (list(tea.filter(regex=("numtakers"))))
-    variables = variables + (list(tea.filter(regex=("days_"))))
+    variables = variables + [
+        "days_start_date",
+        "days_before_third_week",
+        "days",
+        "days_drop_outliers",
+    ]
+    variables = variables + (list(tea.filter(regex=("minutes"))))
     variables = variables + (list(tea.filter(regex=("class_size"))))
     variables = variables + (list(tea.filter(regex=("perf_"))))
     variables = variables + ["stu_teach_ratio"]
+
     tea = tea[variables]
 
     return tea

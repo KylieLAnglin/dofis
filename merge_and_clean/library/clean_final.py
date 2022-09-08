@@ -103,8 +103,11 @@ def destring_vars(data):
     for col in list(data.columns):
         if col.startswith("class_size") or col.startswith("perf"):
             num_cols.append(col)
-    print(num_cols)
-    data[num_cols] = data[num_cols].apply(pd.to_numeric, errors="coerce")
+    num_cols = [col for col in num_cols if col in list(data.columns)]
+    for col in num_cols:
+        print(col)
+        data[col] = pd.to_numeric(data[col], errors="coerce")
+    # data[num_cols] = data[num_cols].apply(pd.to_numeric, errors="coerce")
 
     return data
 
@@ -143,7 +146,7 @@ def gen_student_vars(data):
     data["students_sped"] = data["students_sped_num"] / data["students_num"]
     # data["students_cte"] = data["students_cte_num"] / data["students_num"]
 
-    data["days"] = data["perf_studays"] / data["students_num"]
+    # data["days"] = data["perf_studays"] / data["students_num"]
 
     data["students_teacher_ratio"] = data.students_num / data.teachers_num
 
