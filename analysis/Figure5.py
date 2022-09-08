@@ -14,16 +14,16 @@ from dofis.analysis.library import analysis
 
 
 uncertified_agg = pd.read_excel(
-    start.TABLE_PATH + "results_uncertified_ag_raw_average.xlsx"
+    start.TABLE_PATH + "results_uncertified_ag_tot_raw_average.xlsx"
 )
 out_of_field_agg = pd.read_excel(
-    start.TABLE_PATH + "results_out_of_field_ag_raw_average.xlsx"
+    start.TABLE_PATH + "results_out_of_field_ag_tot_raw_average.xlsx"
 )
 class_size_agg = pd.read_excel(
-    start.TABLE_PATH + "results_class_size_elem_ag_raw_average.xlsx"
+    start.TABLE_PATH + "results_class_size_elem_ag_tot_raw_average.xlsx"
 )
 ratio_agg = pd.read_excel(
-    start.TABLE_PATH + "results_stu_teach_ratio_ag_raw_average.xlsx"
+    start.TABLE_PATH + "results_stu_teach_ratio_ag_tot_raw_average.xlsx"
 )
 data = pd.read_csv(start.DATA_PATH + "clean/r_data.csv")
 n = data.district.nunique()
@@ -86,7 +86,10 @@ for pos, y, err, color in zip(cert_df.year, cert_df["coef"], cert_df["errsig"], 
     ax1.errorbar(pos, y, err, lw=2, capsize=4, capthick=4, color=color)
 
 ax1.axhline(y=0, linestyle="--", color="black", linewidth=1)
-ax1.xaxis.set_ticks_position("none")
+ax1.set_xticks(cert_df.year)
+
+# ax1.xaxis.set_ticks_position("none")
+# ax1.set_xticklabels(cert_df.year)
 # _ = ax1.set_xticklabels(
 #     ["Pre5", "Pre4", "Pre3", "Pre2", "Pre1", "Post1", "Post2", "Post3"],
 #     rotation=0,
@@ -110,7 +113,9 @@ for pos, y, err, color in zip(
     ax2.errorbar(pos, y, err, lw=2, capsize=4, capthick=4, color=color)
 
 ax2.axhline(y=0, linestyle="--", color="black", linewidth=1)
-ax2.xaxis.set_ticks_position("none")
+ax2.set_xticks(field_df.year)
+
+# ax2.xaxis.set_ticks_position("none")
 # _ = ax2.set_xticklabels(
 #     ["Pre5", "Pre4", "Pre3", "Pre2", "Pre1", "Post1", "Post2", "Post3"],
 #     rotation=0,
@@ -132,6 +137,7 @@ for pos, y, err, color in zip(
 ):
 
     ax3.errorbar(pos, y, err, lw=2, capsize=4, capthick=4, color=color)
+ax3.set_xticks(classes_df.year)
 
 ax3.axhline(y=0, linestyle="--", color="black", linewidth=1)
 ax3.xaxis.set_ticks_position("none")
@@ -156,7 +162,7 @@ for pos, y, err, color in zip(
 ):
 
     ax4.errorbar(pos, y, err, lw=2, capsize=4, capthick=4, color=color)
-
+ax4.set_xticks(ratio_df.year)
 ax4.axhline(y=0, linestyle="--", color="black", linewidth=1)
 ax4.xaxis.set_ticks_position("none")
 # _ = ax4.set_xticklabels(
