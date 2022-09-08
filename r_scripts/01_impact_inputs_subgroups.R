@@ -52,4 +52,8 @@ run_and_export_main(df = avescore, outcome = "teacher_out_of_field_fte", disag_f
 run_and_export_main(df = avescore, outcome = "class_size_elem", disag_file = "results_class_size_elem_disag_raw_avescore.xlsx", ag_file = "results_class_size_elem_ag_raw_avescore.xlsx")
 run_and_export_main(df = avescore, outcome = "stu_teach_ratio", disag_file = "results_stu_teach_ratio_disag_raw_avescore.xlsx", ag_file = "results_stu_teach_ratio_ag_raw_avescore.xlsx")
 
+# Days
+df <- read.csv(paste(data_path, "clean/r_data_days.csv", sep=""))
+df <- df[df$year < 2021, ]
 
+run_and_export_main(df = df, outcome = "days", disag_file = "results_days_disag_raw_average.xlsx", ag_file = "results_days_ag_raw_average.xlsx")
