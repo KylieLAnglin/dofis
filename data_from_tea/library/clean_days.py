@@ -16,7 +16,7 @@ def clean_cdays(year):
         "yr1718": datetime.date(year=2017, month=8, day=20),
         "yr1819": datetime.date(year=2018, month=8, day=19),
         "yr1920": datetime.date(year=2019, month=8, day=18),
-        "yr2021": datetime.date(year=2016, month=8, day=16),
+        "yr2021": datetime.date(year=2020, month=8, day=15),
     }
 
     yr = year[4:6]
@@ -25,13 +25,16 @@ def clean_cdays(year):
     CALENDAR_LOCATION = start.DATA_PATH + "days/PRU_6691_CALENDAR_" + yr + ".csv"
 
     tracks = pd.read_csv(TRACKS_LOCATION)
+    tracks["students"] = np.where(tracks.STUDENTS < 0, np.nan, tracks.STUDENTS)
 
     tracks = pd.DataFrame(
-        tracks[["CAMPUS", "TRACK", "STUDENTS"]]
+        tracks[["CAMPUS", "TRACK", "students"]]
         .groupby(["CAMPUS", "TRACK"])
-        .agg({"STUDENTS": "mean"})
+        .agg({"students": "mean"})
     )
-    tracks = tracks.reset_index().sort_values(by=["CAMPUS", "TRACK", "STUDENTS"])
+    tracks = tracks.reset_index().sort_values(
+        by=["CAMPUS", "TRACK", "students"], ascending=False
+    )
     tracks = tracks.drop_duplicates(subset=["CAMPUS", "TRACK"], keep="first")
 
     calendar = pd.read_csv(CALENDAR_LOCATION)
@@ -68,9 +71,13 @@ def clean_cdays(year):
     # Total minutes
 
     total_school_minutes = pd.DataFrame(
-        df[["CAMPUS", "SCHOOL_DAY_OPR_MINUTES"]]
-        .groupby(["CAMPUS"])
-        .agg({"SCHOOL_DAY_OPR_MINUTES": "sum"})
+        df[["CAMPUS", "CALENDAR_DT", "SCHOOL_DAY_OPR_MINUTES"]]
+        .groupby(["CAMPUS", "CALENDAR_DT"])
+        .agg({"SCHOOL_DAY_OPR_MINUTES": "max"})
+    )
+
+    total_school_minutes = pd.DataFrame(
+        total_school_minutes.groupby(["CAMPUS"]).agg({"SCHOOL_DAY_OPR_MINUTES": "sum"})
     )
 
     total_school_minutes["SCHOOL_DAY_OPR_MINUTES"] = np.where(
@@ -115,6 +122,7 @@ def clean_cdays(year):
     ]
 
     final_df["days"] = np.where(final_df.days <= 0, np.nan, final_df.days)
+    final_df["minutes"] = np.where(final_df.minutes <= 0, np.nan, final_df.minutes)
 
     final_df["days_drop_outliers"] = np.where(
         final_df.days < 150, np.nan, final_df.days
