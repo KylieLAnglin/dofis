@@ -72,7 +72,7 @@ data_district = clean_final.gen_exempt_categories(data_district)
 data_district = clean_final.gen_student_vars(data_district)
 data_district = clean_final.gen_district_vars(data_district)
 data_district = clean_final.gen_teacher_vars(data_district)
-data_district = clean_final.gen_score_vars(data_district)
+data_district = clean_final.gen_score_vars(data_district, level="district")
 data_district = clean_final.gen_gdid_vars(data_district)
 data_district = clean_final.gen_event_vars(data_district)
 
@@ -105,3 +105,5 @@ data_district["group"] = clean_final.gen_analytic_group(data=data_district)
 data_district.to_csv(
     os.path.join(start.DATA_PATH, "clean", "master_data_district.csv"), sep=","
 )
+
+# %%

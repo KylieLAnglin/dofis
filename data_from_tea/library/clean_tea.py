@@ -190,33 +190,76 @@ def clean_cscores(year, subject):
             "r_all_d": "r_" + subject + "_numtakers",
             "m_all_rs": "m_" + subject + "_avescore",
             "m_all_d": "m_" + subject + "_numtakers",
+            "r_ethh_rs": "r_" + subject + "_hisp_avescore",
+            "r_ethb_rs": "r_" + subject + "_black_avescore",
+            "r_ethw_rs": "r_" + subject + "_white_avescore",
+            "r_ecoy_rs": "r_" + subject + "_frpl_avescore",
+            "r_spey_rs": "r_" + subject + "_sped_avescore",
+            "m_ethh_rs": "m_" + subject + "_hisp_avescore",
+            "m_ethb_rs": "m_" + subject + "_black_avescore",
+            "m_ethw_rs": "m_" + subject + "_white_avescore",
+            "m_ecoy_rs": "m_" + subject + "_frpl_avescore",
+            "m_spey_rs": "m_" + subject + "_sped_avescore",
         }
+
+        # r_ethh_rs - hispanic scores
+    # r_ethb_rs - black scores
+    # r_ethw_rs - white scores
+    # r_ecoy_rs - frpl students
+    # r_spey_rs - sped students
+
     if subject == "8th":
         cscores_tokeep["s_all_rs"] = "s_" + subject + "_avescore"
         cscores_tokeep["s_all_d"] = "s_" + subject + "_numtakers"
+        cscores_tokeep["s_ethh_rs"] = "s_" + subject + "_hisp_avescore"
+        cscores_tokeep["s_ethb_rs"] = "s_" + subject + "_black_avescore"
+        cscores_tokeep["s_ecoy_rs"] = "s_" + subject + "_frpl_avescore"
+        cscores_tokeep["s_spey_rs"] = "s_" + subject + "_sped_avescore"
+        cscores_tokeep["s_ethw_rs"] = "s_" + subject + "_white_avescore"
+
     if subject == "Algebra":
         cscores_tokeep = {
             "CAMPUS": "campus",
             "a1_all_rs": "alg_avescore",
             "a1_all_d": "alg_numtakers",
+            "a1_ethh_rs": "alg_hisp_avescore",
+            "a1_ethb_rs": "alg_black_avescore",
+            "a1_ethw_rs": "alg_white_avescore",
+            "a1_ecoy_rs": "alg_frpl_avescore",
+            "a1_spey_rs": "alg_sped_avescore",
         }
         if year == "yr1819" or year == "yr2021":
             cscores_tokeep = {
                 "campus": "campus",
                 "a1_all_rs": "alg_avescore",
                 "a1_all_d": "alg_numtakers",
+                "a1_ethh_rs": "alg_hisp_avescore",
+                "a1_ethb_rs": "alg_black_avescore",
+                "a1_ethw_rs": "alg_white_avescore",
+                "a1_ecoy_rs": "alg_frpl_avescore",
+                "a1_spey_rs": "alg_sped_avescore",
             }
     if subject == "Biology":
         cscores_tokeep = {
             "CAMPUS": "campus",
             "bi_all_rs": "bio_avescore",
             "bi_all_d": "bio_numtakers",
+            "bi_ethh_rs": "bio_hisp_avescore",
+            "bi_ethb_rs": "bio_black_avescore",
+            "bi_ethw_rs": "bio_white_avescore",
+            "bi_ecoy_rs": "bio_frpl_avescore",
+            "bi_spey_rs": "bio_sped_avescore",
         }
         if year == "yr1819" or year == "yr2021":
             cscores_tokeep = {
                 "campus": "campus",
                 "bi_all_rs": "bio_avescore",
                 "bi_all_d": "bio_numtakers",
+                "bi_ethh_rs": "bio_hisp_avescore",
+                "bi_ethb_rs": "bio_black_avescore",
+                "bi_ethw_rs": "bio_white_avescore",
+                "bi_ecoy_rs": "bio_frpl_avescore",
+                "bi_spey_rs": "bio_sped_avescore",
             }
 
     if subject == "EnglishI":
@@ -233,35 +276,66 @@ def clean_cscores(year, subject):
                 "campus": "campus",
                 "e1_all_rs": "eng1_avescore",
                 "e1_all_d": "eng1_numtakers",
+                "e1_ethh_rs": "eng1_hisp_avescore",
+                "e1_ethb_rs": "eng1_black_avescore",
+                "e1_ethw_rs": "eng1_white_avescore",
+                "e1_ecoy_rs": "eng1_frpl_avescore",
+                "e1_spey_rs": "eng1_sped_avescore",
             }
 
     if subject == "EnglishII":
         if year == "yr1112" or year == "yr1213":
             cscores["e2_all_rs"] = cscores["r2_all_rs"] + cscores2["w2_all_rs"]
+            cscores["e2_ethh_rs"] = cscores["r2_ethh_rs"] + cscores2["w2_ethh_rs"]
+            cscores["e2_ethb_rs"] = cscores["r2_ethb_rs"] + cscores2["w2_ethb_rs"]
+            cscores["e2_ethw_rs"] = cscores["r2_ethw_rs"] + cscores2["w2_ethw_rs"]
+            cscores["e2_ecoy_rs"] = cscores["r2_ecoy_rs"] + cscores2["w2_ecoy_rs"]
+            cscores["e2_spey_rs"] = cscores["r2_spey_rs"] + cscores2["w2_spey_rs"]
+
             cscores["e2_all_d"] = cscores["r2_all_d"]
 
         cscores_tokeep = {
             "CAMPUS": "campus",
             "e2_all_rs": "eng2_avescore",
             "e2_all_d": "eng2_numtakers",
+            "e2_ethh_rs": "eng2_hisp_avescore",
+            "e2_ethb_rs": "eng2_black_avescore",
+            "e2_ethw_rs": "eng2_white_avescore",
+            "e2_ecoy_rs": "eng2_frpl_avescore",
+            "e2_spey_rs": "eng2_sped_avescore",
         }
         if year == "yr1819" or year == "yr2021":
             cscores_tokeep = {
                 "campus": "campus",
                 "e2_all_rs": "eng2_avescore",
                 "e2_all_d": "eng2_numtakers",
+                "e2_ethh_rs": "eng2_hisp_avescore",
+                "e2_ethb_rs": "eng2_black_avescore",
+                "e2_ethw_rs": "eng2_white_avescore",
+                "e2_ecoy_rs": "eng2_frpl_avescore",
+                "e2_spey_rs": "eng2_sped_avescore",
             }
     if subject == "USHistory":
         cscores_tokeep = {
             "CAMPUS": "campus",
             "us_all_rs": "us_avescore",
             "us_all_d": "us_numtakers",
+            "us_ethh_rs": "us_hisp_avescore",
+            "us_ethb_rs": "us_black_avescore",
+            "us_ethw_rs": "us_white_avescore",
+            "us_ecoy_rs": "us_frpl_avescore",
+            "us_spey_rs": "us_sped_avescore",
         }
         if year == "yr1819" or year == "yr2021":
             cscores_tokeep = {
                 "campus": "campus",
                 "us_all_rs": "us_avescore",
                 "us_all_d": "us_numtakers",
+                "us_ethh_rs": "us_hisp_avescore",
+                "us_ethb_rs": "us_black_avescore",
+                "us_ethw_rs": "us_white_avescore",
+                "us_ecoy_rs": "us_frpl_avescore",
+                "us_spey_rs": "us_sped_avescore",
             }
 
     cscores = filter_and_rename_cols(cscores, cscores_tokeep)
@@ -908,121 +982,121 @@ def clean_scores(year, subject):
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
             "m_all_rs": "m_" + subject + "_avescore",
-            "r_ethh_rs": "r_" + subject + "avescore_hisp",
-            "r_ethb_rs": "r_" + subject + "avescore_black",
-            "r_ecoy_rs": "r_" + subject + "avescore_frpl",
-            "r_spey_rs": "r_" + subject + "avscore_sped",
-            "m_ethh_rs": "m_" + subject + "avescore_hisp",
-            "m_ethb_rs": "m_" + subject + "avescore_black",
-            "m_ecoy_rs": "m_" + subject + "avescore_frpl",
-            "m_spey_rs": "m_" + subject + "avscore_sped",
+            "r_ethh_rs": "r_" + subject + "_hisp_avescore",
+            "r_ethb_rs": "r_" + subject + "_black_avescore",
+            "r_ecoy_rs": "r_" + subject + "_frpl_avescore",
+            "r_spey_rs": "r_" + subject + "_sped_avescore",
+            "m_ethh_rs": "m_" + subject + "_hisp_avescore",
+            "m_ethb_rs": "m_" + subject + "_black_avescore",
+            "m_ecoy_rs": "m_" + subject + "_frpl_avescore",
+            "m_spey_rs": "m_" + subject + "_sped_avescore",
         },
         "4th": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
             "m_all_rs": "m_" + subject + "_avescore",
-            "r_ethh_rs": "r_" + subject + "avescore_hisp",
-            "r_ethb_rs": "r_" + subject + "avescore_black",
-            "r_ecoy_rs": "r_" + subject + "avescore_frpl",
-            "r_spey_rs": "r_" + subject + "avscore_sped",
-            "m_ethh_rs": "m_" + subject + "avescore_hisp",
-            "m_ethb_rs": "m_" + subject + "avescore_black",
-            "m_ecoy_rs": "m_" + subject + "avescore_frpl",
-            "m_spey_rs": "m_" + subject + "avscore_sped",
+            "r_ethh_rs": "r_" + subject + "_hisp_avescore",
+            "r_ethb_rs": "r_" + subject + "_black_avescore",
+            "r_ecoy_rs": "r_" + subject + "_frpl_avescore",
+            "r_spey_rs": "r_" + subject + "_sped_avescore",
+            "m_ethh_rs": "m_" + subject + "_hisp_avescore",
+            "m_ethb_rs": "m_" + subject + "_black_avescore",
+            "m_ecoy_rs": "m_" + subject + "_frpl_avescore",
+            "m_spey_rs": "m_" + subject + "_sped_avescore",
         },
         "5th": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
             "m_all_rs": "m_" + subject + "_avescore",
             "s_all_rs": "s_" + subject + "_avescore",
-            "r_ethh_rs": "r_" + subject + "avescore_hisp",
-            "r_ethb_rs": "r_" + subject + "avescore_black",
-            "r_ecoy_rs": "r_" + subject + "avescore_frpl",
-            "r_spey_rs": "r_" + subject + "avscore_sped",
-            "m_ethh_rs": "m_" + subject + "avescore_hisp",
-            "m_ethb_rs": "m_" + subject + "avescore_black",
-            "m_ecoy_rs": "m_" + subject + "avescore_frpl",
-            "m_spey_rs": "m_" + subject + "avscore_sped",
+            "r_ethh_rs": "r_" + subject + "_hisp_avescore",
+            "r_ethb_rs": "r_" + subject + "_black_avescore",
+            "r_ecoy_rs": "r_" + subject + "_avescore_frpl",
+            "r_spey_rs": "r_" + subject + "_sped_avescore",
+            "m_ethh_rs": "m_" + subject + "_hisp_avescore",
+            "m_ethb_rs": "m_" + subject + "_black_avescore",
+            "m_ecoy_rs": "m_" + subject + "_frpl_avescore",
+            "m_spey_rs": "m_" + subject + "_sped_avescore",
         },
         "6th": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
             "m_all_rs": "m_" + subject + "_avescore",
-            "r_ethh_rs": "r_" + subject + "avescore_hisp",
-            "r_ethb_rs": "r_" + subject + "avescore_black",
-            "r_ecoy_rs": "r_" + subject + "avescore_frpl",
-            "r_spey_rs": "r_" + subject + "avscore_sped",
-            "m_ethh_rs": "m_" + subject + "avescore_hisp",
-            "m_ethb_rs": "m_" + subject + "avescore_black",
-            "m_ecoy_rs": "m_" + subject + "avescore_frpl",
-            "m_spey_rs": "m_" + subject + "avscore_sped",
+            "r_ethh_rs": "r_" + subject + "_hisp_avescore",
+            "r_ethb_rs": "r_" + subject + "_black_avescore",
+            "r_ecoy_rs": "r_" + subject + "_avescore_frpl",
+            "r_spey_rs": "r_" + subject + "_sped_avescore",
+            "m_ethh_rs": "m_" + subject + "_hisp_avescore",
+            "m_ethb_rs": "m_" + subject + "_black_avescore",
+            "m_ecoy_rs": "m_" + subject + "_frpl_avescore",
+            "m_spey_rs": "m_" + subject + "_sped_avescore",
         },
         "7th": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
             "m_all_rs": "m_" + subject + "_avescore",
-            "r_ethh_rs": "r_" + subject + "avescore_hisp",
-            "r_ethb_rs": "r_" + subject + "avescore_black",
-            "r_ecoy_rs": "r_" + subject + "avescore_frpl",
-            "r_spey_rs": "r_" + subject + "avscore_sped",
-            "m_ethh_rs": "m_" + subject + "avescore_hisp",
-            "m_ethb_rs": "m_" + subject + "avescore_black",
-            "m_ecoy_rs": "m_" + subject + "avescore_frpl",
-            "m_spey_rs": "m_" + subject + "avscore_sped",
+            "r_ethh_rs": "r_" + subject + "_hisp_avescore",
+            "r_ethb_rs": "r_" + subject + "_black_avescore",
+            "r_ecoy_rs": "r_" + subject + "_avescore_frpl",
+            "r_spey_rs": "r_" + subject + "_sped_avescore",
+            "m_ethh_rs": "m_" + subject + "_hisp_avescore",
+            "m_ethb_rs": "m_" + subject + "_black_avescore",
+            "m_ecoy_rs": "m_" + subject + "_frpl_avescore",
+            "m_spey_rs": "m_" + subject + "_sped_avescore",
         },
         "8th": {
             "DISTRICT": "district",
             "r_all_rs": "r_" + subject + "_avescore",
             "m_all_rs": "m_" + subject + "_avescore",
             "s_all_rs": "s_" + subject + "_avescore",
-            "r_ethh_rs": "r_" + subject + "avescore_hisp",
-            "r_ethb_rs": "r_" + subject + "avescore_black",
-            "r_ecoy_rs": "r_" + subject + "avescore_frpl",
-            "r_spey_rs": "r_" + subject + "avscore_sped",
-            "m_ethh_rs": "m_" + subject + "avescore_hisp",
-            "m_ethb_rs": "m_" + subject + "avescore_black",
-            "m_ecoy_rs": "m_" + subject + "avescore_frpl",
-            "m_spey_rs": "m_" + subject + "avscore_sped",
+            "r_ethh_rs": "r_" + subject + "_hisp_avescore",
+            "r_ethb_rs": "r_" + subject + "_black_avescore",
+            "r_ecoy_rs": "r_" + subject + "_frpl_avescore",
+            "r_spey_rs": "r_" + subject + "_sped_avescore",
+            "s_ethh_rs": "s_" + subject + "_hisp_avescore",
+            "s_ethb_rs": "s_" + subject + "_black_avescore",
+            "s_ecoy_rs": "s_" + subject + "_frpl_avescore",
+            "s_spey_rs": "s_" + subject + "_sped_avescore",
         },
         "Algebra": {
             "DISTRICT": "district",
             "a1_all_rs": "alg_avescore",
-            "a1_ethh_rs": "alg_avescore_hisp",
-            "a1_ethb_rs": "alg_avescore_black",
+            "a1_ethh_rs": "alg_hisp_avescore",
+            "a1_ethb_rs": "alg_black_avescore",
             "a1_ecoy_rs": "alg_avescore_frpl",
-            "a1_spey_rs": "alg_avescore_sped",
+            "a1_spey_rs": "alg_sped_avescore",
         },
         "Biology": {
             "DISTRICT": "district",
             "bi_all_rs": "bio_avescore",
-            "bi_ethh_rs": "bio_avescore_hisp",
-            "bi_ethb_rs": "bio_avescore_black",
+            "bi_ethh_rs": "bio_hisp_avescore",
+            "bi_ethb_rs": "bio_black_avescore",
             "bi_ecoy_rs": "bio_avescore_frpl",
-            "bi_spey_rs": "bio_avescore_sped",
+            "bi_spey_rs": "bio_sped_avescore",
         },
         "EnglishI": {
             "DISTRICT": "district",
             "e1_all_rs": "eng1_avescore",
-            "e1_ethh_rs": "eng1_avescore_hisp",
-            "e1_ethb_rs": "eng1_avescore_black",
+            "e1_ethh_rs": "eng1_hisp_avescore",
+            "e1_ethb_rs": "eng1_black_avescore",
             "e1_ecoy_rs": "eng1_avescore_frpl",
-            "e1_spey_rs": "eng1_avescore_sped",
+            "e1_spey_rs": "eng1_sped_avescore",
         },
         "EnglishII": {
             "DISTRICT": "district",
             "e2_all_rs": "eng2_avescore",
-            "e2_ethh_rs": "eng2_avescore_hisp",
-            "e2_ethb_rs": "eng2_avescore_black",
+            "e2_ethh_rs": "eng2_hisp_avescore",
+            "e2_ethb_rs": "eng2_black_avescore",
             "e2_ecoy_rs": "eng2_avescore_frpl",
-            "e2_spey_rs": "eng2_avescore_sped",
+            "e2_spey_rs": "eng2_sped_avescore",
         },
         "USHistory": {
             "DISTRICT": "district",
             "us_all_rs": "us_avescore",
-            "us_ethh_rs": "us_avescore_hisp",
-            "us_ethb_rs": "us_avescore_black",
+            "us_ethh_rs": "us_hisp_avescore",
+            "us_ethb_rs": "us_black_avescore",
             "us_ecoy_rs": "us_avescore_frpl",
-            "us_spey_rs": "us_avescore_sped",
+            "us_spey_rs": "us_sped_avescore",
         },
     }
 
