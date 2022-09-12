@@ -25,6 +25,7 @@ plt.figure(figsize=(480 / my_dpi, 480 / my_dpi), dpi=my_dpi)
 # %%
 
 data = pd.read_csv(start.DATA_PATH + "clean/master_data_school.csv")
+data = data[data.year >= 2016]
 
 # %% Visual Impact by Subject
 
@@ -42,10 +43,10 @@ def create_group_df(df, outcome):
 # %%
 
 title_labels = {
-    "teacher_uncertified": "Proportion Uncertified Teachers",
-    "teacher_out_of_field_fte": "Proportion Out-of-Field Teachers",
-    "class_size_elem": "Average Elementary Class Size",
-    "stu_teach_ratio": "Student-Teacher Ratio",
+    "teachers_num": "Number of Teachers",
+    "teachers_new_num": "Number of New Teachers",
+    "teachers_exp_ave": "Average Teacher Experience",
+    "teachers_turnover_ratio_d": "Percent Teachers Turning Over",
 }
 
 
@@ -97,6 +98,6 @@ for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
 
 ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5))
 
-fig.savefig(start.TABLE_PATH + "trends_by_subgroup.pdf", bbox_inches="tight")
+fig.savefig(start.TABLE_PATH + "trends_by_subgroup2.pdf", bbox_inches="tight")
 
 # %%

@@ -13,7 +13,6 @@ from dofis.analysis.library import analysis
 
 # %%
 subgroups = ["average", "rural", "hispanic", "black", "frpl"]
-# subgroups = ["average", "rural", "urban", "black", "hispanic", "frpl", "avescore"]
 outcomes = [
     "teachers_num",
     "teachers_new_num",
@@ -28,31 +27,24 @@ for outcome in outcomes:
         results[outcome][subgroup] = {}
 
 # %%
-# graph_parameters = {"teacher_uncertified": {"import_file": "results_uncertified_ag_raw.xlsx"}}
 graph_parameters = {
     "average": {"x_ticks_location": -0.3, "color": "black", "label": "Average Impact"},
     "rural": {"x_ticks_location": -0.2, "color": "blue", "label": "Rural Schools"},
-    # "urban": {"x_ticks_location": 0.0, "color": "purple", "label": "Urban Schools"},
     "black": {
         "x_ticks_location": -0.1,
         "color": "lightblue",
-        "label": "Q4 % Black Students",
+        "label": "Q4 Schools by % Black Students",
     },
     "hispanic": {
         "x_ticks_location": 0.10,
         "color": "green",
-        "label": "Q4 % Hispanic Students",
+        "label": "Q4 Schools by % Hispanic Students",
     },
     "frpl": {
         "x_ticks_location": 0.2,
         "color": "teal",
-        "label": "Q4 % FRPL Students",
+        "label": "Q4 Schools by % FRPL Students",
     },
-    # "avescore": {
-    #     "x_ticks_location": -0.4,
-    #     "color": "blue",
-    #     "label": "Q1 Average STAAR Scores",
-    # },
     "teachers_num": {
         "title": "Number of Teachers",
         "ylabel": "Teachers",
@@ -146,13 +138,6 @@ ax2 = fig.add_subplot(222)
 ax3 = fig.add_subplot(223)
 ax4 = fig.add_subplot(224)
 
-# fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
-
-
-# colors = ["gray", "gray", "gray", "gray", "black", "black", "black", "black"]
-
-outcome = "teacher_uncertified"
-subgroup = "average"
 
 # Uncertified
 for outcome, ax in zip(outcomes, [ax1, ax2, ax3, ax4]):
