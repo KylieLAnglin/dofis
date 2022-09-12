@@ -16,7 +16,7 @@ run_and_export_main <- function(df, outcome, disag_file, ag_file){
                        data = df,
                        control_group = c("notyettreated"), 
                        est_method = "reg",
-                       allow_unbalanced_panel = FALSE,
+                       allow_unbalanced_panel = TRUE,
                        clustervars = c("district"),
                        print_details = TRUE,
   )

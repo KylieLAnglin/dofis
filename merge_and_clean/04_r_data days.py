@@ -98,9 +98,13 @@ def simple_did_df(
     did_df["treat_post"] = did_df.treat * did_df.post
 
     return did_df
+
+
 # %%
 import statsmodels.formula.api as smf
 import statsmodels.api as sm
+
+
 def did(
     outcome: str,
     group_var: str,
@@ -134,9 +138,17 @@ def did(
         print(res.summary())
     return res
 
+
 # %%
-did(outcome = "minutes", group_var = "group", group = 2018, time_var="year", time=2018, cluster_var="district", df = r_data)
+did(
+    outcome="minutes",
+    group_var="group",
+    group=2018,
+    time_var="year",
+    time=2018,
+    cluster_var="district",
+    df=r_data,
+)
+
+
 # %%
-
-
-

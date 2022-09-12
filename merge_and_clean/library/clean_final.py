@@ -262,42 +262,66 @@ def gen_certification_vars(data):
     return data
 
 
-aggregate_variables = {
-    "elem_math": ["m_3rd", "m_4th", "m_5th"],
-    "elem_reading": ["r_3rd", "r_4th", "r_5th"],
-    "elem": [
-        "m_3rd",
-        "m_4th",
-        "m_5th",
-        "r_3rd",
-        "r_4th",
-        "r_5th",
-    ],
-    "middle_math": ["m_6th", "m_7th", "m_8th"],
-    "middle_reading": ["r_6th", "r_7th", "r_8th"],
-    "middle_science": ["s_8th"],
-    "algebra": ["alg"],
-    "biology": ["bio"],
-    "eng1": ["eng1"],
-    "math": [
-        "m_3rd",
-        "m_4th",
-        "m_5th",
-        "m_6th",
-        "m_7th",
-        "m_8th",
-        "alg",
-    ],
-    "reading": [
-        "r_3rd",
-        "r_4th",
-        "r_5th",
-        "r_6th",
-        "r_7th",
-        "r_8th",
-        "eng1",
-    ],
-    "avescores": [
+def gen_score_vars(data, level="school"):
+
+    aggregate_variables = {
+        "elem_math": ["m_3rd", "m_4th", "m_5th"],
+        "elem_reading": ["r_3rd", "r_4th", "r_5th"],
+        "elem": [
+            "m_3rd",
+            "m_4th",
+            "m_5th",
+            "r_3rd",
+            "r_4th",
+            "r_5th",
+        ],
+        "middle_math": ["m_6th", "m_7th", "m_8th"],
+        "middle_reading": ["r_6th", "r_7th", "r_8th"],
+        "middle_science": ["s_8th"],
+        "algebra": ["alg"],
+        "biology": ["bio"],
+        "eng1": ["eng1"],
+        "math": [
+            "m_3rd",
+            "m_4th",
+            "m_5th",
+            "m_6th",
+            "m_7th",
+            "m_8th",
+            "alg",
+        ],
+        "reading": [
+            "r_3rd",
+            "r_4th",
+            "r_5th",
+            "r_6th",
+            "r_7th",
+            "r_8th",
+            "eng1",
+        ],
+        "avescores": [
+            "r_3rd",
+            "m_3rd",
+            "r_4th",
+            "m_4th",
+            "r_5th",
+            "m_5th",
+            "r_6th",
+            "m_6th",
+            "r_7th",
+            "m_7th",
+            "r_8th",
+            "m_8th",
+            "s_8th",
+            "alg",
+            "bio",
+            "eng1",
+            "eng2",
+            "us",
+        ],
+    }
+
+    subjects = [
         "r_3rd",
         "m_3rd",
         "r_4th",
@@ -316,15 +340,37 @@ aggregate_variables = {
         "eng1",
         "eng2",
         "us",
-    ],
-}
+    ]
 
+    if level == "school":
+        for subj in subjects:
+            for subgroup in ["hisp", "black", "white", "frpl", "sped"]:
+                aggregate_variables["avescores"].append(subj + "_" + subgroup)
 
-def gen_score_vars(data):
+        for subgroup in ["hisp", "black", "white", "frpl", "sped"]:
+            agg_var = "algebra_" + subgroup
+            aggregate_variables[agg_var] = ["alg_" + subgroup]
+            agg_var = "biology_" + subgroup
+            aggregate_variables[agg_var] = ["bio_" + subgroup]
+            agg_var = "eng1_" + subgroup
+            aggregate_variables[agg_var] = ["eng1_" + subgroup]
+
+            agg_var = "math_" + subgroup
+            temp_list = []
+            for subj in aggregate_variables["math"]:
+                temp_list.append(subj + "_" + subgroup)
+            aggregate_variables[agg_var] = temp_list
+
+            agg_var = "reading_" + subgroup
+            temp_list = []
+            for subj in aggregate_variables["reading"]:
+                temp_list.append(subj + "_" + subgroup)
+            aggregate_variables[agg_var] = temp_list
 
     for col in aggregate_variables["avescores"]:
         old_var = col + "_avescore"
         new_var = col + "_std"
+        print(new_var)
         data[new_var] = standardize_scores_within_year(
             data=data,
             year_column="year",
