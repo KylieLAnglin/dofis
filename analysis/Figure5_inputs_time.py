@@ -13,11 +13,7 @@ from dofis.analysis.library import analysis
 
 # %%
 subgroups = ["average", "rural", "hispanic", "black", "frpl"]
-outcomes = [
-    "days",
-    "days_before_third_week",
-    "minutes",
-]
+outcomes = ["days", "days_before_third_week", "minutes_per_day", "minutes"]
 
 results = {}
 for outcome in outcomes:
@@ -57,7 +53,12 @@ graph_parameters = {
     "minutes": {
         "title": "Number of Instructional Minutes",
         "ylabel": "Minutes",
-        "ylim": (-10000, 10000),
+        "ylim": (-5000, 5000),
+    },
+    "minutes_per_day": {
+        "title": "Number of Instructional Minutes Per Day",
+        "ylabel": "Minutes",
+        "ylim": (-60, 60),
     },
 }
 
@@ -108,6 +109,14 @@ for subgroup in subgroups:
         results["minutes"][subgroup]["df"]
     )
 
+    results["minutes_per_day"][subgroup]["df"] = pd.read_excel(
+        start.TABLE_PATH + "results_minutes_per_day_ag_raw_" + subgroup + ".xlsx"
+    )
+
+    results["minutes_per_day"][subgroup]["coef_df"] = coef_df(
+        results["minutes_per_day"][subgroup]["df"]
+    )
+
 
 # %%
 
@@ -116,6 +125,7 @@ fig = plt.figure(figsize=(15, 10))
 ax1 = fig.add_subplot(221)
 ax2 = fig.add_subplot(222)
 ax3 = fig.add_subplot(223)
+ax4 = fig.add_subplot(224)
 
 
 # Uncertified

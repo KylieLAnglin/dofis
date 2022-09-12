@@ -96,17 +96,48 @@ def clean_cdays(year):
         total_school_minutes.minutes_less_than_minimum,
     )
 
+    # Average length school day
+
+    average_school_minutes = pd.DataFrame(
+        df[["CAMPUS", "CALENDAR_DT", "SCHOOL_DAY_OPR_MINUTES"]]
+        .groupby(["CAMPUS", "CALENDAR_DT"])
+        .agg({"SCHOOL_DAY_OPR_MINUTES": "max"})
+    )
+
+    average_school_minutes = pd.DataFrame(
+        average_school_minutes.groupby(["CAMPUS"]).agg(
+            {"SCHOOL_DAY_OPR_MINUTES": "mean"}
+        )
+    )
+
+    average_school_minutes["SCHOOL_DAY_OPR_MINUTES"] = np.where(
+        average_school_minutes.SCHOOL_DAY_OPR_MINUTES <= 0,
+        np.nan,
+        average_school_minutes.SCHOOL_DAY_OPR_MINUTES,
+    )
+
+    average_school_minutes = average_school_minutes.rename(
+        columns={"SCHOOL_DAY_OPR_MINUTES": "SCHOOL_DAY_OPR_MINUTES_AVERAGE"}
+    )
+    average_school_minutes = average_school_minutes.reset_index()
+
     #
     final_df = calendar_start_date.merge(
         total_school_days, left_on="CAMPUS", right_on="CAMPUS"
     )
     final_df = final_df.merge(total_school_minutes, left_on="CAMPUS", right_on="CAMPUS")
+    final_df = final_df.merge(
+        average_school_minutes[["CAMPUS", "SCHOOL_DAY_OPR_MINUTES_AVERAGE"]],
+        left_on="CAMPUS",
+        right_on="CAMPUS",
+    )
 
     final_df = final_df.rename(
         columns={
             "CAMPUS": "campus",
             "DAYS_TAUGHT": "days",
             "SCHOOL_DAY_OPR_MINUTES": "minutes",
+            "SCHOOL_DAY_OPR_MINUTES_AVERAGE": "minutes_per_day",
         }
     )
 
@@ -117,12 +148,16 @@ def clean_cdays(year):
             "days_before_third_week",
             "days",
             "minutes",
+            "minutes_per_day",
             "minutes_less_than_minimum",
         ]
     ]
 
     final_df["days"] = np.where(final_df.days <= 0, np.nan, final_df.days)
     final_df["minutes"] = np.where(final_df.minutes <= 0, np.nan, final_df.minutes)
+    final_df["minutes_per_day"] = np.where(
+        final_df.minutes_per_day <= 0, np.nan, final_df.minutes_per_day
+    )
 
     final_df["days_drop_outliers"] = np.where(
         final_df.days < 150, np.nan, final_df.days
