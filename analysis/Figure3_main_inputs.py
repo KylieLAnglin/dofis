@@ -36,17 +36,17 @@ graph_parameters = {
     "black": {
         "x_ticks_location": -0.1,
         "color": "lightblue",
-        "label": "Q4 % Black Students",
+        "label": "Q4 Schools by % Black Students",
     },
     "hispanic": {
         "x_ticks_location": 0.10,
         "color": "green",
-        "label": "Q4 % Hispanic Students",
+        "label": "Q4 Schools by % Hispanic Students",
     },
     "frpl": {
         "x_ticks_location": 0.2,
         "color": "teal",
-        "label": "Q4 % FRPL Students",
+        "label": "Q4 Schools by % FRPL Students",
     },
     # "avescore": {
     #     "x_ticks_location": -0.4,
@@ -66,12 +66,12 @@ graph_parameters = {
     "class_size_elem": {
         "title": "Average Elementary Class Size",
         "ylabel": "Students",
-        "ylim": (-3, 3),
+        "ylim": (-5, 5),
     },
     "stu_teach_ratio": {
         "title": "Student to Teacher Ratio",
         "ylabel": "Students",
-        "ylim": (-3, 3),
+        "ylim": (-5, 5),
     },
 }
 
