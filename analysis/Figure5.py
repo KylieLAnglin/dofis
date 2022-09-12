@@ -1,6 +1,3 @@
-# %% Event Study Graphs - Math
-
-# %%
 # %%
 import pandas as pd
 import numpy as np
@@ -12,23 +9,60 @@ import matplotlib.pyplot as plt
 from dofis import start
 from dofis.analysis.library import analysis
 
+# %%
+subgroups = ["average", "rural", "hispanic", "black", "frpl"]
+# subgroups = ["average", "rural", "urban", "black", "hispanic", "frpl", "avescore"]
+outcomes = [
+    "math_yr15std",
+    "reading_yr15std",
+    "perf_attendance",
+]
 
-uncertified_agg = pd.read_excel(
-    start.TABLE_PATH + "results_uncertified_ag_tot_raw_average.xlsx"
-)
-out_of_field_agg = pd.read_excel(
-    start.TABLE_PATH + "results_out_of_field_ag_tot_raw_average.xlsx"
-)
-class_size_agg = pd.read_excel(
-    start.TABLE_PATH + "results_class_size_elem_ag_tot_raw_average.xlsx"
-)
-ratio_agg = pd.read_excel(
-    start.TABLE_PATH + "results_stu_teach_ratio_ag_tot_raw_average.xlsx"
-)
-data = pd.read_csv(start.DATA_PATH + "clean/r_data.csv")
-n = data.district.nunique()
+results = {}
+for outcome in outcomes:
+    results[outcome] = {}
+    for subgroup in subgroups:
+        results[outcome][subgroup] = {}
 
 # %%
+# graph_parameters = {"teacher_uncertified": {"import_file": "results_uncertified_ag_raw.xlsx"}}
+graph_parameters = {
+    "average": {"x_ticks_location": -0.3, "color": "black", "label": "Average Impact"},
+    "rural": {"x_ticks_location": -0.2, "color": "blue", "label": "Rural Schools"},
+    # "urban": {"x_ticks_location": 0.0, "color": "purple", "label": "Urban Schools"},
+    "black": {
+        "x_ticks_location": -0.1,
+        "color": "lightblue",
+        "label": "Black Students",
+    },
+    "hispanic": {
+        "x_ticks_location": 0.10,
+        "color": "green",
+        "label": "Hispanic Students",
+    },
+    "frpl": {
+        "x_ticks_location": 0.2,
+        "color": "teal",
+        "label": "FRPL Students",
+    },
+    "math_yr15std": {
+        "title": "Standardized Math Performance",
+        "ylabel": "Effect Size",
+        "ylim": (-0.5, 0.5),
+    },
+    "reading_yr15std": {
+        "title": "Standardized Reading Performance",
+        "ylabel": "Effect Size",
+        "ylim": (-0.5, 0.5),
+    },
+    "perf_attendance": {
+        "title": "Attendance Rate",
+        "ylabel": "Average Percent Students Present",
+        "ylim": (-10, 10),
+    },
+}
+
+
 # %%
 def coef_df(df: pd.DataFrame):
     coefs = []
@@ -53,125 +87,78 @@ def coef_df(df: pd.DataFrame):
 
 
 # %%
+for subgroup in subgroups:
+    results["math_yr15std"][subgroup]["df"] = pd.read_excel(
+        start.TABLE_PATH + "results_math_yr15std_" + subgroup + "_ag_raw.xlsx"
+    )
 
-cert_df = coef_df(uncertified_agg)
-classes_df = coef_df(class_size_agg)
-ratio_df = coef_df(ratio_agg)
-field_df = coef_df(out_of_field_agg)
+    results["math_yr15std"][subgroup]["coef_df"] = coef_df(
+        results["math_yr15std"][subgroup]["df"]
+    )
 
-fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
-colors = [
-    "gray",
-    "gray",
-    "gray",
-    "gray",
-    "gray",
-    "gray",
-    "black",
-    "black",
-    "black",
-    "black",
-]
+    results["reading_yr15std"][subgroup]["df"] = pd.read_excel(
+        start.TABLE_PATH + "results_reading_yr15std_" + subgroup + "_ag_raw.xlsx"
+    )
+
+    results["reading_yr15std"][subgroup]["coef_df"] = coef_df(
+        results["reading_yr15std"][subgroup]["df"]
+    )
+
+    results["perf_attendance"][subgroup]["df"] = pd.read_excel(
+        start.TABLE_PATH + "results_perf_attendance_" + subgroup + "_ag_raw.xlsx"
+    )
+
+    results["perf_attendance"][subgroup]["coef_df"] = coef_df(
+        results["perf_attendance"][subgroup]["df"]
+    )
+
+
+# %%
+
+
+fig = plt.figure(figsize=(15, 10))
+ax1 = fig.add_subplot(221)
+ax2 = fig.add_subplot(222)
+ax3 = fig.add_subplot(223)
+
+# fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
+
+
+# colors = ["gray", "gray", "gray", "gray", "black", "black", "black", "black"]
 
 # Uncertified
-ax1.scatter(
-    x=cert_df.year,
-    marker="s",
-    s=120,
-    y=cert_df["coef"],
-    color=colors,
-)
-for pos, y, err, color in zip(cert_df.year, cert_df["coef"], cert_df["errsig"], colors):
+for outcome, ax in zip(outcomes, [ax1, ax2, ax3]):
+    for subgroup in subgroups:
+        df = results[outcome][subgroup]["coef_df"]
+        df = df[df.year >= -5]
 
-    ax1.errorbar(pos, y, err, lw=2, capsize=4, capthick=4, color=color)
+        xs = [x + graph_parameters[subgroup]["x_ticks_location"] for x in df["year"]]
 
-ax1.axhline(y=0, linestyle="--", color="black", linewidth=1)
-ax1.set_xticks(cert_df.year)
+        color = graph_parameters[subgroup]["color"]
+        ax.scatter(
+            x=xs,
+            marker="s",
+            s=30,
+            y=df["coef"],
+            color=graph_parameters[subgroup]["color"],
+            label=graph_parameters[subgroup]["label"],
+        )
+        for pos, y, err in zip(xs, df["coef"], df["errsig"]):
+            ax.errorbar(pos, y, err, lw=2, capsize=2, capthick=2, color=color)
 
-# ax1.xaxis.set_ticks_position("none")
-# ax1.set_xticklabels(cert_df.year)
-# _ = ax1.set_xticklabels(
-#     ["Pre5", "Pre4", "Pre3", "Pre2", "Pre1", "Post1", "Post2", "Post3"],
-#     rotation=0,
-# )
-ax1.set_ylabel("Proportion")
-ax1.set_title("Proportion Uncertified Teachers")
-ax1.set_ylim((-0.05, 0.05))
+    ax.axhline(y=0, linestyle="--", color="black", linewidth=1)
+    # ax.xaxis.set_ticks_position("none")
+    ax.set_xticks(xs)
+    ax.set_xticklabels(
+        df["year"],
+    )
+    ax.set_ylabel(graph_parameters[outcome]["ylabel"])
+    ax.set_title(graph_parameters[outcome]["title"])
+    # ax.set_xlim((-0.5, 7.5))
+    ax.set_ylim(graph_parameters[outcome]["ylim"])
+    ax.axvline(0, color="gray")
 
-# Out of field
-ax2.scatter(
-    x=field_df.year,
-    marker="s",
-    s=120,
-    y=field_df["coef"],
-    color=colors,
-)
-for pos, y, err, color in zip(
-    field_df.year, field_df["coef"], field_df["errsig"], colors
-):
-
-    ax2.errorbar(pos, y, err, lw=2, capsize=4, capthick=4, color=color)
-
-ax2.axhline(y=0, linestyle="--", color="black", linewidth=1)
-ax2.set_xticks(field_df.year)
-
-# ax2.xaxis.set_ticks_position("none")
-# _ = ax2.set_xticklabels(
-#     ["Pre5", "Pre4", "Pre3", "Pre2", "Pre1", "Post1", "Post2", "Post3"],
-#     rotation=0,
-# )
-ax2.set_ylabel("Effect Size Estimate")
-ax2.set_title("Percent Out-of-field Teachers")
-ax2.set_ylim((-0.1, 0.1))
-
-# Class Size
-ax3.scatter(
-    x=cert_df.year,
-    marker="s",
-    s=120,
-    y=classes_df["coef"],
-    color=colors,
-)
-for pos, y, err, color in zip(
-    classes_df.year, classes_df["coef"], classes_df["errsig"], colors
-):
-
-    ax3.errorbar(pos, y, err, lw=2, capsize=4, capthick=4, color=color)
-ax3.set_xticks(classes_df.year)
-
-ax3.axhline(y=0, linestyle="--", color="black", linewidth=1)
-ax3.xaxis.set_ticks_position("none")
-# _ = ax3.set_xticklabels(
-#     ["Pre5", "Pre4", "Pre3", "Pre2", "Pre1", "Post1", "Post2", "Post3"],
-#     rotation=0,
-# )
-ax3.set_ylabel("Students")
-ax3.set_title("Effect on Average Class Size")
-ax3.set_ylim((-3, 3))
-
-# Student-Teacher Ratio
-ax4.scatter(
-    x=ratio_df.year,
-    marker="s",
-    s=120,
-    y=ratio_df["coef"],
-    color=colors,
-)
-for pos, y, err, color in zip(
-    ratio_df.year, ratio_df["coef"], ratio_df["errsig"], colors
-):
-
-    ax4.errorbar(pos, y, err, lw=2, capsize=4, capthick=4, color=color)
-ax4.set_xticks(ratio_df.year)
-ax4.axhline(y=0, linestyle="--", color="black", linewidth=1)
-ax4.xaxis.set_ticks_position("none")
-# _ = ax4.set_xticklabels(
-#     ["Pre5", "Pre4", "Pre3", "Pre2", "Pre1", "Post1", "Post2", "Post3", ""],
-#     rotation=0,
-# )
-ax4.set_ylabel("Students")
-ax4.set_title("Effect on Student Teacher Ratio")
-ax4.set_ylim((-3, 3))
+ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5))
 
 
-fig.savefig(start.TABLE_PATH + "Figure3" + ".png", bbox_inches="tight")
+# %%
