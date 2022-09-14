@@ -25,8 +25,7 @@ class_size_agg = pd.read_excel(
 ratio_agg = pd.read_excel(
     start.TABLE_PATH + "results_stu_teach_ratio_ag_tot_raw_average.xlsx"
 )
-data = pd.read_csv(start.DATA_PATH + "clean/r_data.csv")
-n = data.district.nunique()
+
 
 # %%
 # %%
@@ -174,4 +173,4 @@ ax4.set_title("Effect on Student Teacher Ratio")
 ax4.set_ylim((-3, 3))
 
 
-fig.savefig(start.TABLE_PATH + "Figure3" + ".png", bbox_inches="tight")
+# fig.savefig(start.TABLE_PATH + "TOT" + ".png", bbox_inches="tight")
