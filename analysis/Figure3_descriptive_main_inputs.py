@@ -26,7 +26,8 @@ plt.figure(figsize=(480 / my_dpi, 480 / my_dpi), dpi=my_dpi)
 
 data = pd.read_csv(start.DATA_PATH + "clean/master_data_school.csv")
 data = data[data.year >= 2016]
-
+data = data[data.distischarter == 0]
+data = data[data.campischarter == "N"]
 
 # %% Visual Impact by Subject
 

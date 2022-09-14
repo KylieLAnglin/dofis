@@ -2,7 +2,6 @@
 # Main inputs
 ###
 df <- read.csv(paste(data_path, "clean/r_data.csv", sep=""))
-df <- df[df$year < 2021, ]
 
 run_and_export_main(df = df, outcome = "teachers_num", disag_file = "results_teachers_num_disag_raw_average.xlsx", ag_file = "results_teachers_num_ag_raw_average.xlsx")
 run_and_export_main(df = df, outcome = "teachers_new_num", disag_file = "results_teachers_new_num_disag_raw_average.xlsx", ag_file = "results_teachers_new_num_ag_raw_average.xlsx")

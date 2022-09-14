@@ -25,9 +25,13 @@ len(district_df[(district_df.doi_year > 2017)])
 len(district_df[(district_df.doi_year > 2018)])
 len(district_df[(district_df.doi_year > 2019)])
 len(district_df[(district_df.doi_year > 2020)])
+len(district_df[(district_df.doi_year > 2021)])
+
 
 # %% Number of Ineligible Districts
 data = data[data.distischarter == 0]
+data[(data.eligible == 1) & (data.doi == 0)].district.nunique()
+
 
 data17 = data[data.year == 2017]
 data18 = data[data.year == 2018]

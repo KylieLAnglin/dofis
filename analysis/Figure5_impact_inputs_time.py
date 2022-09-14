@@ -48,7 +48,7 @@ graph_parameters = {
     "days_before_third_week": {
         "title": "Number of Instructional Days before Third Week of August",
         "ylabel": "Days",
-        "ylim": (-5, 5),
+        "ylim": (-3, 3),
     },
     "minutes": {
         "title": "Number of Instructional Minutes",

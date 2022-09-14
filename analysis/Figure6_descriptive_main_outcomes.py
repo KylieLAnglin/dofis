@@ -25,7 +25,7 @@ plt.figure(figsize=(480 / my_dpi, 480 / my_dpi), dpi=my_dpi)
 # %%
 
 data = pd.read_csv(start.DATA_PATH + "clean/master_data_school.csv")
-data = data[data.year >= 2016]
+data = data[(data.year >= 2016) & (data.year < 2020)]
 data = data[data.distischarter == 0]
 data = data[data.campischarter == "N"]
 
@@ -45,10 +45,9 @@ def create_group_df(df, outcome):
 # %%
 
 title_labels = {
-    "teachers_num": "Number of Teachers",
-    "teachers_new_num": "Number of New Teachers",
-    "teachers_exp_ave": "Average Teacher Experience",
-    "teachers_turnover_ratio_d": "Percent Teachers Turning Over",
+    "math_yr15std": "Standardized Mathematics",
+    "reading_yr15std": "Standardized Reading",
+    "perf_attendance": "Average Rate of Attendance",
 }
 
 
@@ -56,35 +55,30 @@ fig = plt.figure(figsize=(15, 10))
 ax1 = fig.add_subplot(221)
 ax2 = fig.add_subplot(222)
 ax3 = fig.add_subplot(223)
-ax4 = fig.add_subplot(224)
 
 subgroups = [
     "All Schools",
     "Rural Schools",
-    "Q4 % Hispanic Students",
-    "Q4 % Black Students",
-    "Q4 % FRPL Students",
+    "Hispanic Students",
+    "Black Students",
+    "FRPL Students",
 ]
 
-for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
+for outcome, ax in zip(title_labels, [ax1, ax2, ax3]):
     df_average = create_group_df(df=data, outcome=outcome)
     df_rural = create_group_df(df=data[data.pre_rural == 1], outcome=outcome)
-    df_urban = create_group_df(df=data[data.pre_urban == 1], outcome=outcome)
     df_black = create_group_df(df=data[data.pre_black100 == 1], outcome=outcome)
     df_hispanic = create_group_df(df=data[data.pre_hisp100 == 1], outcome=outcome)
     df_frpl = create_group_df(df=data[data.pre_frpl100 == 1], outcome=outcome)
-    df_avescore = create_group_df(df=data[data.pre_avescore25 == 1], outcome=outcome)
 
     ax.set_prop_cycle(color=["black", "blue", "green", "lightblue", "teal"])
     for df, subgroup in zip(
         [
             df_average,
             df_rural,
-            df_urban,
             df_black,
             df_hispanic,
             df_frpl,
-            df_avescore,
         ],
         subgroups,
     ):

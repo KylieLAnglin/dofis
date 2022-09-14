@@ -28,7 +28,6 @@ for (i in 1:length(outcomes)){
   results[nrow(results) + 1,] = c(outcomes[i], agg$overall.att, agg$overall.se)
 }
 file_name = paste(output_path, "results_subjects_raw.xlsx", sep = "")
-wb <- loadWorkbook(file_name)
-writeData(wb, sheet = "raw" , results, colNames = TRUE)
-saveWorkbook(wb,file_name,overwrite = T)
+wb = createWorkbook()
+write.xlsx(x = results, file = file_name, sheetName = "raw")
 

@@ -158,7 +158,6 @@ for outcome, ax in zip(outcomes, [ax1, ax2, ax3, ax4]):
         df = df[df.year >= -5]
 
         xs = [x + graph_parameters[subgroup]["x_ticks_location"] for x in df["year"]]
-
         color = graph_parameters[subgroup]["color"]
         ax.scatter(
             x=xs,
@@ -169,7 +168,15 @@ for outcome, ax in zip(outcomes, [ax1, ax2, ax3, ax4]):
             label=graph_parameters[subgroup]["label"],
         )
         for pos, y, err in zip(xs, df["coef"], df["errsig"]):
-            ax.errorbar(pos, y, err, lw=2, capsize=2, capthick=2, color=color)
+            ax.errorbar(
+                pos,
+                y,
+                err,
+                lw=2,
+                capsize=2,
+                capthick=2,
+                color=color,
+            )
 
     ax.axhline(y=0, linestyle="--", color="black", linewidth=1)
     # ax.xaxis.set_ticks_position("none")

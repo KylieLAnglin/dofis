@@ -10,13 +10,16 @@ from dofis import start
 pd.options.display.max_columns = 200
 
 # %%
-data_school = pd.read_csv((start.DATA_PATH + "/clean/master_data_school.csv"), sep=",")
 
-# Exclude never-takers
-r_data = data_school[data_school.campischarter == "N"]
+data_district = pd.read_csv(
+    (start.DATA_PATH + "/clean/master_data_district.csv"), sep=","
+)
+
+
+# Exclude charters, inelgible districts, and never-takers
+r_data = data_district[data_district.distischarter == "N"]
 r_data = r_data[r_data.eligible == True]
 r_data = r_data[r_data.group.isin(["2017", "2018", "2019", "2020+"])]
-
 r_data = r_data.rename(columns={"group": "doi_group"})
 r_data = r_data[r_data.year < 2021]
 # %%
@@ -34,7 +37,6 @@ r_data = r_data.dropna(
     subset=[
         "group",
         "district",
-        "campus",
         "year",
         "pre_hisp",
         "pre_black",
@@ -52,6 +54,6 @@ r_data["class_size_mean_elem"] = col.mean(axis=1)
 
 
 r_data.to_csv(
-    os.path.join(start.DATA_PATH, "clean", "r_data.csv"),
+    os.path.join(start.DATA_PATH, "clean", "r_data_district.csv"),
     sep=",",
 )

@@ -21,10 +21,10 @@ print("Cumulative count of DOIs in each year:")
 print(school_counts.doi_year.cumsum())
 
 # %% Not-yet districts of innovation
-len(school_df[(school_df.doi_year > 2017)])
-len(school_df[(school_df.doi_year > 2018)])
-len(school_df[(school_df.doi_year > 2019)])
-len(school_df[(school_df.doi_year > 2020)])
+data[data.doi_year > 2017].campus.nunique()
+data[data.doi_year > 2018].campus.nunique()
+data[data.doi_year > 2019].campus.nunique()
+data[data.doi_year > 2020].campus.nunique()
 
 # %% Number of Ineligible Districts
 data = data[data.distischarter == 0]
