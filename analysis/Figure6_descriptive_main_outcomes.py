@@ -84,7 +84,10 @@ for outcome, ax in zip(title_labels, [ax1, ax2, ax3]):
     ):
         ax.plot(list(df.index), df["outcome"]["score_mean"], label=subgroup)
         ax.fill_between
-
+        ax.set_xticks(df.index)
+        ax.set_xticklabels(
+            df.index,
+        )
     # ax.fill_between(
     #     list(df_treat2017.index), df_treat2017.lb, df_treat2017.ub, alpha=0.2
     # )

@@ -35,3 +35,15 @@ r_data_class_size_treatment.to_csv(
     os.path.join(start.DATA_PATH, "clean", "r_data_classize.csv"),
     sep=",",
 )
+
+
+# %%
+r_data_transfer_treatment = r_data
+r_data_transfer_treatment["group"] = np.where(
+    r_data.exempt_transfer == 1, r_data.group, 0
+)
+
+r_data_transfer_treatment.to_csv(
+    os.path.join(start.DATA_PATH, "clean", "r_data_transfer.csv"),
+    sep=",",
+)

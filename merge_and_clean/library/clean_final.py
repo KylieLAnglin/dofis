@@ -133,6 +133,7 @@ def gen_exempt_categories(data):
     )
     data["exempt_attendance"] = np.where(data["reg25_092"] == 1, 1, 0)
     data["exempt_behavior"] = np.where(data["reg37_0012"] == 1, 1, 0)
+    data["exempt_transfer"] = np.where(data["reg25_036"] == 1, 1, 0)
 
     return data
 

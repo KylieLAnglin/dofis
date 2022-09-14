@@ -130,18 +130,18 @@ for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
 
     if outcome in ["math_yr15std", "reading_yr15std"]:
         ax.get_xaxis().set_ticks([])
-        ax.set_ylim([-0.75, 0.75])
+        ax.set_ylim([-1, 1])
     else:
         ax.set_xticks(
             [2013, 2014, 2015, 2016, 2017, 2018, 2019],
             ["'13", "-14", "'15", "'16", "'17", "'18", "'19"],
         )
 
-    if outcome == "teachers_uncertified":
-        ax.set_ylim([0, 0.01])
+    if outcome == "teacher_uncertified":
+        ax.set_ylim([0, 0.05])
 
     if outcome == "class_size_elem":
-        ax.set_ylim([16, 22])
+        ax.set_ylim([15, 25])
 
 
 # Put a legend to the right of the current axis
