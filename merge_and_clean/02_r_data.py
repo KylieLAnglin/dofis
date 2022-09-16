@@ -50,6 +50,15 @@ r_data = r_data.dropna(
 col = r_data.loc[:, "class_size_3":"class_size_5"]
 r_data["class_size_mean_elem"] = col.mean(axis=1)
 
+r_data["teacher_uncertified_extreme"] = np.where(
+    r_data.teacher_uncertified > 0.05, 1, 0
+)
+r_data["teacher_out_of_field_extreme"] = np.where(
+    r_data.teacher_out_of_field_fte > 0.05, 1, 0
+)
+r_data["class_size_elem_extreme"] = np.where(r_data.class_size_elem > 25, 1, 0)
+r_data["stu_teach_ratio_extreme"] = np.where(r_data.stu_teach_ratio > 18, 1, 0)
+
 
 r_data.to_csv(
     os.path.join(start.DATA_PATH, "clean", "r_data.csv"),
