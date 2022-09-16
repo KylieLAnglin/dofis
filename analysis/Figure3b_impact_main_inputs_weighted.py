@@ -102,7 +102,7 @@ def coef_df(df: pd.DataFrame):
 # %%
 for subgroup in subgroups:
     results["teacher_uncertified"][subgroup]["df"] = pd.read_excel(
-        start.TABLE_PATH + "results_uncertified_ag_raw_" + subgroup + ".xlsx"
+        start.TABLE_PATH + "results_uncertified_ag_raw_" + subgroup + "_weights.xlsx"
     )
 
     results["teacher_uncertified"][subgroup]["coef_df"] = coef_df(
@@ -110,7 +110,7 @@ for subgroup in subgroups:
     )
 
     results["teacher_out_of_field"][subgroup]["df"] = pd.read_excel(
-        start.TABLE_PATH + "results_out_of_field_ag_raw_" + subgroup + ".xlsx"
+        start.TABLE_PATH + "results_out_of_field_ag_raw_" + subgroup + "_weights.xlsx"
     )
 
     results["teacher_out_of_field"][subgroup]["coef_df"] = coef_df(
@@ -118,7 +118,10 @@ for subgroup in subgroups:
     )
 
     results["class_size_elem"][subgroup]["df"] = pd.read_excel(
-        start.TABLE_PATH + "results_class_size_elem_ag_raw_" + subgroup + ".xlsx"
+        start.TABLE_PATH
+        + "results_class_size_elem_ag_raw_"
+        + subgroup
+        + "_weights.xlsx"
     )
 
     results["class_size_elem"][subgroup]["coef_df"] = coef_df(
@@ -126,7 +129,10 @@ for subgroup in subgroups:
     )
 
     results["stu_teach_ratio"][subgroup]["df"] = pd.read_excel(
-        start.TABLE_PATH + "results_stu_teach_ratio_ag_raw_" + subgroup + ".xlsx"
+        start.TABLE_PATH
+        + "results_stu_teach_ratio_ag_raw_"
+        + subgroup
+        + "_weights.xlsx"
     )
 
     results["stu_teach_ratio"][subgroup]["coef_df"] = coef_df(

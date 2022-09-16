@@ -28,7 +28,6 @@ fig = plt.figure()
 ax1 = fig.add_subplot(221)
 ax2 = fig.add_subplot(222)
 ax3 = fig.add_subplot(223)
-ax4 = fig.add_subplot(224)
 
 # %%
 
@@ -48,14 +47,13 @@ def create_group_df(df, outcome):
 
 # %%
 title_labels = {
-    "math_yr15std": "Average Std. Math Scores",
-    "reading_yr15std": "Average Std. Reading Scores",
-    "teacher_uncertified": "Percent Uncertified Teachers",
-    "class_size_elem": "Average Elementary Class Size",
+    "math_yr15std": "Average Math Scores (Effect Size)",
+    "reading_yr15std": "Average Reading Scores (Effect Size)",
+    "perf_attendance": "Student Attendance Rate (%)",
 }
 
 
-for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
+for outcome, ax in zip(title_labels, [ax1, ax2, ax3]):
     df_treat2017 = create_group_df(data[data.group == "2017"], outcome=outcome)
     df_treat2018 = create_group_df(data[data.group == "2018"], outcome=outcome)
     df_treat2019 = create_group_df(data[data.group == "2019"], outcome=outcome)
@@ -123,12 +121,12 @@ for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
     ax.fill_between(list(df_control.index), df_control.lb, df_control.ub, alpha=0.2)
 
     ax.set_title(title_labels[outcome])
-    ax.grid(False)
+    # ax.grid(False)
 
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
 
-    if outcome in ["math_yr15std", "reading_yr15std"]:
+    if outcome in []:
         ax.get_xaxis().set_ticks([])
         ax.set_ylim([-1, 1])
     else:
@@ -137,17 +135,20 @@ for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
             ["'13", "-14", "'15", "'16", "'17", "'18", "'19"],
         )
 
-    if outcome == "teacher_uncertified":
-        ax.set_ylim([0, 0.05])
+    if outcome == "math_yr15std":
+        ax.set_ylim([-0.5, 0.75])
 
-    if outcome == "class_size_elem":
-        ax.set_ylim([15, 25])
+    if outcome == "reading_yr15std":
+        ax.set_ylim([-0.5, 0.75])
+
+    if outcome == "perf_attendance":
+        ax.set_ylim([80, 100])
 
 
 # Put a legend to the right of the current axis
 ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5))
-fig.show()
+plt.subplots_adjust(top=1)
 
-fig.savefig(start.TABLE_PATH + "FigureC1.png", bbox_inches="tight")
+# fig.savefig(start.TABLE_PATH + "FigureC1.png", bbox_inches="tight")
 
 # %%
