@@ -211,54 +211,19 @@ def gen_certification_vars(data):
         {
             "new_var": "teachers_certified",
             "numerator": "teacher_certified",
-            "denominator": "teachers",
+            "denominator": "teachers_num",
         },
         {
             "new_var": "teachers_uncertified",
             "numerator": "teacher_uncertified",
-            "denominator": "teachers",
-        },
-        {
-            "new_var": "teachers_secondary_math_certified",
-            "numerator": "teacher_secondary_math_certified",
-            "denominator": "teacher_secondary_math",
-        },
-        {
-            "new_var": "teachers_secondary_math_uncertified",
-            "numerator": "teacher_secondary_math_uncertified",
-            "denominator": "teacher_secondary_math",
-        },
-        {
-            "new_var": "teachers_secondary_math_outoffield",
-            "numerator": "teacher_secondary_math_outoffield",
-            "denominator": "teacher_secondary_math",
-        },
-        {
-            "new_var": "teachers_secondary_science_outoffield",
-            "numerator": "teacher_secondary_science_outoffield",
-            "denominator": "teacher_secondary_science",
-        },
-        {
-            "new_var": "teachers_secondary_science_uncertified",
-            "numerator": "teacher_secondary_science_uncertified",
-            "denominator": "teacher_secondary_science",
-        },
-        {
-            "new_var": "teachers_secondary_cte_uncertified",
-            "numerator": "teacher_secondary_cte_uncertified",
-            "denominator": "teacher_secondary_cte",
-        },
-        {
-            "new_var": "teachers_secondary_cte_outoffield",
-            "numerator": "teacher_secondary_cte_outoffield",
-            "denominator": "teacher_secondary_cte",
+            "denominator": "teachers_num",
         },
     ]
     for new_var_dict in certification_ratios:
         data[new_var_dict["new_var"]] = (
             data[new_var_dict["numerator"]] / data[new_var_dict["denominator"]]
         )
-    data["teacher_salary_ave"] = data["teacher_salary"] / data["teachers"]
+    # data["teacher_salary_ave"] = data["teacher_salary"] / data["teachers_num"]
 
     return data
 

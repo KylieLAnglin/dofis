@@ -1,4 +1,4 @@
-home_path = "/Users/kla21002/Dropbox/Active/dofis/"
+home_path = "/Users/kylieanglin/Library/CloudStorage/Dropbox/Active/Research/dofis/"
 output_path = paste(home_path, "results/", sep="")
 data_path = paste(home_path,"data/", sep = "")
 df <- read.csv(paste(data_path, "clean/r_data.csv", sep=""))

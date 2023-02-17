@@ -43,7 +43,7 @@ data_school = clean_final.gen_exempt_categories(data_school)
 data_school = clean_final.gen_student_vars(data_school)
 data_school = clean_final.gen_district_vars(data_school)
 data_school = clean_final.gen_teacher_vars(data_school)
-# data_school = clean_final.gen_certification_vars(data_school)
+data_school = clean_final.gen_certification_vars(data_school)
 
 data_school = clean_final.gen_score_vars(data_school)
 data_school = clean_final.gen_gdid_vars(data_school)
