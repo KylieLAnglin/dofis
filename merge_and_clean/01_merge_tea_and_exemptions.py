@@ -72,6 +72,10 @@ data_district = clean_final.gen_exempt_categories(data_district)
 data_district = clean_final.gen_student_vars(data_district)
 data_district = clean_final.gen_district_vars(data_district)
 data_district = clean_final.gen_teacher_vars(data_district)
+
+data_district = clean_final.gen_certification_vars(data_district)
+
+
 data_district = clean_final.gen_score_vars(data_district, level="district")
 data_district = clean_final.gen_gdid_vars(data_district)
 data_district = clean_final.gen_event_vars(data_district)
