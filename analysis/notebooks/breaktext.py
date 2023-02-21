@@ -11,7 +11,7 @@ law_shapes = [i*'d' + '.' + j*'d' + k*'x' for i in range(1, 4) for j in range(3,
 law_shape_patterns = [[{'SHAPE':shape}, {'ORTH':'%', 'OP':'!'}] for shape in law_shapes] # could add {'SHAPE':'§', 'OP':'*'},
 
 matcher = Matcher(nlp.vocab)
-matcher.add("ExplicitLaw", None, *law_shape_patterns)
+matcher.add("ExplicitLaw", law_shape_patterns)
 
 def get_phrase(text, regulation, include_similar = True):
     phrase = ''
