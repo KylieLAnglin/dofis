@@ -111,7 +111,6 @@ run_and_export_weights <- function(df, outcome, disag_file, ag_file){
   wb = createWorkbook()
   write.xlsx(x = agg.results, file = file_name, sheetName = "ag")
   
-  
 }
 
 

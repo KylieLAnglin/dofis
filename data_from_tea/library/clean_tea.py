@@ -927,7 +927,7 @@ def clean_ddem(year):
     return ddem
 
 
-def clean_scores(year, subject):
+def clean_dscores(year, subject):
     """
     Reads STAAR scores from
     https://tea.texas.gov/Student_Testing_and_Accountability/Testing/State_of_Texas_Assessments_of_Academic_Readiness_(STAAR)/STAAR_Aggregate_Data_for_2017-2018/
@@ -1099,17 +1099,26 @@ def clean_scores(year, subject):
             "us_spey_rs": "us_sped_avescore",
         },
     }
+    if year == "yr1819" or year == "yr2021":
+        dscores = dscores.rename(columns={"district": "DISTRICT"})
 
     if subject == "EnglishI":
         if year == "yr1112" or year == "yr1213":
             dscores["e1_all_rs"] = dscores["r1_all_rs"] + dscores2["w1_all_rs"]
             dscores["e1_all_d"] = dscores["r1_all_d"]
+            dscores["e1_ethh_rs"] = dscores["r1_ethh_rs"]
+            dscores["e1_ethb_rs"] = dscores["r1_ethb_rs"]
+            dscores["e1_ecoy_rs"] = dscores["r1_ecoy_rs"]
+            dscores["e1_spey_rs"] = dscores["r1_spey_rs"]
 
     if subject == "EnglishII":
         if year == "yr1112" or year == "yr1213":
             dscores["e2_all_rs"] = dscores["r2_all_rs"] + dscores2["w2_all_rs"]
             dscores["e2_all_d"] = dscores["r2_all_d"]
-
+            dscores["e2_ethh_rs"] = dscores["r2_ethh_rs"]
+            dscores["e2_ethb_rs"] = dscores["r2_ethb_rs"]
+            dscores["e2_ecoy_rs"] = dscores["r2_ecoy_rs"]
+            dscores["e2_spey_rs"] = dscores["r2_spey_rs"]
     dscores = filter_and_rename_cols(dscores, variable_sets[subject])
     if year == "yr1112":
         dscores["district"] = dscores["district"].apply(int)
