@@ -40,7 +40,7 @@ then
     python merge_and_clean/02_r_data.py
     python merge_and_clean/02b_r_data_nevertakers.py
     python merge_and_clean/02c_r_data_district.py
-    python merge_and_clean/03_r_data_alt_treatmetn.py
+    python merge_and_clean/03_r_data_alt_treatment.py
     echo "done"
 fi
 
