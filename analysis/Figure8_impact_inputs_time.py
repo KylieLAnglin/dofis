@@ -68,8 +68,8 @@ def coef_df(df: pd.DataFrame):
     coefs = []
     ses = []
     for year in df["agg.dynamic.egt"]:
-        coef = df.loc[df["agg.dynamic.egt"] == year, "agg.dynamic.att.egt"]
-        se = df.loc[df["agg.dynamic.egt"] == year, "agg.dynamic.se.egt"]
+        coef = list(df.loc[df["agg.dynamic.egt"] == year, "agg.dynamic.att.egt"])[0]
+        se = list(df.loc[df["agg.dynamic.egt"] == year, "agg.dynamic.se.egt"])[0]
         coefs.append(coef)
         ses.append(se)
 

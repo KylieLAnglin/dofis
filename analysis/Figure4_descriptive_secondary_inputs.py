@@ -1,17 +1,8 @@
 # %%
 
-
-import os
-import sys
-
-import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-import statsmodels.formula.api as smf
-from cycler import cycler
-from matplotlib import lines, markers
-from scipy import stats
+
 
 from dofis import start
 
