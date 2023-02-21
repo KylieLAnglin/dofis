@@ -1,3 +1,4 @@
+df <- read.csv(paste(data_path, "clean/r_data.csv", sep=""))
 
 attgt_object <- function(df, y) {
   att.gt <- att_gt(yname = y,

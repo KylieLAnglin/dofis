@@ -1,5 +1,6 @@
 df <- read.csv(paste(data_path, "clean/r_data.csv", sep=""))
-df < df[df.year < 2021, ]
+
+
 run_and_export_main(df = df, outcome = "math_yr15std", disag_file = "results_math_yr15std_average_disag_raw.xlsx", ag_file = "results_math_yr15std_average_ag_raw.xlsx")
 run_and_export_main(df = df, outcome = "math_black_yr15std", disag_file = "results_math_yr15std_black_disag_raw.xlsx", ag_file = "results_math_yr15std_black_ag_raw.xlsx")
 run_and_export_main(df = df, outcome = "math_hisp_yr15std", disag_file = "results_math_yr15std_hispanic_disag_raw.xlsx", ag_file = "results_math_yr15std_hispanic_ag_raw.xlsx")
