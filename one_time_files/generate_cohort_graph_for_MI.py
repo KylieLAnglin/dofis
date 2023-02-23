@@ -39,7 +39,7 @@ ax1.plot(
     [2016, 2017],
     [0.0113, 0.0113 + 0.0035],
     color="gray",
-    label="Counterfactual",
+    label="2018+ Cohorts",
     linewidth=1,
 )
 
@@ -50,7 +50,7 @@ ax1.plot(
     [0.0113 - 0.0036, 0.0113 + 0.0035 - 0.0036],
     color="gray",
     linestyle="dotted",
-    label="2018+ Cohorts",
+    label="Counterfactual",
     linewidth=1,
 )
 
