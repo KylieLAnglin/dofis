@@ -57,3 +57,12 @@ df_to_excel(
     start_col=4,
     start_row=3,
 )
+
+
+df_to_excel(
+    file=os.path.join(start.TABLE_PATH, "formatted_results/Table1a.xlsx"),
+    df=regs,
+    df_columns=["law", "proportion"],
+    start_col=4,
+    start_row=3,
+)

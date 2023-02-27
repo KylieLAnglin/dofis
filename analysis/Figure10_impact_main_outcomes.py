@@ -159,6 +159,7 @@ for outcome, ax in zip(outcomes, [ax1, ax2, ax3]):
     ax.axvline(0, color="gray")
 
 ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5))
+fig.savefig(start.TABLE_PATH + "formatted_results/Figure10.pdf", bbox_inches="tight")
 
 
 # %%

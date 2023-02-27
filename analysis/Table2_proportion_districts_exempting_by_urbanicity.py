@@ -102,52 +102,59 @@ def create_count_proportion_df(data, var, list_of_regs, formula):
 
 # %% Urbancity
 
-file_name = "Exemptions by Urbanicity.xlsx"
-columns = ["Count", "Urban", "Suburban", "Town", "Rural", "F-test p-value"]
+for file_name in ["Exemptions by Urbanicity.xlsx", "formatted_results/Table2.xlsx"]:
 
-schedules_df = create_count_urban_df(data, regulations.schedules, regulations.labels)
-tables.df_to_excel(
-    file=start.TABLE_PATH + file_name,
-    df=schedules_df,
-    df_columns=columns,
-    start_row=5,
-    start_col=3,
-)
+    columns = ["Count", "Urban", "Suburban", "Town", "Rural", "F-test p-value"]
 
-class_size_df = create_count_urban_df(data, regulations.class_size, regulations.labels)
-tables.df_to_excel(
-    file=start.TABLE_PATH + file_name,
-    df=class_size_df,
-    df_columns=columns,
-    start_row=10,
-    start_col=3,
-)
+    schedules_df = create_count_urban_df(
+        data, regulations.schedules, regulations.labels
+    )
+    tables.df_to_excel(
+        file=start.TABLE_PATH + file_name,
+        df=schedules_df,
+        df_columns=columns,
+        start_row=5,
+        start_col=3,
+    )
 
-certification_df = create_count_urban_df(
-    data, regulations.certification, regulations.labels
-)
-tables.df_to_excel(
-    file=start.TABLE_PATH + file_name,
-    df=certification_df,
-    df_columns=columns,
-    start_row=14,
-    start_col=3,
-)
+    class_size_df = create_count_urban_df(
+        data, regulations.class_size, regulations.labels
+    )
+    tables.df_to_excel(
+        file=start.TABLE_PATH + file_name,
+        df=class_size_df,
+        df_columns=columns,
+        start_row=10,
+        start_col=3,
+    )
 
-contracts_df = create_count_urban_df(data, regulations.contracts, regulations.labels)
-tables.df_to_excel(
-    file=start.TABLE_PATH + file_name,
-    df=contracts_df,
-    df_columns=columns,
-    start_row=18,
-    start_col=3,
-)
+    certification_df = create_count_urban_df(
+        data, regulations.certification, regulations.labels
+    )
+    tables.df_to_excel(
+        file=start.TABLE_PATH + file_name,
+        df=certification_df,
+        df_columns=columns,
+        start_row=14,
+        start_col=3,
+    )
 
-behavior_df = create_count_urban_df(data, regulations.behavior, regulations.labels)
-tables.df_to_excel(
-    file=start.TABLE_PATH + file_name,
-    df=behavior_df,
-    df_columns=columns,
-    start_row=23,
-    start_col=3,
-)
+    contracts_df = create_count_urban_df(
+        data, regulations.contracts, regulations.labels
+    )
+    tables.df_to_excel(
+        file=start.TABLE_PATH + file_name,
+        df=contracts_df,
+        df_columns=columns,
+        start_row=18,
+        start_col=3,
+    )
+
+    behavior_df = create_count_urban_df(data, regulations.behavior, regulations.labels)
+    tables.df_to_excel(
+        file=start.TABLE_PATH + file_name,
+        df=behavior_df,
+        df_columns=columns,
+        start_row=23,
+        start_col=3,
+    )
