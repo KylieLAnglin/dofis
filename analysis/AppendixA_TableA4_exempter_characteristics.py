@@ -19,6 +19,11 @@ from dofis import start
 
 DATA_PATH = start.DATA_PATH
 TABLE_PATH = start.TABLE_PATH
+
+FILE = "District Characteristics by Exemption.xlsx"
+FILE = "formatted_results/AppendixA_Table4.xlsx"
+
+# %%
 data = pd.read_csv(
     os.path.join(start.DATA_PATH, "clean", "master_data_district.csv"), sep=","
 )
@@ -64,7 +69,7 @@ for reg, col in zip(
     rows = [7, 16]
     for df, row in zip(dfs, rows):
         tables.just_diff_to_excel(
-            file=start.TABLE_PATH + "District Characteristics by Exemption.xlsx",
+            file=start.TABLE_PATH + FILE,
             df=df,
             diff_col="Difference",
             se_col="Std. Error",
@@ -73,7 +78,7 @@ for reg, col in zip(
             start_row=row,
         )
     tables.n_to_excel(
-        file=start.TABLE_PATH + "District Characteristics by Exemption.xlsx",
+        file=start.TABLE_PATH + FILE,
         col=col,
         row=5,
         n=data[data[reg] == 1].district.nunique(),
