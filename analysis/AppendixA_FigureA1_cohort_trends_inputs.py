@@ -127,15 +127,8 @@ for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
 
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-
-    if outcome in []:
-        ax.get_xaxis().set_ticks([])
-        ax.set_ylim([-1, 1])
-    else:
-        ax.set_xticks(
-            [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020],
-            ["'13", "-14", "'15", "'16", "'17", "'18", "'19", "'20"],
-        )
+    ax.set_xticks([2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020])
+    ax.set_xticklabels(labels=["'13", "-14", "'15", "'16", "'17", "'18", "'19", "'20"])
 
     if outcome == "teacher_uncertified":
         ax.set_ylim([0, 0.06])
@@ -153,6 +146,12 @@ for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
 # Put a legend to the right of the current axis
 ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5))
 plt.subplots_adjust(top=1)
+
+
+# %%
 # fig.savefig(start.TABLE_PATH + "FigureC1.png", bbox_inches="tight")
+fig.savefig(
+    start.TABLE_PATH + "formatted_results/AppendixA_FigureA1.pdf", bbox_inches="tight"
+)
 
 # %%
