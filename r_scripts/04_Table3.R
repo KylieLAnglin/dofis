@@ -1,12 +1,3 @@
-df <- read.csv(paste(data_path, "clean/r_data.csv", sep=""))
-
-
-run_and_export_main(df = df, outcome = "teacher_uncertified_extreme", disag_file = "results_uncertified_disag_raw_extreme.xlsx", ag_file = "results_uncertified_ag_raw_extreme.xlsx")
-run_and_export_main(df = df, outcome = "teacher_out_of_field_extreme", disag_file = "results_out_of_field_disag_raw_extreme.xlsx", ag_file = "results_out_of_field_ag_raw_extreme.xlsx")
-run_and_export_main(df = df, outcome = "class_size_elem_extreme", disag_file = "results_class_size_elem_disag_raw_extreme.xlsx", ag_file = "results_class_size_elem_ag_raw_extreme.xlsx")
-run_and_export_main(df = df, outcome = "stu_teach_ratio_extreme", disag_file = "results_stu_teach_ratio_disag_raw_extreme.xlsx", ag_file = "results_stu_teach_ratio_ag_raw_extreme.xlsx")
-
-
 home_path = "/Users/kylieanglin/Library/CloudStorage/Dropbox/Active/Research/dofis/"
 output_path = paste(home_path, "results/", sep="")
 data_path = paste(home_path,"data/", sep = "")
@@ -17,7 +8,7 @@ set.seed(42)
 library("did")
 library("xlsx")
 
-outcomes = c("teacher_uncertified_extreme", "teacher_out_of_field_extreme", "class_size_elem_extreme", "stu_teach_ratio_extreme", )
+outcomes = c("teacher_uncertified", "teacher_out_of_field_fte", "class_size_elem", "stu_teach_ratio", "teachers_num", "teachers_new_num", "teachers_turnover_ratio_d", "teachers_exp_ave", "days", "days_before_third_week", "minutes_per_day", "minutes", "math_yr15std", "reading_yr15std", "perf_attendance")
 
 return_att <- function(df, outcome){
   disag <- att_gt(yname = outcome,
@@ -32,12 +23,12 @@ return_att <- function(df, outcome){
                   clustervars = c("district"),
                   print_details = TRUE,
   )
-  
+
   agg.simple <- aggte(disag, type = "simple")
-  
+
   return(agg.simple$overall.att)
-  #  summary(agg.simple)  
-  
+#  summary(agg.simple)  
+
 }
 
 return_se <- function(df, outcome){
@@ -57,7 +48,7 @@ return_se <- function(df, outcome){
   agg.simple <- aggte(disag, type = "simple")
   
   return(agg.simple$overall.se)
-  
+
 }
 
 tes <- list() #create an empty list
@@ -74,7 +65,7 @@ for (i in 1:length(outcomes)) {
 # ses = append(ses, return_se(df = df, outcome = "teacher_uncertified"))
 lists = list(outcomes = outcomes, tes = tes, ses = ses)
 results = as.data.frame(do.call(cbind, lists))
-write.xlsx(x = results, file = paste(output_path, "aggregated_results_extremes.xlsx", sep = ""), sheetName = "ag")
+write.xlsx(x = results, file = paste(output_path, "aggregated_results.xlsx", sep = ""), sheetName = "ag")
 
 
 print_results <- function(df, outcome){
@@ -95,4 +86,4 @@ print_results <- function(df, outcome){
   return(agg.simple)
 }
 
-print_results(df, "teacher_uncertified_extreme")
+print_results(df, "teacher_uncertified")

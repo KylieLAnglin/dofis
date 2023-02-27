@@ -160,3 +160,6 @@ ax4.xaxis.set_ticks_position("none")
 ax4.set_ylabel("Students")
 ax4.set_title("Number of Students")
 ax4.set_ylim((-50, 50))
+fig.savefig(
+    start.TABLE_PATH + "formatted_results/AppendixD_FigureD6.pdf", bbox_inches="tight"
+)

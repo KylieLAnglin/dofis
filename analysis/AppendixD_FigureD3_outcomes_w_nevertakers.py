@@ -136,3 +136,7 @@ ax3.xaxis.set_ticks_position("none")
 ax3.set_ylabel("Proportion")
 ax3.set_title("Attendance")
 ax3.set_ylim((-1, 1))
+
+fig.savefig(
+    start.TABLE_PATH + "formatted_results/AppendixD_FigureD3.pdf", bbox_inches="tight"
+)

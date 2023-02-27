@@ -172,5 +172,7 @@ ax4.set_ylabel("Students")
 ax4.set_title("Effect on Student Teacher Ratio")
 ax4.set_ylim((-3, 3))
 
-
+fig.savefig(
+    start.TABLE_PATH + "formatted_results/AppendixD_FigureD1.pdf", bbox_inches="tight"
+)
 # fig.savefig(start.TABLE_PATH + "TOT" + ".png", bbox_inches="tight")

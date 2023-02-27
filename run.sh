@@ -83,6 +83,7 @@ r_scripts/00_start.r
 # chmod +x r_scripts/02c_impact_outcomes_main_weighted.r
 # chmod +x r_scripts/03_impact_with_nevertakers.r
 # chmod +x r_scripts/X_effect_on_enrollment.r
+# chmod +x r_scripts/04_Table3.r
 
 echo "finished R analyses"
 
@@ -95,6 +96,7 @@ echo "formatting R results"
 python analysis/Table1_exemptions.py
 python analysis/Table1b_exemptions_w_proportion_students.py
 python analysis/Table2_proportion_districts_exempting_by_urbanicity.py
+python analysis/Table3_aggregate_impacts.py
 
 python analysis/Figure3_descriptive_main_inputs.py
 python analysis/Figure4_descriptive_secondary_inputs.py

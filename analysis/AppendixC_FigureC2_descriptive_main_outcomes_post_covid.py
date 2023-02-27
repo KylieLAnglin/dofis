@@ -103,5 +103,7 @@ for outcome, ax in zip(
 ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5))
 
 fig.savefig(start.TABLE_PATH + "trends_by_subgroup2.pdf", bbox_inches="tight")
-
+fig.savefig(
+    start.TABLE_PATH + "formatted_results/AppendixC_FigureC2.pdf", bbox_inches="tight"
+)
 # %%

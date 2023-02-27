@@ -175,5 +175,6 @@ for group, col in zip(
 
 
 wb.save(FILE)
+wb.save(start.TABLE_PATH + "formatted_results/AppendixA_Table1.xlsx")
 
 # %%

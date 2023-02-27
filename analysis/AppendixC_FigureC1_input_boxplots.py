@@ -90,5 +90,8 @@ ax4.set_ylabel("Students")
 ax4.set_title("Student Teacher Ratio")
 ax4.set_xlabel("Year")
 
+fig.savefig(
+    start.TABLE_PATH + "formatted_results/AppendixC_FigureC1.pdf", bbox_inches="tight"
+)
 
 # %%

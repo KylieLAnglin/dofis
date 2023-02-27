@@ -15,6 +15,7 @@ results = pd.read_excel(results_path).set_index("outcome")
 
 
 file_path = start.TABLE_PATH + "Aggregated Impact of DOI Status by Subject.xlsx"
+file_path = start.TABLE_PATH + "formatted_results/AppendixD_TableD1.xlsx"
 wb = load_workbook(file_path)
 ws = wb.active
 

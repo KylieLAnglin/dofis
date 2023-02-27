@@ -132,8 +132,8 @@ for outcome, ax in zip(title_labels, [ax1, ax2, ax3]):
     else:
         ax.set_xticks(
             [2013, 2014, 2015, 2016, 2017, 2018, 2019],
-            ["'13", "-14", "'15", "'16", "'17", "'18", "'19"],
         )
+        ax.set_xticklabels(["'13", "-14", "'15", "'16", "'17", "'18", "'19"])
 
     if outcome == "math_yr15std":
         ax.set_ylim([-0.5, 0.75])
@@ -150,5 +150,7 @@ ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5))
 plt.subplots_adjust(top=1)
 
 # fig.savefig(start.TABLE_PATH + "FigureC1.png", bbox_inches="tight")
-
+fig.savefig(
+    start.TABLE_PATH + "formatted_results/AppendixA_FigureA2.pdf", bbox_inches="tight"
+)
 # %%

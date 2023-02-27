@@ -25,7 +25,6 @@ len(district_df[(district_df.doi_year > 2017)])
 len(district_df[(district_df.doi_year > 2018)])
 len(district_df[(district_df.doi_year > 2019)])
 len(district_df[(district_df.doi_year > 2020)])
-len(district_df[(district_df.doi_year > 2021)])
 
 
 # %% Number of Ineligible Districts
