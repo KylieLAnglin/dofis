@@ -37,13 +37,13 @@ ax3 = fig.add_subplot(223)
 ax4 = fig.add_subplot(224)
 
 subgroups = [
-    ("All Schools", "-"),
-    ("Rural Schools", "--"),
-    ("Q4 % Hispanic Students", ":"),
-    ("Q4 % Black Students", "-."),
-    ("Q4 % FRPL Students", "-"),
+    ("All Schools", "solid"),
+    ("Rural Schools", "dotted"),
+    ("Q4 % Hispanic Students", "dashed"),
+    ("Q4 % Black Students", "solid"),
+    ("Q4 % FRPL Students", "dotted"),
 ]
-
+# (0, (3,10,1,10))
 for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
     df_average = create_group_df(df=data, outcome=outcome)
     df_rural = create_group_df(df=data[data.pre_rural == 1], outcome=outcome)
@@ -53,7 +53,7 @@ for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
     df_frpl = create_group_df(df=data[data.pre_frpl100 == 1], outcome=outcome)
     df_avescore = create_group_df(df=data[data.pre_avescore25 == 1], outcome=outcome)
 
-    ax.set_prop_cycle(color=["gray"])
+    ax.set_prop_cycle(color=["black", "black", "black", "gray", "gray"])
     for i, (df, subgroup) in enumerate(
         zip(
             [
