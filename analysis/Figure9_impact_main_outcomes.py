@@ -1,17 +1,12 @@
 # %%
 import pandas as pd
-import numpy as np
 import pandas as pd
-from openpyxl import load_workbook
-import scipy
 import matplotlib.pyplot as plt
 
 from dofis import start
-from dofis.analysis.library import analysis
 
 # %%
 subgroups = ["average", "rural", "hispanic", "black", "frpl"]
-# subgroups = ["average", "rural", "urban", "black", "hispanic", "frpl", "avescore"]
 outcomes = [
     "math_yr15std",
     "reading_yr15std",
@@ -25,25 +20,23 @@ for outcome in outcomes:
         results[outcome][subgroup] = {}
 
 # %%
-# graph_parameters = {"teacher_uncertified": {"import_file": "results_uncertified_ag_raw.xlsx"}}
 graph_parameters = {
-    "average": {"x_ticks_location": -0.3, "color": "black", "label": "Average Impact"},
-    "rural": {"x_ticks_location": -0.2, "color": "blue", "label": "Rural Schools"},
-    # "urban": {"x_ticks_location": 0.0, "color": "purple", "label": "Urban Schools"},
-    "black": {
-        "x_ticks_location": -0.1,
-        "color": "lightblue",
-        "label": "Black Students",
-    },
+    "average": {"x_ticks_location": -0.3, "color": "blue", "label": "Average Impact"},
+    "rural": {"x_ticks_location": -0.1, "color": "green", "label": "Rural Schools"},
     "hispanic": {
-        "x_ticks_location": 0.10,
+        "x_ticks_location": 0,
         "color": "green",
-        "label": "Hispanic Students",
+        "label": "Q4 Schools by % Hispanic Students",
+    },
+    "black": {
+        "x_ticks_location": 0.1,
+        "color": "lightblue",
+        "label": "Q4 Schools by % Black Students",
     },
     "frpl": {
         "x_ticks_location": 0.2,
         "color": "teal",
-        "label": "FRPL Students",
+        "label": "Q4 Schools by % FRPL Students",
     },
     "math_yr15std": {
         "title": "Standardized Math Performance",
@@ -115,51 +108,57 @@ for subgroup in subgroups:
 
 # %%
 
-
 fig = plt.figure(figsize=(15, 10))
 ax1 = fig.add_subplot(221)
 ax2 = fig.add_subplot(222)
 ax3 = fig.add_subplot(223)
 
-# fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
-
-
-# colors = ["gray", "gray", "gray", "gray", "black", "black", "black", "black"]
-
-# Uncertified
-for outcome, ax in zip(outcomes, [ax1, ax2, ax3]):
-    for subgroup in subgroups:
+for outcome, ax in zip(outcomes, [ax1, ax2, ax3, ax4]):
+    colors = ["black", "gray", "silver", "gray", "silver"]
+    linestyles = ["solid", "dotted", "dashed", "solid", "dotted"]
+    markers = ["o", "v", "v", "s", "s"]
+    for subgroup, color, marker in zip(subgroups, colors, markers):
         df = results[outcome][subgroup]["coef_df"]
         df = df[df.year >= -5]
 
         xs = [x + graph_parameters[subgroup]["x_ticks_location"] for x in df["year"]]
+        # color = graph_parameters[subgroup]["color"]
 
-        color = graph_parameters[subgroup]["color"]
+        for pos, y, err in zip(xs, df["coef"], df["errsig"]):
+            eb1 = ax.errorbar(
+                pos,
+                y,
+                err,
+                lw=2,
+                capsize=2,
+                capthick=2,
+                color=color,
+                linestyle="--",
+            )
+            # eb1[-1][0].set_linestyle("--")
+
         ax.scatter(
             x=xs,
-            marker="s",
+            marker=marker,
             s=30,
             y=df["coef"],
-            color=graph_parameters[subgroup]["color"],
+            color=color,
             label=graph_parameters[subgroup]["label"],
         )
-        for pos, y, err in zip(xs, df["coef"], df["errsig"]):
-            ax.errorbar(pos, y, err, lw=2, capsize=2, capthick=2, color=color)
 
     ax.axhline(y=0, linestyle="--", color="black", linewidth=1)
-    # ax.xaxis.set_ticks_position("none")
     ax.set_xticks(xs)
     ax.set_xticklabels(
         df["year"],
     )
     ax.set_ylabel(graph_parameters[outcome]["ylabel"])
     ax.set_title(graph_parameters[outcome]["title"])
-    # ax.set_xlim((-0.5, 7.5))
     ax.set_ylim(graph_parameters[outcome]["ylim"])
     ax.axvline(0, color="gray")
 
 ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5))
-fig.savefig(start.TABLE_PATH + "formatted_results/Figure10.pdf", bbox_inches="tight")
+
+fig.savefig(start.TABLE_PATH + "formatted_results/Figure9.pdf", bbox_inches="tight")
 
 
 # %%
