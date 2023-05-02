@@ -1,3 +1,4 @@
+# %%
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -76,12 +77,15 @@ for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
             linestyle=subgroup[1],
             linewidth=1.5 + i / 2,
         )
+        ax.set_xticks(df.index)
 
+        ax.set_xticklabels(
+            df.index,
+        )
     ax.set_title(title_labels[outcome])
     ax.grid(False)
 
 ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5), numpoints=1)
-
 
 fig.savefig(start.TABLE_PATH + "trends_by_subgroup_time.pdf", bbox_inches="tight")
 fig.savefig(start.TABLE_PATH + "formatted_results/Figure4.pdf", bbox_inches="tight")

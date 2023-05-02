@@ -123,15 +123,15 @@ ax4 = fig.add_subplot(224)
 
 
 for outcome, ax in zip(outcomes, [ax1, ax2, ax3, ax4]):
-    colors = ["black", "gray", "silver", "gray", "silver"]
+    colors = ["black", "dimgrey", "darkgrey", "dimgrey", "darkgrey"]
     linestyles = ["solid", "dotted", "dashed", "solid", "dotted"]
-    markers = ["o", "v", "v", "s", "s"]
+    markers = ["s", "o", "o", "v", "v"]
     for subgroup, color, marker in zip(subgroups, colors, markers):
         df = results[outcome][subgroup]["coef_df"]
         df = df[df.year >= -5]
+        df["year"] = df.year.astype(int)
 
         xs = [x + graph_parameters[subgroup]["x_ticks_location"] for x in df["year"]]
-        # color = graph_parameters[subgroup]["color"]
 
         for pos, y, err in zip(xs, df["coef"], df["errsig"]):
             eb1 = ax.errorbar(
@@ -144,7 +144,6 @@ for outcome, ax in zip(outcomes, [ax1, ax2, ax3, ax4]):
                 color=color,
                 linestyle="--",
             )
-            # eb1[-1][0].set_linestyle("--")
 
         ax.scatter(
             x=xs,
@@ -163,7 +162,7 @@ for outcome, ax in zip(outcomes, [ax1, ax2, ax3, ax4]):
     ax.set_ylabel(graph_parameters[outcome]["ylabel"])
     ax.set_title(graph_parameters[outcome]["title"])
     ax.set_ylim(graph_parameters[outcome]["ylim"])
-    ax.axvline(0, color="gray")
+    ax.axvline(linestyle="--", color="black", linewidth=1)
 
 ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5))
 
