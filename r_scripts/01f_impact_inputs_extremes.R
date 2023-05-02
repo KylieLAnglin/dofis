@@ -17,7 +17,7 @@ set.seed(42)
 library("did")
 library("xlsx")
 
-outcomes = c("teacher_uncertified_extreme", "teacher_out_of_field_extreme", "class_size_elem_extreme", "stu_teach_ratio_extreme", )
+outcomes = c("teacher_uncertified_extreme", "teacher_out_of_field_extreme", "class_size_elem_extreme", "stu_teach_ratio_extreme")
 
 return_att <- function(df, outcome){
   disag <- att_gt(yname = outcome,

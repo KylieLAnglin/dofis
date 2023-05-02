@@ -173,7 +173,6 @@ for outcome, ax in zip(outcomes, [ax1, ax2, ax3, ax4]):
     )
     ax.set_ylabel(graph_parameters[outcome]["ylabel"])
     ax.set_title(graph_parameters[outcome]["title"])
-    # ax.set_xlim((-0.5, 7.5))
     ax.set_ylim(graph_parameters[outcome]["ylim"])
     ax.axvline(0, color="gray")
 
