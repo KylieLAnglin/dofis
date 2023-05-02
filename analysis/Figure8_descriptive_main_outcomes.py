@@ -1,35 +1,16 @@
-# %%
-
-
-import os
-import sys
-
-import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-import statsmodels.formula.api as smf
-from cycler import cycler
-from matplotlib import lines, markers
-from scipy import stats
 
 from dofis import start
-
-# %%
 
 plt.style.use("seaborn")
 my_dpi = 96
 plt.figure(figsize=(480 / my_dpi, 480 / my_dpi), dpi=my_dpi)
 
-
-# %%
-
 data = pd.read_csv(start.DATA_PATH + "clean/master_data_school.csv")
 data = data[(data.year >= 2016) & (data.year < 2020)]
 data = data[data.distischarter == 0]
 data = data[data.campischarter == "N"]
-
-# %% Visual Impact by Subject
 
 
 def create_group_df(df, outcome):
@@ -57,40 +38,48 @@ ax2 = fig.add_subplot(222)
 ax3 = fig.add_subplot(223)
 
 subgroups = [
-    "All Schools",
-    "Rural Schools",
-    "Hispanic Students",
-    "Black Students",
-    "FRPL Students",
+    ("All Schools", "solid"),
+    ("Rural Schools", "dotted"),
+    ("Q4 % Hispanic Students", "dashed"),
+    ("Q4 % Black Students", "solid"),
+    ("Q4 % FRPL Students", "dotted"),
 ]
 
-for outcome, ax in zip(title_labels, [ax1, ax2, ax3]):
+
+for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
     df_average = create_group_df(df=data, outcome=outcome)
     df_rural = create_group_df(df=data[data.pre_rural == 1], outcome=outcome)
+    df_urban = create_group_df(df=data[data.pre_urban == 1], outcome=outcome)
     df_black = create_group_df(df=data[data.pre_black100 == 1], outcome=outcome)
     df_hispanic = create_group_df(df=data[data.pre_hisp100 == 1], outcome=outcome)
     df_frpl = create_group_df(df=data[data.pre_frpl100 == 1], outcome=outcome)
+    df_avescore = create_group_df(df=data[data.pre_avescore25 == 1], outcome=outcome)
 
-    ax.set_prop_cycle(color=["black", "blue", "green", "lightblue", "teal"])
-    for df, subgroup in zip(
-        [
-            df_average,
-            df_rural,
-            df_black,
-            df_hispanic,
-            df_frpl,
-        ],
-        subgroups,
+    ax.set_prop_cycle(color=["black", "black", "black", "gray", "gray"])
+    for i, (df, subgroup) in enumerate(
+        zip(
+            [
+                df_average,
+                df_rural,
+                df_urban,
+                df_black,
+                df_hispanic,
+                df_frpl,
+            ],
+            subgroups,
+        )
     ):
-        ax.plot(list(df.index), df["outcome"]["score_mean"], label=subgroup)
-        ax.fill_between
+        ax.plot(
+            list(df.index),
+            df["outcome"]["score_mean"],
+            label=subgroup[0],
+            linestyle=subgroup[1],
+            linewidth=1.5 + i / 2,
+        )
         ax.set_xticks(df.index)
         ax.set_xticklabels(
             df.index,
         )
-    # ax.fill_between(
-    #     list(df_treat2017.index), df_treat2017.lb, df_treat2017.ub, alpha=0.2
-    # )
 
     ax.set_title(title_labels[outcome])
     ax.grid(False)
@@ -98,6 +87,4 @@ for outcome, ax in zip(title_labels, [ax1, ax2, ax3]):
 ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5))
 
 fig.savefig(start.TABLE_PATH + "trends_by_subgroup2.pdf", bbox_inches="tight")
-fig.savefig(start.TABLE_PATH + "formatted_results/Figure9.pdf", bbox_inches="tight")
-
-# %%
+fig.savefig(start.TABLE_PATH + "formatted_results/Figure8.pdf")
