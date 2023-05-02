@@ -1,15 +1,9 @@
-# TODO: Huge standard errors on student teacher ratio for urban schools
 # %%
-from re import sub
 import pandas as pd
-import numpy as np
 import pandas as pd
-from openpyxl import load_workbook
-import scipy
 import matplotlib.pyplot as plt
 
 from dofis import start
-from dofis.analysis.library import analysis
 
 # %%
 subgroups = ["average", "rural", "hispanic", "black", "frpl"]
@@ -28,17 +22,17 @@ for outcome in outcomes:
 
 # %%
 graph_parameters = {
-    "average": {"x_ticks_location": -0.3, "color": "black", "label": "Average Impact"},
-    "rural": {"x_ticks_location": -0.2, "color": "blue", "label": "Rural Schools"},
-    "black": {
-        "x_ticks_location": -0.1,
-        "color": "lightblue",
-        "label": "Q4 Schools by % Black Students",
-    },
+    "average": {"x_ticks_location": -0.3, "color": "blue", "label": "Average Impact"},
+    "rural": {"x_ticks_location": -0.1, "color": "green", "label": "Rural Schools"},
     "hispanic": {
-        "x_ticks_location": 0.10,
+        "x_ticks_location": 0,
         "color": "green",
         "label": "Q4 Schools by % Hispanic Students",
+    },
+    "black": {
+        "x_ticks_location": 0.1,
+        "color": "lightblue",
+        "label": "Q4 Schools by % Black Students",
     },
     "frpl": {
         "x_ticks_location": 0.2,
@@ -139,28 +133,40 @@ ax3 = fig.add_subplot(223)
 ax4 = fig.add_subplot(224)
 
 
-# Uncertified
 for outcome, ax in zip(outcomes, [ax1, ax2, ax3, ax4]):
-    for subgroup in subgroups:
+    colors = ["black", "gray", "silver", "gray", "silver"]
+    linestyles = ["solid", "dotted", "dashed", "solid", "dotted"]
+    markers = ["o", "v", "v", "s", "s"]
+    for subgroup, color, marker in zip(subgroups, colors, markers):
         df = results[outcome][subgroup]["coef_df"]
         df = df[df.year >= -5]
 
         xs = [x + graph_parameters[subgroup]["x_ticks_location"] for x in df["year"]]
+        # color = graph_parameters[subgroup]["color"]
 
-        color = graph_parameters[subgroup]["color"]
+        for pos, y, err in zip(xs, df["coef"], df["errsig"]):
+            eb1 = ax.errorbar(
+                pos,
+                y,
+                err,
+                lw=2,
+                capsize=2,
+                capthick=2,
+                color=color,
+                linestyle="--",
+            )
+            # eb1[-1][0].set_linestyle("--")
+
         ax.scatter(
             x=xs,
-            marker="s",
+            marker=marker,
             s=30,
             y=df["coef"],
-            color=graph_parameters[subgroup]["color"],
+            color=color,
             label=graph_parameters[subgroup]["label"],
         )
-        for pos, y, err in zip(xs, df["coef"], df["errsig"]):
-            ax.errorbar(pos, y, err, lw=2, capsize=2, capthick=2, color=color)
 
     ax.axhline(y=0, linestyle="--", color="black", linewidth=1)
-    # ax.xaxis.set_ticks_position("none")
     ax.set_xticks(xs)
     ax.set_xticklabels(
         df["year"],
@@ -172,7 +178,7 @@ for outcome, ax in zip(outcomes, [ax1, ax2, ax3, ax4]):
     ax.axvline(0, color="gray")
 
 ax.legend(loc="lower left", bbox_to_anchor=(1, 0.5))
-fig.savefig(start.TABLE_PATH + "formatted_results/Figure7.pdf", bbox_inches="tight")
+fig.savefig(start.TABLE_PATH + "formatted_results/Figure6.pdf", bbox_inches="tight")
 
 
 # %%
