@@ -43,7 +43,6 @@ subgroups = [
     ("Q4 % Black Students", "solid"),
     ("Q4 % FRPL Students", "dotted"),
 ]
-# (0, (3,10,1,10))
 for outcome, ax in zip(title_labels, [ax1, ax2, ax3, ax4]):
     df_average = create_group_df(df=data, outcome=outcome)
     df_rural = create_group_df(df=data[data.pre_rural == 1], outcome=outcome)
